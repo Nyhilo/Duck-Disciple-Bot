@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 
 import config
+from log import log
 
 # Globals #
 load_dotenv()
@@ -20,10 +21,10 @@ bot = commands.Bot(command_prefix=config.PREFIX,
 
 @bot.event
 async def on_ready():
-    print('Python version', sys.version)
-    print('Discord API version: ' + discord.__version__)
-    print('Logged in as', bot.user.name)
-    print('Bot is ready!')
+    log.info('Python version', sys.version)
+    log.info('Discord API version: ', discord.__version__)
+    log.info('Logged in as', bot.user.name)
+    log.info('Bot is ready!')
 
 
 # Commands #
@@ -33,7 +34,7 @@ async def test(ctx):
 
 
 def init():
-    print("Starting bot...")
+    log.info("Starting bot...")
     bot.run(TOKEN)
 
 
