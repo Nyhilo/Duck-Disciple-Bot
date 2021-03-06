@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 
 import config
 from log import log
+import generator
+
 
 # Globals #
 load_dotenv()
@@ -21,16 +23,26 @@ bot = commands.Bot(command_prefix=config.PREFIX,
 
 @bot.event
 async def on_ready():
-    log.info('Python version', sys.version)
-    log.info('Discord API version: ', discord.__version__)
-    log.info('Logged in as', bot.user.name)
+    log.info(f'Python version {sys.version}')
+    log.info(f'Discord API version:  {discord.__version__}')
+    log.info(f'Logged in as {bot.user.name}')
     log.info('Bot is ready!')
 
 
 # Commands #
 @bot.command()
-async def test(ctx):
-    await ctx.send("Hello world!")
+async def name(ctx):
+    log.info(f'Name request by {ctx.author}')
+
+    name = generator.get_random_duck_name()
+
+    if name is None:
+        error = ('An error occured getting your duck name :(\n'
+                 'Please send a message to my author and let them know.')
+
+        await ctx.send(error)
+    else:
+        await ctx.send(f'A duck name for you! `{name}`')
 
 
 def init():
