@@ -3,10 +3,12 @@ import logging
 from config import LOG_FILE
 
 # Courtesy https://stackoverflow.com/a/49562361
-log = logging.getLogger(__name__)
+log = logging.getLogger('discord')
 log.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s:%(levelname)s:%(name)s: %(message)s'
+)
 
 # Log to File
 fh = logging.FileHandler(LOG_FILE, mode='w', encoding='utf-8')
