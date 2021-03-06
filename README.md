@@ -2,8 +2,6 @@
 
 A bot for adding helpful tools to Round 9 of the Infinite Nomic discord
 
-# Features
+## Features
 
-`&name`
-
-Returns a random duck name generated via https://thestoryshack.com/tools/duck-name-generator/
+`&name` - Returns a random duck name generated via https://thestoryshack.com/tools/duck-name-generator/
