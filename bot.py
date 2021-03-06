@@ -6,6 +6,7 @@ import os
 
 from dotenv import load_dotenv
 
+import config
 
 # Globals #
 load_dotenv()
@@ -13,7 +14,8 @@ TOKEN = os.getenv('TOKEN')
 
 
 # Setup #
-bot = commands.Bot(command_prefix="&", description='Duck bot go quack.')
+bot = commands.Bot(command_prefix=config.PREFIX,
+                   description='Duck bot go quack.')
 
 
 @bot.event
