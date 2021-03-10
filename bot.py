@@ -19,8 +19,10 @@ TOKEN = os.getenv('TOKEN')
 
 
 # Setup #
+help_command = commands.DefaultHelpCommand(no_category='Commands')
 bot = commands.Bot(command_prefix=config.PREFIX,
-                   description='Duck bot go quack.')
+                   description='Duck bot go quack.',
+                   help_command=help_command)
 
 
 @bot.event
@@ -34,6 +36,8 @@ async def on_ready():
 # Commands #
 @bot.command()
 async def name(ctx):
+    """Generate a random duck name."""
+
     log.info(f'Name request by {ctx.author}')
 
     name = generator.get_random_duck_name()
@@ -52,6 +56,8 @@ async def name(ctx):
 # TODO: Handle possible errors
 @bot.command()
 async def duck(ctx):
+    """Fetch a random named duck from the Round 9 Gamestate wiki."""
+
     log.info(f'Roll requested by {ctx.author}')
 
     cached_ducks = scraper.get_ducks(False)
