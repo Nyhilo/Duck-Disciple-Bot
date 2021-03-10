@@ -34,7 +34,7 @@ def get_ducks(include_unnamed=True):
     ducks = [parse_duck_row(r, header_keys) for r in rows[1:]]
 
     if not include_unnamed:
-        ducks = [duck for duck in ducks if duck["Name"][0] != '-']
+        ducks = [duck for duck in ducks if duck['Name'][0] != '-']
 
     return ducks
 
@@ -44,8 +44,15 @@ def get_player_duck(dice_roll, cached_ducks=None, include_unnamed=True):
     if not ducks:
         ducks = get_ducks(include_unnamed)
 
-    duck = ducks[dice_roll]
-    return f"The duck named {duck['Name']} belonging to {duck['Owner']}"
+    duck = ducks[dice_roll-1]
+
+    log.info(f'Rolled {dice_roll} and got {duck}')
+
+    named_ducks = '' if include_unnamed else ' for named ducks'
+    name = duck['Name']
+    owner = duck['Owner']
+    return f'Rolled a {dice_roll} on the Ducks table{named_ducks}:\n' + \
+           f'Got the duck named `{name}` belonging to `{owner}`'
 
 
 if __name__ == '__main__':
