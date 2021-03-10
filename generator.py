@@ -5,7 +5,7 @@ from log import log
 
 
 def get_random_duck_name():
-    req = requests.get(config.NAME_GENERATOR_URL)\
+    req = requests.get(config.NAME_GENERATOR_URL)
 
     log.info(f'Getting duck name from {config.NAME_GENERATOR_URL}')
 

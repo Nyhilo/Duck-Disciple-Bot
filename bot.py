@@ -47,13 +47,16 @@ async def name(ctx):
         await ctx.send(f'A duck name for you! `{name}`')
 
 
+# TODO: Let command accept number to acquire duck
+# TODO: Make version of command that gets unnamed ducks as well
+# TODO: Handle possible errors
 @bot.command()
 async def duck(ctx):
     log.info(f'Roll requested by {ctx.author}')
 
     cached_ducks = scraper.get_ducks(False)
     duck_count = len(cached_ducks)
-    
+
     random_number = randint(1, duck_count)
 
     msg = scraper.get_player_duck(random_number, cached_ducks, False)
