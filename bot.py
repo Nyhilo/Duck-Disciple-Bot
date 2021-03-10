@@ -58,7 +58,7 @@ async def name(ctx):
 # TODO: Make version of command that gets unnamed ducks as well
 # TODO: Handle possible errors
 @bot.command(
-    brief='Fetch a random or specific nammed duck.',
+    brief='Fetch a random or specific named duck.',
     help=('Fetch a random named duck from the Round 9 Gamestate wiki.\n'
           'Use `duck <number>` to fetch a duck with a specific dice roll.')
 )
