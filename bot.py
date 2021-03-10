@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import config
 from log import log
 import generator
+import scraper
 
 
 # Globals #
@@ -43,6 +44,19 @@ async def name(ctx):
         await ctx.send(error)
     else:
         await ctx.send(f'A duck name for you! `{name}`')
+
+
+@bot.command()
+async def duck(ctx):
+    cached_ducks = scraper.get_ducks(False)
+    duck_count = len(cached_ducks)
+
+    # TODO: Get random number from dice bot
+    random_number = 18   # Guaranteed to be random
+
+    msg = scraper.get_player_duck(random_number, cached_ducks, False)
+
+    await ctx.send(msg)
 
 
 def init():
