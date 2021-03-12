@@ -107,7 +107,7 @@ def get_player_quacks():
 
     sorted_owners = sorted(owners.items(), key=lambda i: i[1], reverse=True)
     for owner, quacks in sorted_owners:
-        print(owner, quacks)
+
         # `Player Name     Value`
         msg += owner.ljust(column_len[0]) + str(quacks).rjust(column_len[1])
         msg += '\n'
