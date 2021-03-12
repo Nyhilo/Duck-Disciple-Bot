@@ -54,7 +54,6 @@ async def name(ctx):
         await ctx.send(f'A duck name for you! `{name}`')
 
 
-# TODO: Let command accept number to acquire duck
 # TODO: Make version of command that gets unnamed ducks as well
 # TODO: Handle possible errors
 @bot.command(
@@ -91,6 +90,21 @@ async def duck(ctx, *, arg=None):
     msg = scraper.get_player_duck(random_number, cached_ducks, False)
 
     await ctx.send(msg)
+
+
+@bot.command(
+    brief='Get a sum of all current player quacks',
+    help=('Get an aggregate of each player\'s collective quacks as they are '
+          'currently represented on the Round 9 Gamestate wiki.')
+)
+async def quacks(ctx):
+    log.info(f'Quacks requested by {ctx.author}')
+
+    try:
+        await ctx.send(scraper.get_player_quacks())
+    except Exception:
+        log.error(Exception)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 def init():
