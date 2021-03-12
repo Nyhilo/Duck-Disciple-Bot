@@ -103,7 +103,7 @@ def get_player_quacks():
 
     msg += '```\n'
     msg += headers[0].ljust(column_len[0]) + headers[1].rjust(column_len[1])
-    msg += '-' * (column_len[0] + column_len[1]) + '\n'
+    msg += '\n' + '-' * (column_len[0] + column_len[1]) + '\n'
 
     sorted_owners = sorted(owners.items(), key=lambda i: i[1], reverse=True)
     for owner, quacks in sorted_owners:
