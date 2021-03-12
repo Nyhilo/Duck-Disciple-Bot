@@ -43,7 +43,12 @@ async def on_ready():
 async def name(ctx):
     log.info(f'Name request by {ctx.author}')
 
-    name = generator.get_random_duck_name()
+    try:
+        name = generator.get_random_duck_name()
+    except Exception:
+        log.error(Exception)
+        await ctx.send(config.GENERIC_ERROR)
+        return
 
     if name is None:
         error = ('An error occured getting your duck name :(\n'
@@ -64,8 +69,13 @@ async def name(ctx):
 async def duck(ctx, *, arg=None):
     log.info(f'Roll requested by {ctx.author}')
 
-    cached_ducks = scraper.get_ducks(False)
-    duck_count = len(cached_ducks)
+    try:
+        cached_ducks = scraper.get_ducks(False)
+        duck_count = len(cached_ducks)
+    except Exception:
+        log.error(Exception)
+        await ctx.send(config.GENERIC_ERROR)
+        return
 
     if arg is None:
         random_number = randint(1, duck_count)
@@ -74,8 +84,9 @@ async def duck(ctx, *, arg=None):
             random_number = int(arg)
         except ValueError:
             log.info(f'Invalid value sent by user. Value: {arg}')
-            return await ctx.send(f'Value: `{arg}` is not an integer that '
-                                  'I can find a duck with.')
+            await ctx.send(f'Value: `{arg}` is not an integer that '
+                           'I can find a duck with.')
+            return
 
     if arg and random_number < 1:
         log.info(f'Number recieved is less than 1: {random_number}')
