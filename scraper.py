@@ -85,9 +85,12 @@ def get_player_quacks():
                 msg += (f'Whoops! {name} has a non-integer number of quacks! '
                         f'Gonna leave {owner} out of this one.\n')
 
+            if owner in owners:
+                owners.pop(owner)
+
         if owner in owners:
             owners[owner] += quacks
-        else:
+        elif owner not in flagged_owners:
             owners[owner] = quacks
 
     # Build the return table
