@@ -46,8 +46,8 @@ async def name(ctx):
 
     try:
         name = generator.get_random_duck_name()
-    except Exception:
-        log.error(Exception)
+    except Exception as e:
+        log.error(e)
         await ctx.send(config.GENERIC_ERROR)
         return
 
@@ -73,8 +73,8 @@ async def duck(ctx, *, arg=None):
     try:
         cached_ducks = scraper.get_ducks(False)
         duck_count = len(cached_ducks)
-    except Exception:
-        log.error(Exception)
+    except Exception as e:
+        log.error(e)
         await ctx.send(config.GENERIC_ERROR)
         return
 
@@ -114,8 +114,8 @@ async def quacks(ctx):
 
     try:
         await ctx.send(scraper.get_player_quacks())
-    except Exception:
-        log.error(Exception)
+    except Exception as e:
+        log.error(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -126,8 +126,8 @@ async def quacks(ctx):
 async def time(ctx):
     try:
         await ctx.send(duck_time.get_current_utc_string())
-    except Exception:
-        log.error(Exception)
+    except Exception as e:
+        log.error(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
