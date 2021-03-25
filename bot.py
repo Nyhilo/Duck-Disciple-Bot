@@ -11,6 +11,7 @@ import config
 from log import log
 import generator
 import scraper
+import duck_time
 
 
 # Globals #
@@ -113,6 +114,18 @@ async def quacks(ctx):
 
     try:
         await ctx.send(scraper.get_player_quacks())
+    except Exception:
+        log.error(Exception)
+        await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command(
+    brief='Get current time and day in UTC',
+    help='Get current time, day, and voting period in UTC'
+)
+async def time(ctx):
+    try:
+        await ctx.send(duck_time.get_current_utc_string())
     except Exception:
         log.error(Exception)
         await ctx.send(config.GENERIC_ERROR)
