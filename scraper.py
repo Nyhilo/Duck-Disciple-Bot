@@ -1,3 +1,4 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 
@@ -55,11 +56,15 @@ def get_player_duck(dice_roll, cached_ducks=None, include_unnamed=True):
     log.info(f'Rolled {dice_roll} and got {duck}')
 
     named_ducks = '' if include_unnamed else ' for named ducks'
-    name = duck['Name'] if 'Name' in duck else ''
-    owner = duck['Owner'] if 'Owner' in duck else ''
+    name = _escape_backticks(duck['Name']) if 'Name' in duck else ''
+    owner = _escape_backticks(duck['Owner']) if 'Owner' in duck else ''
+
+    # Leading backticks need a space before them
+    name = ' ' + name if name[0] == '`' else name
+    owner = ' ' + owner if owner[0] == '`' else owner
 
     return f'Rolled a {dice_roll} on the Ducks table{named_ducks}:\n' + \
-           f'Got the duck named `{name}` belonging to `{owner}`'
+           f'Got the duck named ``{name}`` belonging to ``{owner}``'
 
 
 def get_player_quacks():
@@ -104,20 +109,27 @@ def get_player_quacks():
     if msg != '':
         msg += '\n'
 
-    msg += '```\n'
-    msg += headers[0].ljust(column_len[0]) + headers[1].rjust(column_len[1])
-    msg += '\n' + '-' * (column_len[0] + column_len[1]) + '\n'
+    block = headers[0].ljust(column_len[0]) + headers[1].rjust(column_len[1])
+    block += '\n' + '-' * (column_len[0] + column_len[1]) + '\n'
 
     sorted_owners = sorted(owners.items(), key=lambda i: i[1], reverse=True)
     for owner, quacks in sorted_owners:
 
         # `Player Name     Value`
-        msg += owner.ljust(column_len[0]) + str(quacks).rjust(column_len[1])
-        msg += '\n'
+        block += owner.ljust(column_len[0]) + str(quacks).rjust(column_len[1])
+        block += '\n'
 
+    msg += '```\n'
+    msg += _escape_backticks(block)
     msg += '```'
 
     return msg
+
+
+def _escape_backticks(text):
+    """Inserts a zero-width character after each backtick"""
+    zws = chr(8203)
+    return re.sub(r'`', '`' + zws, text)
 
 
 if __name__ == '__main__':
