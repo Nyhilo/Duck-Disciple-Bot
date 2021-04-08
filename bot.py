@@ -101,6 +101,7 @@ async def duck(ctx, *, arg=None):
 
     msg = scraper.get_player_duck(random_number, cached_ducks, False)
 
+    msg = discord.utils.escape_mentions(msg)
     await ctx.send(msg)
 
 
@@ -113,7 +114,9 @@ async def quacks(ctx):
     log.info(f'Quacks requested by {ctx.author}')
 
     try:
-        await ctx.send(scraper.get_player_quacks())
+        msg = scraper.get_player_quacks()
+        msg = discord.utils.escape_mentions(msg)
+        await ctx.send(msg)
     except Exception as e:
         log.error(e)
         await ctx.send(config.GENERIC_ERROR)
