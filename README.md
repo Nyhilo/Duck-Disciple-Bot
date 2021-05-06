@@ -4,8 +4,4 @@ A bot for adding helpful tools to Round 9 of the Infinite Nomic discord
 
 ## Features
 
-`name` - Returns a random duck name generated via https://thestoryshack.com/tools/duck-name-generator/
-
-`duck` - Returns a random existing duck from the Nomic Gamestate Wiki
-
-`quacks` - Returns an aggregated list of the total quacks among all the ducks each player owns
+`time` - Displays the current time and day in UTC
