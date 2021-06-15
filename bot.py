@@ -25,7 +25,7 @@ TOKEN = os.getenv('TOKEN')
 
 help_command = commands.DefaultHelpCommand(no_category='Commands')
 bot = commands.Bot(command_prefix=config.PREFIX,
-                   description=('Duck bot go quack. A general-use bot for the '
+                   description=('Poker bot doubles down. A general-use bot for the '
                                 'Infinite Nomic on discord.'),
                    help_command=help_command)
 
