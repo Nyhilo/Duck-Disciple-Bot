@@ -58,8 +58,7 @@ async def time(ctx):
 @bot.command(
     brief='Gets the SHA256 for a given input.',
     help=('Gets the SHA256 hash for a given input. Note that including '
-          'discord mentions will produce unexpected results if the original '
-          'hash was generated using a method other than this bot.')
+          'discord mentions may produce unexpected results.')
 )
 async def sha(ctx, *, message):
     try:
