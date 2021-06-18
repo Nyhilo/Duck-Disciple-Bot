@@ -4,6 +4,9 @@ LOG_FILE = 'bot.log'
 GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
                  'should probably tell an admin about it or something...')
 
+# This is set to false to prevent cheating when secretly generating a Sha265
+LOG_DEBUG_TO_FILE = False
+
 _phase_bartering = 'Bartering Phase'
 _phase_auction = 'Auction Phase'
 
