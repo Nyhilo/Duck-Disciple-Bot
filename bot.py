@@ -60,9 +60,12 @@ async def time(ctx):
     help=('Gets the SHA256 hash for a given input. Note that including '
           'discord mentions may produce unexpected results.')
 )
-async def sha(ctx, *, message):
+async def sha(ctx, *, message=None):
+    if message is None:
+        await ctx.send("Please include the message you would like me to hash.")
+        return
+
     try:
-        log.debug(message)
         hash = shalib.get_sha_256(message)
         await ctx.send(f'The hash for the above message is:\n{hash}')
     except Exception as e:
