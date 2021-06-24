@@ -124,7 +124,7 @@ async def drawpairs(ctx, number=1):
 @drawpairs.error
 async def drawpairs_error(ctx, error):
     if isinstance(error, commands.BadArgument):
-        await ctx.send('Please provide a *number* of cards to draw.')
+        await ctx.send('Please provide a integer of cards to draw.')
 
 
 ##############
