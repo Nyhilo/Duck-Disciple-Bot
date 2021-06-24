@@ -78,7 +78,7 @@ async def sha(ctx, *, message=None):
     brief='Draw a number of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
           'the cards generated from those dice rolls. Will return 1 card by'
-          'default.')
+          'default, maximum draw is 100.')
 )
 async def draw(ctx, number=1):
     try:
@@ -89,6 +89,11 @@ async def draw(ctx, number=1):
 
     if number < 1:
         return await ctx.send('Positive integers only please.')
+
+    maxcards = 100
+    if number > maxcards:
+        return await ctx.send('Sorry, maximum number of cards per draw '
+                              f'is {maxcards}.')
 
     try:
         msg = cards.draw_random_card_strings(number)
@@ -102,7 +107,7 @@ async def draw(ctx, number=1):
     brief='Draw pairs of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
           'the cards generated from those dice rolls. Will return 1 pair of '
-          'cards by default.')
+          'cards by default, maximum draw is 50 pairs.')
 )
 async def drawpairs(ctx, number=1):
     try:
@@ -113,6 +118,11 @@ async def drawpairs(ctx, number=1):
 
     if number < 1:
         return await ctx.send('Positive integers only please.')
+
+    maxpairs = 50
+    if number > maxpairs:
+        return await ctx.send('Sorry, maximum number of pairs per draw '
+                              f'is {maxpairs}.')
 
     try:
         msg = cards.draw_random_card_pair_strings(number)
