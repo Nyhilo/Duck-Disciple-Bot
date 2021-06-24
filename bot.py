@@ -81,12 +81,6 @@ async def sha(ctx, *, message=None):
           'default, maximum draw is 100.')
 )
 async def draw(ctx, number=1):
-    try:
-        int(number)
-    except ValueError:
-        return await ctx.send(f'That\'s not an integer. How do I draw {number}'
-                              ' of something?')
-
     if number < 1:
         return await ctx.send('Positive integers only please.')
 
@@ -110,12 +104,6 @@ async def draw(ctx, number=1):
           'cards by default, maximum draw is 50 pairs.')
 )
 async def drawpairs(ctx, number=1):
-    try:
-        int(number)
-    except ValueError:
-        return await ctx.send(f'That\'s not an integer. How do I draw {number}'
-                              ' of something?')
-
     if number < 1:
         return await ctx.send('Positive integers only please.')
 
@@ -130,6 +118,13 @@ async def drawpairs(ctx, number=1):
     except Exception as e:
         log.error(e)
         await ctx.send(config.GENERIC_ERROR)
+
+
+@draw.error
+@drawpairs.error
+async def drawpairs_error(ctx, error):
+    if isinstance(error, commands.BadArgument):
+        await ctx.send('Please provide a *number* of cards to draw.')
 
 
 ##############
