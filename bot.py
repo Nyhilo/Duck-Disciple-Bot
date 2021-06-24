@@ -11,6 +11,7 @@ import config
 from log import log
 import nomic_time
 import sha as shalib
+import cards
 
 ###########
 # Globals #
@@ -71,6 +72,54 @@ async def sha(ctx, *, message=None):
     except Exception as e:
         log.error(e)
         await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command(
+    brief='Draw a number of cards.',
+    help=('Automatically roll some dice and report back the dice rolls and '
+          'the cards generated from those dice rolls. Will return 1 card by'
+          'default.')
+)
+async def draw(ctx, number=1):
+    try:
+        int(number)
+    except ValueError:
+        return await ctx.send(f'That\'s not an integer. How do I draw {number}'
+                              ' of something?')
+
+    if number < 1:
+        return await ctx.send('Positive integers only please.')
+
+    try:
+        msg = cards.draw_random_card_strings(number)
+        await ctx.send(msg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.config.GENERIC_ERROR)
+
+
+@bot.command(
+    brief='Draw pairs of cards.',
+    help=('Automatically roll some dice and report back the dice rolls and '
+          'the cards generated from those dice rolls. Will return 1 pair of '
+          'cards by default.')
+)
+async def drawpairs(ctx, number=1):
+    try:
+        int(number)
+    except ValueError:
+        return await ctx.send(f'That\'s not an integer. How do I draw {number}'
+                              ' of something?')
+
+    if number < 1:
+        return await ctx.send('Positive integers only please.')
+
+    try:
+        msg = cards.draw_random_card_pair_strings(number)
+        await ctx.send(msg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.config.GENERIC_ERROR)
 
 
 ##############

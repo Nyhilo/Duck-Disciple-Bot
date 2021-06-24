@@ -7,6 +7,7 @@ GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = False
 
+# Phases
 _phase_bartering = 'Bartering Phase'
 _phase_auction = 'Auction Phase'
 
@@ -29,3 +30,7 @@ PHASE_START = {
     _phase_bartering: 'Thursday',
     _phase_auction: 'Sunday'
 }
+
+# Cards
+CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
+CARD_SUITS = ['♠', '♥', '♣', '♦']
