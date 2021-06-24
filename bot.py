@@ -95,7 +95,7 @@ async def draw(ctx, number=1):
         await ctx.send(msg)
     except Exception as e:
         log.error(e)
-        await ctx.send(config.config.GENERIC_ERROR)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 @bot.command(
@@ -119,7 +119,7 @@ async def drawpairs(ctx, number=1):
         await ctx.send(msg)
     except Exception as e:
         log.error(e)
-        await ctx.send(config.config.GENERIC_ERROR)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 ##############
