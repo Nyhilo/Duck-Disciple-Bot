@@ -17,7 +17,7 @@ PHASES_BY_DAY = {
     'Thursday': _phase_bartering,
     'Friday': _phase_bartering,
     'Saturday': _phase_bartering,
-    'Sunday': _phase_auction
+    'Sunday': _phase_bartering
 }
 
 PHASE_CYCLE = {
@@ -27,5 +27,5 @@ PHASE_CYCLE = {
 
 PHASE_START = {
     _phase_bartering: 'Thursday',
-    _phase_auction: 'Sunday'
+    _phase_auction: 'Monday'
 }
