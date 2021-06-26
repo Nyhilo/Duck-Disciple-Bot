@@ -13,17 +13,17 @@ def get_current_utc_string():
     nextPhase = PHASE_CYCLE[phase]
     nextDay = PHASE_START[nextPhase]
 
-    preposition = "on"
     if nextDay == tomorrow.strftime("%A"):
-        preposition = "in"
         secondstilmidnight = (tomorrow - now).seconds
         hours = secondstilmidnight // 3600
         minutes = (secondstilmidnight % 3600) // 60
-        nextDay = f"*{hours}* hours and *{minutes}* minutes"
+        nextDay = f"*{nextDay}* (in *{hours} hours* and *{minutes} minutes*)"
+    else:
+        nextDay = f'*{nextDay}*'
 
     return (f'It is **{time}** on **{weekday}**, UTC\n'
             f'That means it is the **{phase}**\n'
-            f'The *{nextPhase}* starts {preposition} *{nextDay}*')
+            f'The *{nextPhase}* starts on {nextDay}')
 
 
 def _now():
