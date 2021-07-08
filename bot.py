@@ -77,7 +77,7 @@ async def sha(ctx, *, message=None):
 @bot.command(
     brief='Draw a number of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
-          'the cards generated from those dice rolls. Will return 1 card by'
+          'the cards generated from those dice rolls. Will return 1 card by '
           'default, maximum draw is 100.')
 )
 async def draw(ctx, number=1):
