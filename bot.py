@@ -12,6 +12,8 @@ from log import log
 import nomic_time
 import sha as shalib
 import cards
+import utils
+
 
 ###########
 # Globals #
@@ -59,7 +61,9 @@ async def time(ctx):
 @bot.command(
     brief='Gets the SHA256 for a given input.',
     help=('Gets the SHA256 hash for a given input. Note that including '
-          'discord mentions may produce unexpected results.')
+          'discord mentions may produce unexpected results.\n'
+          'Inputs may be surrounded by double quotes to ensure expected '
+          'whitespace.')
 )
 async def sha(ctx, *, message=None):
     if message is None:
@@ -67,7 +71,8 @@ async def sha(ctx, *, message=None):
         return
 
     try:
-        hash = shalib.get_sha_256(message)
+        filteredMessage = utils.trim_quotes(message)
+        hash = shalib.get_sha_256(filteredMessage)
         await ctx.send(f'The hash for the above message is:\n{hash}')
     except Exception as e:
         log.error(e)
@@ -77,7 +82,7 @@ async def sha(ctx, *, message=None):
 @bot.command(
     brief='Draw a number of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
-          'the cards generated from those dice rolls. Will return 1 card by'
+          'the cards generated from those dice rolls. Will return 1 card by '
           'default, maximum draw is 100.')
 )
 async def draw(ctx, number=1):
