@@ -12,7 +12,7 @@ class Card:
     def display_strs(self):
         return (
             f"[{self.rank_num:>2}][{self.suit_num}]",
-            f"[{self.rank} {self.suit}]"
+            f"[{self.rank}{self.suit}]"
         )
 
 
@@ -28,7 +28,7 @@ def draw_random_card_sets(number=1, size=1):
             numbers.append(n)
             displays.append(d)
 
-        numstr = "".join(numbers)
+        numstr = " ".join(numbers)
         dispstr = "".join(displays)
 
         cardstrings.append(f"{numstr}    {dispstr}")
