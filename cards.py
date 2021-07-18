@@ -16,7 +16,7 @@ class Card:
         )
 
 
-def draw_random_card_sets(number = 1, size = 1):
+def draw_random_card_sets(number=1, size=1):
     cardstrings = []
     for _ in range(number):
         numbers = []
@@ -38,9 +38,9 @@ def draw_random_card_sets(number = 1, size = 1):
     cardstring = '\n'.join(cardstrings)
 
     return(f'Rolling some dice and... here {number_phrase}\n'
-            '```\n'
-            f'{cardstring}\n'
-            '```')
+           '```\n'
+           f'{cardstring}\n'
+           '```')
 
 
 def get_unweighted_card():
