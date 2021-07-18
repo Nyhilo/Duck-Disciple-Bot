@@ -87,7 +87,7 @@ async def sha(ctx, *, message=None):
           'is size of card sets. Maximum draw is 100.')
 )
 async def draw(ctx, number=1, size=1):
-    if number < 1:
+    if number * size < 1:
         return await ctx.send('Positive integers only please.')
 
     maxcards = 100
