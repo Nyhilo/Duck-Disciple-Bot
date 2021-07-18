@@ -82,43 +82,21 @@ async def sha(ctx, *, message=None):
 @bot.command(
     brief='Draw a number of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
-          'the cards generated from those dice rolls. Will return 1 card by '
-          'default, maximum draw is 100.')
+          'the cards generated from those dice rolls. Will return 1 set of 1 '
+          'card by default. First argument is number of cards, second argument '
+          'is size of card sets. Maximum draw is 100.')
 )
-async def draw(ctx, number=1):
+async def draw(ctx, number=1, size=1):
     if number < 1:
         return await ctx.send('Positive integers only please.')
 
     maxcards = 100
-    if number > maxcards:
+    if number * size > maxcards:
         return await ctx.send('Sorry, maximum number of cards per draw '
                               f'is {maxcards}.')
 
     try:
-        msg = cards.draw_random_card_strings(number)
-        await ctx.send(msg)
-    except Exception as e:
-        log.error(e)
-        await ctx.send(config.GENERIC_ERROR)
-
-
-@bot.command(
-    brief='Draw pairs of cards.',
-    help=('Automatically roll some dice and report back the dice rolls and '
-          'the cards generated from those dice rolls. Will return 1 pair of '
-          'cards by default, maximum draw is 50 pairs.')
-)
-async def drawpairs(ctx, number=1):
-    if number < 1:
-        return await ctx.send('Positive integers only please.')
-
-    maxpairs = 50
-    if number > maxpairs:
-        return await ctx.send('Sorry, maximum number of pairs per draw '
-                              f'is {maxpairs}.')
-
-    try:
-        msg = cards.draw_random_card_pair_strings(number)
+        msg = cards.draw_random_card_sets(number, size)
         await ctx.send(msg)
     except Exception as e:
         log.error(e)
@@ -126,7 +104,6 @@ async def drawpairs(ctx, number=1):
 
 
 @draw.error
-@drawpairs.error
 async def drawpairs_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send('Please provide an integer of cards to draw.')
