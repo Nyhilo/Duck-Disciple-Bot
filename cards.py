@@ -11,8 +11,8 @@ class Card:
 
     def display_strs(self):
         return (
-            f"[{self.rank_num:>2}][{self.suit_num}]",
-            f"[{self.rank}{self.suit}]"
+            f"[{self.rank_num:>2}][{self.suit_num:>2}]",
+            f"[{self.rank}{self.suit:>2}]"
         )
 
 

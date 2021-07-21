@@ -37,5 +37,34 @@ PHASE_START = {
 }
 
 # Cards
-CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
-CARD_SUITS = ['♠', '♥', '♣', '♦']
+
+###
+# Key  
+# Ranks:    X - 10
+#           E - 11
+#           D - 12
+#           H - 13
+#           U - Unter Knave
+#           O - Ober Knave
+#           N - Knight
+#           B - Bishop
+#           R - Rook
+#           Q - Queen
+#           K - king
+#
+# Suits:    l - Leaves
+#           ♦ - Diamonds
+#           u - Cups
+#           ♣ - Clubs
+#           a - Acorns
+#           r - Roses
+#           b - Bells
+#           s - Swords
+#           d - Shields
+#           ♥ - Hearts
+#           c - Coins
+#           ♠ - Spades
+#           
+###
+CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
+CARD_SUITS = ['l', '♦', 'u', '♣', 'a', 'r', 'b', 'd', 's', '♥', 'c', '♠']
