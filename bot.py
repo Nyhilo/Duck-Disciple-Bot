@@ -84,7 +84,20 @@ async def sha(ctx, *, message=None):
     help=('Automatically roll some dice and report back the dice rolls and '
           'the cards generated from those dice rolls. Will return 1 set of 1 '
           'card by default. First argument is number of cards, second argument '
-          'is size of card sets. Maximum draw is 100.')
+          'is size of card sets. Maximum draw is 100.\n'
+          'Ranks:              Suits:\n'
+          ' X - 10              l - Leaves\n'
+          ' E - 11              ♦ - Diamonds\n'
+          ' D - 12              u - Cups\n'
+          ' H - 13              ♣ - Clubs\n'
+          ' U - Unter Knave     a - Acorns\n'
+          ' O - Ober Knave      r - Roses\n'
+          ' N - Knight          b - Bells\n'
+          ' B - Bishop          s - Swords\n'
+          ' R - Rook            d - Shields\n'
+          ' Q - Queen           ♥ - Hearts\n'
+          ' K - king            c - Coins\n'
+          '                     ♠ - Spades\n')
 )
 async def draw(ctx, number=1, size=1):
     if number * size < 1:
