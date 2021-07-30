@@ -37,6 +37,66 @@ PHASE_START = {
 }
 
 # Cards
-
 CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
 CARD_SUITS = ['l', '♦', 'u', '♣', 'a', 'r', 'b', 'd', 's', '♥', 'c', '♠']
+
+# Cards for determining suit/rank value for alternate formats
+# Strings should be normalized uppercase before comparing to these
+CARD_RANKS_FORMATS = [
+    # Default card ranks
+    CARD_RANKS,
+
+    # Wiki {{Card}} format
+    ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', 'U', 'O', 'N', 'B', 'R', 'Q', 'K'],
+
+    # 10 is also sometimes T
+    ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', '11', '12', '13', 'U', 'O', 'N', 'B', 'R', 'Q', 'K'],
+
+    # Long format
+    ['ACE',
+     'TWO',
+     'THREE',
+     'FOUR',
+     'FIVE',
+     'SIX',
+     'SEVEN',
+     'EIGHT',
+     'NINE',
+     'TEN',
+     'ELEVEN',
+     'TWELVE',
+     'THIRTEEN',
+     'UNTER KNAVE',
+     'OBER KNAVE',
+     'KNIGHT',
+     'BISHOP',
+     'ROOK',
+     'QUEEN',
+     'KING']
+]
+
+CARD_SUITS_FORMATS = [
+    # Default card suits, normalized uppercase
+    [suit.upper() for suit in CARD_SUITS],
+
+    # Wiki format
+    ['L', 'D', 'Cp', 'C', 'A', 'R', 'B', 'Sw', 'Sh', 'H', 'Cn', 'S'],
+
+    # Emojis if you like
+    ['🍃', '♦', '🥤', '♣', '🌰', '🌹', '🔔', '⚔', '🛡', '♥', '👛', '♠'],
+    ['🍂', '💎', '🏆', '♣', '🌰', '🌹', '🛎', '🤺', '🛡', '♥', '💰', '♠'],
+
+    # Long format
+    [' OF LEAVES',
+     ' OF DIAMONDS',
+     ' OF CUPS',
+     ' OF CLUBS',
+     ' OF ACORNS',
+     ' OF ROSES',
+     ' OF BELLS',
+     ' OF SWORDS',
+     ' OF SHIELDS',
+     ' OF HEARTS',
+     ' OF COINS',
+     ' OF SPADES']
+]
