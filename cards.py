@@ -1,6 +1,9 @@
 from random import randint
 import re
-from config import CARD_RANKS, CARD_SUITS, CARD_RANKS_FORMATS, CARD_SUITS_FORMATS
+from functools import reduce
+
+from config import (CARD_RANKS, CARD_SUITS, CARD_RANKS_FORMATS, CARD_SUITS_FORMATS,
+                    SCORE_SENATORIAL, SCORE_REGIONALS, SCORE_COLORS)
 
 
 class Card:
@@ -62,9 +65,14 @@ def _roll(d):
     return randint(1, d)
 
 
+########################
+# Hand Scoring/Parsing #
+########################
+
 def get_hand_score(handstring):
     cards = parse_hand_string(handstring.strip())
-    print([card.display_strs() for card in cards])
+    score, formula = calculate_hand_score(cards)
+    return f'{formula} = {score}'
 
 
 def parse_hand_string(handstring):
@@ -113,17 +121,178 @@ def parse_hand_string(handstring):
     for card in cards:
         rank_num = _get_best_index_match(card.rank, CARD_RANKS_FORMATS)
         if rank_num < 0:
-            raise ValueError(f'Was unable to find the rank for {card.raw_string}')
+            raise ValueError(f'Was unable to find the rank, "{card.rank}" in "{card.raw_string}"')
 
         suit_num = _get_best_index_match(card.suit, CARD_SUITS_FORMATS)
         if suit_num < 0:
-            raise ValueError(f'Was unable to find the suit for {card.raw_string}')
+            raise ValueError(f'Was unable to find the suit, "{card.suit}" in "{card.raw_string}"')
 
         card.rank_num = rank_num+1
         card.suit_num = suit_num+1
 
     return cards
 
+
+def calculate_hand_score(cards):
+    # Size of hand
+    c = len(cards)
+
+    # Number of Ranks constant
+    r = len(CARD_RANKS)
+
+    # Multipliers
+    m_pairs = calculate_multipliers_list(cards)
+    mults = [pair[0] for pair in m_pairs]
+    m_strs = [pair[1] for pair in m_pairs if pair[1] is not None]
+
+    # High-card constant
+    h = calculate_high_card_value(cards)
+
+    m = reduce(lambda x, y: x * y, mults, 1)
+
+    # Return crm+h and string representation of (c*r*(m)) + h
+    mult_string = '' if len(m_strs) == 0 else f'*({"*".join(m_strs)})'
+    return ((c * r * m) + h), f'({c}*{r}{mult_string}) + {h}'
+
+
+def calculate_high_card_value(cards):
+    return max([card.rank_num for card in cards])
+
+
+def calculate_multipliers_list(cards):
+    multiplier_funcs = [
+        mult_paired,
+        mult_running,
+        mult_senatorial,
+        mult_regional,
+        mult_monochrome,
+        mult_flushed,
+    ]
+
+    return [func(cards) for func in multiplier_funcs]
+
+
+def mult_paired(cards):
+    # Group the card types together
+    rank_groups = {}
+    for card in cards:
+        if card.rank_num in rank_groups:
+            rank_groups[card.rank_num].append(card)
+        else:
+            rank_groups[card.rank_num] = [card]
+
+    # Determine if all the groups are the same length
+    group_list = list(rank_groups.values())
+    valid = all([len(group) == len(group_list[0]) for group in group_list])
+
+    if not valid:
+        return (1, None)
+
+    # We only care if the length of a given group is > 1
+    if len(group_list[0]) == 1:
+        return (1, None)
+
+    # Paired is an additive multiplier
+    x = len(group_list)
+    y = len(group_list[0])
+    return (x + y), f'({x}+{y})'
+
+
+def mult_running(cards):
+    if len(cards) < 3:
+        return (1, None)
+
+    ranks = [card.rank_num for card in cards]
+
+    # Sort the list
+    ranks.sort()
+    print(ranks)
+    # Ensure everything is... ya know, running
+    valid = all(i == 0 or ranks[i] == ranks[i-1] + 1 for i, _ in enumerate(ranks))
+
+    if not valid:
+        return (1, None)
+
+    high_card = max(ranks)
+    return (high_card, str(high_card))
+
+
+def mult_senatorial(cards):
+    suits = [card.suit_num for card in cards]
+
+    valid = True
+    for suit in SCORE_SENATORIAL:
+        valid = valid and suit in suits
+
+    if not valid:
+        return (1, None)
+
+    return (3, '3')
+
+
+def mult_regional(cards):
+    suits = [card.suit_num for card in cards]
+
+    valid = False
+    # For each set of valid groups of suits
+    for set in SCORE_REGIONALS:
+        valid_set = True
+        # Check all of existing suits against the hand
+        for suit in range(1, len(CARD_SUITS)+1):
+            # If the hand contains a suit that is not in the set, invalidate the set
+            if suit in suits and suit not in set:
+                valid_set = False
+
+        # If any set is valid, then the hand is valid
+        if valid_set:
+            valid = valid or valid_set
+            break
+
+    if not valid:
+        return (1, None)
+
+    return (2, '2')
+
+
+def mult_monochrome(cards):
+    suits = [card.suit_num for card in cards]
+
+    valid = False
+    # For each set of valid groups of suits
+    for set in SCORE_COLORS:
+        valid_set = True
+        # Check all of existing suits against the hand
+        for suit in range(1, len(CARD_SUITS)+1):
+            # If the hand contains a suit that is not in the set, invalidate the set
+            if suit in suits and suit not in set:
+                valid_set = False
+
+        # If any set is valid, then the hand is valid
+        if valid_set:
+            valid = valid or valid_set
+            break
+
+    if not valid:
+        return (1, None)
+
+    return (3, '3')
+
+
+def mult_flushed(cards):
+    if len(cards) < 4:
+        return (1, None)
+
+    valid = all(card.suit_num == cards[0].suit_num for card in cards)
+
+    if not valid:
+        return (1, None)
+
+    return (4, '4')
+
+
+###########
+# Helpers #
+###########
 
 def _get_short_spaced_card(cardstring):
     try:
@@ -152,8 +321,10 @@ def _get_wiki_format_card(cardstring):
 
 
 def _get_long_format_card(cardstring):
-    rank = re.search(r'^\w*\b', cardstring, re.IGNORECASE).group()
-    suit = re.search(r' of \w*$', cardstring, re.IGNORECASE).group()
+    r = re.compile(r' OF ', flags=re.I)
+    splits = r.split(cardstring)
+    rank = splits[0]
+    suit = splits[1]
 
     return Card(None, None, rank, suit, cardstring)
 

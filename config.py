@@ -38,7 +38,7 @@ PHASE_START = {
 
 # Cards
 CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
-CARD_SUITS = ['l', '♦', 'u', '♣', 'a', 'r', 'b', 'd', 's', '♥', 'c', '♠']
+CARD_SUITS = ['L', '♦', 'U', '♣', 'A', 'R', 'B', 'D', 'S', '♥', 'C', '♠']
 
 # Cards for determining suit/rank value for alternate formats
 # Strings should be normalized uppercase before comparing to these
@@ -52,7 +52,7 @@ CARD_RANKS_FORMATS = [
     # 10 is also sometimes T
     ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', '11', '12', '13', 'U', 'O', 'N', 'B', 'R', 'Q', 'K'],
 
-    # Long format
+    # Long formats
     ['ACE',
      'TWO',
      'THREE',
@@ -72,7 +72,49 @@ CARD_RANKS_FORMATS = [
      'BISHOP',
      'ROOK',
      'QUEEN',
-     'KING']
+     'KING'],
+
+    ['THE ACE',
+     'THE TWO',
+     'THE THREE',
+     'THE FOUR',
+     'THE FIVE',
+     'THE SIX',
+     'THE SEVEN',
+     'THE EIGHT',
+     'THE NINE',
+     'THE TEN',
+     'THE ELEVEN',
+     'THE TWELVE',
+     'THE THIRTEEN',
+     'THE UNTER KNAVE',
+     'THE OBER KNAVE',
+     'THE KNIGHT',
+     'THE BISHOP',
+     'THE ROOK',
+     'THE QUEEN',
+     'THE KING'],
+
+    ['A ACE',
+     'A TWO',
+     'A THREE',
+     'A FOUR',
+     'A FIVE',
+     'A SIX',
+     'A SEVEN',
+     'A EIGHT',
+     'A NINE',
+     'A TEN',
+     'A ELEVEN',
+     'A TWELVE',
+     'A THIRTEEN',
+     'A UNTER KNAVE',
+     'A OBER KNAVE',
+     'A KNIGHT',
+     'A BISHOP',
+     'A ROOK',
+     'A QUEEN',
+     'A KING']
 ]
 
 CARD_SUITS_FORMATS = [
@@ -80,23 +122,39 @@ CARD_SUITS_FORMATS = [
     [suit.upper() for suit in CARD_SUITS],
 
     # Wiki format
-    ['L', 'D', 'Cp', 'C', 'A', 'R', 'B', 'Sw', 'Sh', 'H', 'Cn', 'S'],
+    ['L', 'D', 'CP', 'C', 'A', 'R', 'B', 'SW', 'SH', 'H', 'CN', 'S'],
 
     # Emojis if you like
     ['🍃', '♦', '🥤', '♣', '🌰', '🌹', '🔔', '⚔', '🛡', '♥', '👛', '♠'],
     ['🍂', '💎', '🏆', '♣', '🌰', '🌹', '🛎', '🤺', '🛡', '♥', '💰', '♠'],
 
     # Long format
-    [' OF LEAVES',
-     ' OF DIAMONDS',
-     ' OF CUPS',
-     ' OF CLUBS',
-     ' OF ACORNS',
-     ' OF ROSES',
-     ' OF BELLS',
-     ' OF SWORDS',
-     ' OF SHIELDS',
-     ' OF HEARTS',
-     ' OF COINS',
-     ' OF SPADES']
+    ['LEAVES',
+     'DIAMONDS',
+     'CUPS',
+     'CLUBS',
+     'ACORNS',
+     'ROSES',
+     'BELLS',
+     'SWORDS',
+     'SHIELDS',
+     'HEARTS',
+     'COINS',
+     'SPADES']
+]
+
+# Scoring Groups
+
+SCORE_SENATORIAL = [16, 17, 18]
+SCORE_REGIONALS = [
+    [2, 4, 10, 12],     # French
+    [3, 4, 8, 11],      # Spanish
+    [1, 5, 7, 10],      # German
+    [5, 6, 7, 9],       # Swiss
+]
+SCORE_COLORS = [
+    [2, 6, 10],     # Red
+    [4, 8, 12],     # Black
+    [1, 5, 9],      # Green
+    [3, 7, 11],     # Gold
 ]
