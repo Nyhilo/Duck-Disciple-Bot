@@ -236,16 +236,21 @@ def mult_regional(cards):
     valid = False
     # For each set of valid groups of suits
     for set in SCORE_REGIONALS:
-        valid_set = True
-        # Check all of existing suits against the hand
-        for suit in range(1, len(CARD_SUITS)+1):
+        _valid = True
+        invalid_set = [suit for suit in range(1, len(CARD_SUITS)+1) if suit not in set]
+        
+        # Check if the hand contains all the valid suits
+        for suit in set:
             # If the hand contains a suit that is not in the set, invalidate the set
-            if suit in suits and suit not in set:
-                valid_set = False
+            _valid = _valid and suit in suits
+
+        # Check that hand does not contain any other suits
+        for suit in invalid_set:
+            _valid = _valid and not (suit in suits)
 
         # If any set is valid, then the hand is valid
-        if valid_set:
-            valid = valid or valid_set
+        if _valid:
+            valid = valid or _valid
             break
 
     if not valid:
@@ -260,16 +265,21 @@ def mult_monochrome(cards):
     valid = False
     # For each set of valid groups of suits
     for set in SCORE_COLORS:
-        valid_set = True
-        # Check all of existing suits against the hand
-        for suit in range(1, len(CARD_SUITS)+1):
+        _valid = True
+        invalid_set = [suit for suit in range(1, len(CARD_SUITS)+1) if suit not in set]
+        
+        # Check if the hand contains all the valid suits
+        for suit in set:
             # If the hand contains a suit that is not in the set, invalidate the set
-            if suit in suits and suit not in set:
-                valid_set = False
+            _valid = _valid and suit in suits
+
+        # Check that hand does not contain any other suits
+        for suit in invalid_set:
+            _valid = _valid and not (suit in suits)
 
         # If any set is valid, then the hand is valid
-        if valid_set:
-            valid = valid or valid_set
+        if _valid:
+            valid = valid or _valid
             break
 
     if not valid:
