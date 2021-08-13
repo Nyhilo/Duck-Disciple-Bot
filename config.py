@@ -140,7 +140,34 @@ CARD_SUITS_FORMATS = [
      'SHIELDS',
      'HEARTS',
      'COINS',
-     'SPADES']
+     'SPADES'],
+
+    # Long format discord
+    [':LEAVES:',
+     ':DIAMONDS:',
+     ':CUP_WITH_STRAW:',
+     ':CLUBS:',
+     ':CHESTNUT:',
+     ':ROSE:',
+     ':BELL:',
+     ':CROSSED_SWORDS:',
+     ':SHIELD:',
+     ':HEARTS:',
+     ':PURSE:',
+     ':SPADES:'],
+
+    [':FALLEN_LEAF:',
+     ':GEM:',
+     ':TROPHY:',
+     ':CLUBS:',
+     ':CHESTNUT:',
+     ':ROSE:',
+     ':BELLHOP:',
+     ':PERSON_FENCING:',
+     ':SHIELD:',
+     ':HEARTS:',
+     ':MONEYBAG:',
+     ':SPADES:'],
 ]
 
 # Scoring Groups
