@@ -122,6 +122,36 @@ async def drawpairs_error(ctx, error):
         await ctx.send('Please provide an integer of cards to draw.')
 
 
+@bot.command(
+    brief=f'Scores a given hand. See "{config.PREFIX}help score" for more info.',
+    help=('Calculates a score for the given hand.\n'
+          'Supports a number of different hand formats. Copying directly from the wiki ir not currently supported.\n'
+          '\nHere are a few examples of valid hands:\n'
+          '[Q♣] [A♠] [3♥] [5♦]\n'
+          '[4 c][E s][Q l][H r][4 b][O ♣]\n'
+          '[4 Cp][E Sh][Q L][H R][4 B][O C]\n'
+          # '[Q🍃] [A🏆] [3👛] [5🌹]\n' # Deprecated until unicode can be resolved
+          'Ace of Hearts, 2 of Clubs, 3 of Shields (commas or newlines)\n'
+          # '[K:spades:] [K:spades:] [K:shield:] [K:shield:]\n'
+          '{{Card|N|Sw}} {{Card|6|R}} {{Card|D|Cp}}')
+)
+async def score(ctx, *, message=None):
+    if message is None:
+        await ctx.send("Please include the hand you would like to score.")
+        return
+
+    try:
+        score = cards.get_hand_score(message)
+        await ctx.send('**NOTE:** This feature is experimental, and its results should be double-checked\n'
+                       f'The score for your hand is `{score}`')
+    except ValueError as e:
+        log.error(e)
+        await ctx.send(f'Encountered a problem parsing your hand \\:(\n{str(e)}')
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
+
+
 ##############
 # Initialize #
 ##############
