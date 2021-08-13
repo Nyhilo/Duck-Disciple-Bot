@@ -37,34 +37,151 @@ PHASE_START = {
 }
 
 # Cards
-
-###
-# Key  
-# Ranks:    X - 10
-#           E - 11
-#           D - 12
-#           H - 13
-#           U - Unter Knave
-#           O - Ober Knave
-#           N - Knight
-#           B - Bishop
-#           R - Rook
-#           Q - Queen
-#           K - king
-#
-# Suits:    l - Leaves
-#           ♦ - Diamonds
-#           u - Cups
-#           ♣ - Clubs
-#           a - Acorns
-#           r - Roses
-#           b - Bells
-#           s - Swords
-#           d - Shields
-#           ♥ - Hearts
-#           c - Coins
-#           ♠ - Spades
-#           
-###
 CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
-CARD_SUITS = ['l', '♦', 'u', '♣', 'a', 'r', 'b', 'd', 's', '♥', 'c', '♠']
+CARD_SUITS = ['L', '♦', 'U', '♣', 'A', 'R', 'B', 'D', 'S', '♥', 'C', '♠']
+
+# Cards for determining suit/rank value for alternate formats
+# Strings should be normalized uppercase before comparing to these
+CARD_RANKS_FORMATS = [
+    # Default card ranks
+    CARD_RANKS,
+
+    # Wiki {{Card}} format
+    ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', 'U', 'O', 'N', 'B', 'R', 'Q', 'K'],
+
+    # 10 is also sometimes T
+    ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', '11', '12', '13', 'U', 'O', 'N', 'B', 'R', 'Q', 'K'],
+
+    # Long formats
+    ['ACE',
+     'TWO',
+     'THREE',
+     'FOUR',
+     'FIVE',
+     'SIX',
+     'SEVEN',
+     'EIGHT',
+     'NINE',
+     'TEN',
+     'ELEVEN',
+     'TWELVE',
+     'THIRTEEN',
+     'UNTER KNAVE',
+     'OBER KNAVE',
+     'KNIGHT',
+     'BISHOP',
+     'ROOK',
+     'QUEEN',
+     'KING'],
+
+    ['THE ACE',
+     'THE TWO',
+     'THE THREE',
+     'THE FOUR',
+     'THE FIVE',
+     'THE SIX',
+     'THE SEVEN',
+     'THE EIGHT',
+     'THE NINE',
+     'THE TEN',
+     'THE ELEVEN',
+     'THE TWELVE',
+     'THE THIRTEEN',
+     'THE UNTER KNAVE',
+     'THE OBER KNAVE',
+     'THE KNIGHT',
+     'THE BISHOP',
+     'THE ROOK',
+     'THE QUEEN',
+     'THE KING'],
+
+    ['A ACE',
+     'A TWO',
+     'A THREE',
+     'A FOUR',
+     'A FIVE',
+     'A SIX',
+     'A SEVEN',
+     'A EIGHT',
+     'A NINE',
+     'A TEN',
+     'A ELEVEN',
+     'A TWELVE',
+     'A THIRTEEN',
+     'A UNTER KNAVE',
+     'A OBER KNAVE',
+     'A KNIGHT',
+     'A BISHOP',
+     'A ROOK',
+     'A QUEEN',
+     'A KING']
+]
+
+CARD_SUITS_FORMATS = [
+    # Default card suits, normalized uppercase
+    [suit.upper() for suit in CARD_SUITS],
+
+    # Wiki format
+    ['L', 'D', 'CP', 'C', 'A', 'R', 'B', 'SW', 'SH', 'H', 'CN', 'S'],
+
+    # Emojis if you like
+    ['🍃', '♦', '🥤', '♣', '🌰', '🌹', '🔔', '⚔', '🛡', '♥', '👛', '♠'],    # This uses ascii standard suits
+    ['🍂', '♦️', '🏆', '♣️', '🌰', '🌹', '🛎', '🤺', '🛡', '♥️', '💰', '♠️'],  # This usese emoji variant standard suits
+
+    # Long format
+    ['LEAVES',
+     'DIAMONDS',
+     'CUPS',
+     'CLUBS',
+     'ACORNS',
+     'ROSES',
+     'BELLS',
+     'SWORDS',
+     'SHIELDS',
+     'HEARTS',
+     'COINS',
+     'SPADES'],
+
+    # Long format discord
+    [':LEAVES:',
+     ':DIAMONDS:',
+     ':CUP_WITH_STRAW:',
+     ':CLUBS:',
+     ':CHESTNUT:',
+     ':ROSE:',
+     ':BELL:',
+     ':CROSSED_SWORDS:',
+     ':SHIELD:',
+     ':HEARTS:',
+     ':PURSE:',
+     ':SPADES:'],
+
+    [':FALLEN_LEAF:',
+     ':GEM:',
+     ':TROPHY:',
+     ':CLUBS:',
+     ':CHESTNUT:',
+     ':ROSE:',
+     ':BELLHOP:',
+     ':PERSON_FENCING:',
+     ':SHIELD:',
+     ':HEARTS:',
+     ':MONEYBAG:',
+     ':SPADES:'],
+]
+
+# Scoring Groups
+
+SCORE_SENATORIAL = [16, 17, 18]
+SCORE_REGIONALS = [
+    [2, 4, 10, 12],     # French
+    [3, 4, 8, 11],      # Spanish
+    [1, 5, 7, 10],      # German
+    [5, 6, 7, 9],       # Swiss
+]
+SCORE_COLORS = [
+    [2, 6, 10],     # Red
+    [4, 8, 12],     # Black
+    [1, 5, 9],      # Green
+    [3, 7, 11],     # Gold
+]

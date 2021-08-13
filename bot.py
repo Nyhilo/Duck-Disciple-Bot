@@ -84,7 +84,20 @@ async def sha(ctx, *, message=None):
     help=('Automatically roll some dice and report back the dice rolls and '
           'the cards generated from those dice rolls. Will return 1 set of 1 '
           'card by default. First argument is number of cards, second argument '
-          'is size of card sets. Maximum draw is 100.')
+          'is size of card sets. Maximum draw is 100.\n'
+          'Ranks:              Suits:\n'
+          ' X - 10              l - Leaves\n'
+          ' E - 11              ♦ - Diamonds\n'
+          ' D - 12              u - Cups\n'
+          ' H - 13              ♣ - Clubs\n'
+          ' U - Unter Knave     a - Acorns\n'
+          ' O - Ober Knave      r - Roses\n'
+          ' N - Knight          b - Bells\n'
+          ' B - Bishop          s - Swords\n'
+          ' R - Rook            d - Shields\n'
+          ' Q - Queen           ♥ - Hearts\n'
+          ' K - king            c - Coins\n'
+          '                     ♠ - Spades\n')
 )
 async def draw(ctx, number=1, size=1):
     if number * size < 1:
@@ -107,6 +120,36 @@ async def draw(ctx, number=1, size=1):
 async def drawpairs_error(ctx, error):
     if isinstance(error, commands.BadArgument):
         await ctx.send('Please provide an integer of cards to draw.')
+
+
+@bot.command(
+    brief=f'Scores a given hand. See "{config.PREFIX}help score" for more info.',
+    help=('Calculates a score for the given hand.\n'
+          'Supports a number of different hand formats. Copying directly from the wiki ir not currently supported.\n'
+          '\nHere are a few examples of valid hands:\n'
+          '[Q♣] [A♠] [3♥] [5♦]\n'
+          '[4 c][E s][Q l][H r][4 b][O ♣]\n'
+          '[4 Cp][E Sh][Q L][H R][4 B][O C]\n'
+          # '[Q🍃] [A🏆] [3👛] [5🌹]\n' # Deprecated until unicode can be resolved
+          'Ace of Hearts, 2 of Clubs, 3 of Shields (commas or newlines)\n'
+          # '[K:spades:] [K:spades:] [K:shield:] [K:shield:]\n'
+          '{{Card|N|Sw}} {{Card|6|R}} {{Card|D|Cp}}')
+)
+async def score(ctx, *, message=None):
+    if message is None:
+        await ctx.send("Please include the hand you would like to score.")
+        return
+
+    try:
+        score = cards.get_hand_score(message)
+        await ctx.send('**NOTE:** This feature is experimental, and its results should be double-checked\n'
+                       f'The score for your hand is `{score}`')
+    except ValueError as e:
+        log.error(e)
+        await ctx.send(f'Encountered a problem parsing your hand \\:(\n{str(e)}')
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 ##############
