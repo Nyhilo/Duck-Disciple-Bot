@@ -107,9 +107,13 @@ def parse_hand_string(handstring):
 
     # Long format (probably)
     elif handstring[0].isalpha() or handstring[0].isdigit():
-        cardstrings = handstring.split(', ')
+        if ',' in handstring:
+            cardstrings = handstring.split(', ')
+        else:   # elif '\n' in handstring:
+            cardstrings = handstring.split('\n')
+
         if len(re.findall(' of ', cardstrings[0], re.IGNORECASE)) > 1:
-            raise ValueError("Either your cards aren't separated by commas your this isn't a proper hand.")
+            raise ValueError("Either your cards aren't separated by commas or newlines or this isn't a proper hand.")
 
         cards = [_get_long_format_card(s) for s in cardstrings]
 
@@ -206,7 +210,7 @@ def mult_running(cards):
 
     # Sort the list
     ranks.sort()
-    print(ranks)
+
     # Ensure everything is... ya know, running
     valid = all(i == 0 or ranks[i] == ranks[i-1] + 1 for i, _ in enumerate(ranks))
 
@@ -238,7 +242,7 @@ def mult_regional(cards):
     for set in SCORE_REGIONALS:
         _valid = True
         invalid_set = [suit for suit in range(1, len(CARD_SUITS)+1) if suit not in set]
-        
+
         # Check if the hand contains all the valid suits
         for suit in set:
             # If the hand contains a suit that is not in the set, invalidate the set
@@ -267,7 +271,7 @@ def mult_monochrome(cards):
     for set in SCORE_COLORS:
         _valid = True
         invalid_set = [suit for suit in range(1, len(CARD_SUITS)+1) if suit not in set]
-        
+
         # Check if the hand contains all the valid suits
         for suit in set:
             # If the hand contains a suit that is not in the set, invalidate the set
