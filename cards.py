@@ -222,7 +222,7 @@ def mult_running(cards):
 
 
 def mult_senatorial(cards):
-    suits = [card.suit_num for card in cards]
+    suits = [card.rank_num for card in cards]
 
     valid = True
     for suit in SCORE_SENATORIAL:
