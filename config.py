@@ -38,7 +38,7 @@ PHASE_START = {
 
 # Cards
 CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
-CARD_SUITS = ['L', '♦', 'U', '♣', 'A', 'R', 'B', 'D', 'S', '♥', 'C', '♠']
+CARD_SUITS = ['L', '♦', 'CP', '♣', 'A', 'R', 'B', 'SW', 'SH', '♥', 'CN', '♠']
 
 # Cards for determining suit/rank value for alternate formats
 # Strings should be normalized uppercase before comparing to these
