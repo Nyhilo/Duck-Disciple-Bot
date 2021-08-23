@@ -155,7 +155,7 @@ def calculate_hand_score(cards):
     m = reduce(lambda x, y: x * y, mults, 1)
 
     # Return crm+h and string representation of (c*r*(m)) + h
-    mult_string = '' if len(m_strs) == 0 else f'*({"*".join(m_strs)})'
+    mult_string = '' if len(m_strs) == 0 else f'({"*".join(m_strs)})'
     return ((c * m) + h), f'({c}*{mult_string}) + {h}'
 
     # return ((c * r * m) + h), f'({c}*{r}{mult_string}) + {h}'
