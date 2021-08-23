@@ -152,10 +152,10 @@ def calculate_hand_score(cards):
     # High-card constant
     # h = calculate_high_card_value(cards)
 
-    m = 0 if len(m_strs) == 0 else reduce(lambda x, y: x * y, mults, 1)
+    m = 0 if len(m_strs) == 0 else reduce(lambda x, y: x + y, mults, 1)
 
     # Return crm+h and string representation of (c*r*(m)) + h
-    mult_string = '*0' if len(m_strs) == 0 else f'*({"*".join(m_strs)})'
+    mult_string = '*0' if len(m_strs) == 0 else f'*({"+".join(m_strs)})'
     return ((c * m)), f'({c}{mult_string})'
 
     # return ((c * r * m) + h), f'({c}*{r}{mult_string}) + {h}'
