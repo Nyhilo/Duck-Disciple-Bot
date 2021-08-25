@@ -201,7 +201,7 @@ def mult_paired(cards):
     # Paired is an additive multiplier
     x = len(group_list)
     y = len(group_list[0])
-    return (x * y), f'({x}*{y})'
+    return (x + y), f'({x}+{y})'
 
 
 def mult_running(cards):
