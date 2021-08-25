@@ -142,7 +142,7 @@ def calculate_hand_score(cards):
     c = len(cards)
 
     # Number of Ranks constant
-    # r = len(CARD_RANKS)
+    r = len(CARD_RANKS)
 
     # Multipliers
     m_pairs = calculate_multipliers_list(cards)
@@ -150,15 +150,13 @@ def calculate_hand_score(cards):
     m_strs = [pair[1] for pair in m_pairs if pair[1] is not None]
 
     # High-card constant
-    # h = calculate_high_card_value(cards)
+    h = calculate_high_card_value(cards)
 
-    m = 0 if len(m_strs) == 0 else reduce(lambda x, y: x * y, mults, 1)
+    m = reduce(lambda x, y: x * y, mults, 1)
 
     # Return crm+h and string representation of (c*r*(m)) + h
-    mult_string = '*0' if len(m_strs) == 0 else f'*({"*".join(m_strs)})'
-    return ((c * m)), f'({c}{mult_string})'
-
-    # return ((c * r * m) + h), f'({c}*{r}{mult_string}) + {h}'
+    mult_string = '' if len(m_strs) == 0 else f'*({"*".join(m_strs)})'
+    return ((c * r * m) + h), f'({c}*{r}{mult_string}) + {h}'
 
 
 def calculate_high_card_value(cards):
