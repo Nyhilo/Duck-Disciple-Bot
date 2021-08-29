@@ -38,7 +38,32 @@ PHASE_START = {
 
 # Cards
 CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'X', 'E', 'D', 'H', 'U', 'O', 'N', 'B', 'R', 'Q', 'K']
-CARD_SUITS = ['L', '♦', 'CP', '♣', 'A', 'R', 'B', 'SW', 'SH', '♥', 'CN', '♠']
+TAROT_RANKS = [
+    'The Fool',
+    'The Magician',
+    'The High Priestess',
+    'The Empress',
+    'The Emperor',
+    'The Hierophant',
+    'The Lovers',
+    'The Chariot',
+    'Justice',
+    'The Hermit',
+    'Wheel of Fortune',
+    'Strength',
+    'The Hanged Man',
+    'Death',
+    'Temperance',
+    'The Devil',
+    'The Tower',
+    'The Star',
+    'The Moon',
+    'The Sun',
+    'Judgement',
+    'The World '
+]
+CARD_SUITS = ['L', '♦', 'CP', '♣', 'A', 'R', 'B', 'SW', 'SH', '♥', 'CN', '♠', 'Arcana']
+ARCANA_SUITS = [13]
 
 # Cards for determining suit/rank value for alternate formats
 # Strings should be normalized uppercase before comparing to these
