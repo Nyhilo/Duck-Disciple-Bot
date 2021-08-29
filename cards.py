@@ -2,7 +2,8 @@ from random import randint
 import re
 from functools import reduce
 
-from config import (CARD_RANKS, CARD_SUITS, CARD_RANKS_FORMATS, CARD_SUITS_FORMATS,
+from config import (CARD_RANKS, TAROT_RANKS, CARD_SUITS, ARCANA_SUITS, 
+                    CARD_RANKS_FORMATS, CARD_SUITS_FORMATS,
                     SCORE_SENATORIAL, SCORE_REGIONALS, SCORE_COLORS)
 
 
@@ -15,10 +16,17 @@ class Card:
         self.raw_string = raw_string
 
     def display_strs(self):
-        return (
-            f"[{self.rank_num:>2}][{self.suit_num:>2}]",
-            f"[{self.rank}{self.suit:>2}]"
-        )
+        print(self.suit_num, ARCANA_SUITS, self.suit_num in ARCANA_SUITS)
+        if self.suit_num in ARCANA_SUITS:
+            return (
+                f"[{self.rank_num:>2}][{self.suit_num:>2}]",
+                f"[{self.rank}]"
+            )
+        else:
+            return (
+                f"[{self.rank_num:>2}][{self.suit_num:>2}]",
+                f"[{self.rank}{self.suit:>2}]"
+            )
 
 
 def draw_random_card_sets(number=1, size=1):
@@ -49,13 +57,16 @@ def draw_random_card_sets(number=1, size=1):
 
 
 def get_unweighted_card():
-    rank_count = len(CARD_RANKS)
     suit_count = len(CARD_SUITS)
+    rank_count = len(CARD_RANKS)
+    tarot_count = len(TAROT_RANKS)
 
-    rank_num = _roll(rank_count)
     suit_num = _roll(suit_count)
+    rank_num = _roll(tarot_count) if suit_num in ARCANA_SUITS else _roll(rank_count)
 
-    rank = CARD_RANKS[rank_num-1]
+    print(rank_num, suit_num)
+
+    rank = TAROT_RANKS[rank_num] if suit_num in ARCANA_SUITS else CARD_RANKS[rank_num-1]
     suit = CARD_SUITS[suit_num-1]
 
     return Card(rank_num, suit_num, rank, suit)
