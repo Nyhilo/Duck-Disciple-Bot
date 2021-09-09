@@ -16,7 +16,6 @@ class Card:
         self.raw_string = raw_string
 
     def display_strs(self):
-        print(self.suit_num, ARCANA_SUITS, self.suit_num in ARCANA_SUITS)
         if self.suit_num in ARCANA_SUITS:
             return (
                 f"[{self.rank_num:>2}][{self.suit_num:>2}]",
@@ -63,8 +62,6 @@ def get_unweighted_card():
 
     suit_num = _roll(suit_count)
     rank_num = _roll(tarot_count) if suit_num in ARCANA_SUITS else _roll(rank_count)
-
-    print(rank_num, suit_num)
 
     rank = TAROT_RANKS[rank_num] if suit_num in ARCANA_SUITS else CARD_RANKS[rank_num-1]
     suit = CARD_SUITS[suit_num-1]
