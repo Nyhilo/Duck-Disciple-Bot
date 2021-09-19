@@ -13,7 +13,7 @@ GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
 LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "TRUE"
 
 # Phases
-_phase_bartering = 'Bartering Phase'
+_phase_bartering = 'Resolution Phase'
 _phase_auction = 'Auction Phase'
 
 PHASES_BY_DAY = {
