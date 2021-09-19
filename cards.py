@@ -153,7 +153,7 @@ def calculate_hand_score(cards):
     c = len(cards)
 
     # Number of Ranks constant
-    r = len(CARD_RANKS)
+    r = len(CARD_RANKS) + len(TAROT_RANKS)
 
     # Multipliers
     m_pairs = calculate_multipliers_list(cards)
