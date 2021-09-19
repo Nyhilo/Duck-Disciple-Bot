@@ -11,7 +11,7 @@ class Symbol:
 
 
 class Slot:
-    def __init__(self, symbols: Symbol):
+    def __init__(self, symbols: List[Symbol]):
         self.values = []
 
         for s in symbols:
@@ -39,23 +39,23 @@ class Payout:
         self.symbols = symbols
 
 
-_trials = 10000
-_cost = 6
+_trials = 50000
+_cost = 5
 
 possible_payouts = {
     '🦆🦆🦆': Payout(0, 130, True),
-    '🦆🦆': Payout(0, 120),
-    '♾♾♾': Payout(100, 110),
-    '♾♾': Payout(50, 100),
-    '♾': Payout(25, 90),
-    '🔺🔺🔺': Payout(24, 80),
-    '🔺🔺': Payout(20, 70),
-    '🃏🃏🃏': Payout(18, 60),
-    '🃏🃏': Payout(12, 50),
-    '✨✨✨': Payout(10, 40),
-    '✨✨': Payout(6, 30),
-    '🤔🤔🤔': Payout(3, 20),
-    '🤔🤔': Payout(1, 10)
+    # '🦆🦆': Payout(0, 120),
+    '♾♾♾': Payout(500, 110),
+    '♾♾': Payout(200, 100),
+    # '♾': Payout(25, 90),
+    '🔺🔺🔺': Payout(150, 80),
+    '🔺🔺': Payout(80, 70),
+    # '🃏🃏🃏': Payout(50, 60),
+    '🃏🃏': Payout(50, 50),
+    '✨✨✨': Payout(75, 40),
+    # '✨✨': Payout(6, 30),
+    '🤔🤔🤔': Payout(50, 20),
+    # '🤔🤔': Payout(1, 10)
 }
 
 base_slot = Slot([
@@ -94,13 +94,20 @@ def spin(slots: List[Slot]) -> Payout:
             payout = possible_payouts[play]
             payouts.append(payout)
 
-    # Check for double slot payouts
-    for i in range(length):
-        if i+1 <= length:
-            play = plays[i] + plays[i+1]
-            if play in possible_payouts:
-                payout = possible_payouts[play]
-                payouts.append(payout)
+    # Check for double slot payouts (sequential)
+    # for i in range(length):
+    #     if i+1 <= length:
+    #         play = plays[i] + plays[i+1]
+    #         if play in possible_payouts:
+    #             payout = possible_payouts[play]
+    #             payouts.append(payout)
+
+    # Check for double slot payouts (non-sequential)
+    for symbol in base_slot.values:
+        if plays.count(symbol) == 2:
+            key = f'{symbol}{symbol}'
+            payout = Payout(0, 0) if key not in possible_payouts else possible_payouts[key]
+            payouts.append(payout)
 
     # Check for triple slot payouts
     for i in range(length):
