@@ -16,7 +16,6 @@ class Card:
         self.raw_string = raw_string
 
     def display_strs(self):
-        print(self.suit_num, ARCANA_SUITS, self.suit_num in ARCANA_SUITS)
         if self.suit_num in ARCANA_SUITS:
             return (
                 f"[{self.rank_num:>2}][{self.suit_num:>2}]",
@@ -64,9 +63,7 @@ def get_unweighted_card():
     suit_num = _roll(suit_count)
     rank_num = _roll(tarot_count) if suit_num in ARCANA_SUITS else _roll(rank_count)
 
-    print(rank_num, suit_num)
-
-    rank = TAROT_RANKS[rank_num] if suit_num in ARCANA_SUITS else CARD_RANKS[rank_num-1]
+    rank = TAROT_RANKS[rank_num-1] if suit_num in ARCANA_SUITS else CARD_RANKS[rank_num-1]
     suit = CARD_SUITS[suit_num-1]
 
     return Card(rank_num, suit_num, rank, suit)
@@ -89,7 +86,7 @@ def get_hand_score(handstring):
 def parse_hand_string(handstring):
     # First we need to determine what format the hand given to us is in
     # We're going to assume that the format of the first card will be the same for all of them
-    # Possible formats includ:
+    # Possible formats include:
     #   Shorthand, no spaces - i.e. [A♥] [K♠]
     #   Shorthand, with spaces - i.e. [A ♥] [K ♠]
     #   Longform, comma separated - i.e. Ace of Hearts, King of Spades
