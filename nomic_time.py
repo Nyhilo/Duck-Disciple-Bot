@@ -21,9 +21,7 @@ def get_current_utc_string():
     else:
         nextDay = f'*{nextDay}*'
 
-    return (f'It is **{time}** on **{weekday}**, UTC\n'
-            f'That means it is the **{phase}**\n'
-            f'The *{nextPhase}* starts on {nextDay}')
+    return (f'It is **{time}** on **{weekday}**, UTC\n')
 
 
 def _now():
