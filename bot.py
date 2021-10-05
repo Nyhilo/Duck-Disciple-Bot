@@ -135,12 +135,6 @@ async def trungify(ctx):
         await ctx.send(config.GENERIC_ERROR)
 
 
-@bot.command()
-async def echo(ctx):
-    print(f'{ctx.message=}')
-    print(f'{ctx.message.reference=}')
-
-
 # Leaving this for re-implementation in the future
 # @bot.command(
 #     brief='Draw a number of cards.',
