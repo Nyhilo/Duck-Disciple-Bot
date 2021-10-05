@@ -12,6 +12,7 @@ from log import log
 import nomic_time
 import sha as shalib
 import utils
+import image
 
 
 ###########
@@ -76,6 +77,68 @@ async def sha(ctx, *, message=None):
     except Exception as e:
         log.error(e)
         await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command(
+    brief='Trungifies and image',
+    help=('Attach or link to an image to trungify it.\n'
+          'You can also reply another message that has an image with this '
+          'command to trungify that image instead.')
+)
+async def trungify(ctx):
+    commandName = f'{config.PREFIX}trungify'
+
+    async def get_image_source():
+        # Check if the message contains an image
+        message = ctx.message
+        print(message.content)
+        if (
+            len(message.attachments) > 0 and
+            any(message.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
+           ):
+            return message.attachments[0].url
+
+        if any(message.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
+            return utils.strip_command(message.content, commandName)
+
+        # Check if a replied to message contains an image
+        if message.reference:
+            reply = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+            if (
+                len(reply.attachments) > 0 and
+                any(reply.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
+               ):
+                return reply.attachments[0].url
+
+            if any(reply.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
+                return utils.strip_command(reply.content, commandName)
+
+        # No valid image found
+        return None
+
+    source = await get_image_source()
+    if source is None:
+        await ctx.send('Either I don\'t support that image type or you didn\'t send or reply to an image.')
+        return
+
+    try:
+        async with ctx.typing():
+            image.trungify_and_save(source, config.TRUNGIFY_CACHE)
+
+            with open(config.TRUNGIFY_CACHE, 'rb') as file:
+                f = discord.File(file, filename=config.TRUNGIFY_CACHE)
+
+            await ctx.send(file=f)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command()
+async def echo(ctx):
+    print(f'{ctx.message=}')
+    print(f'{ctx.message.reference=}')
 
 
 # Leaving this for re-implementation in the future

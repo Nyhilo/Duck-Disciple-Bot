@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+
+# Discord API related stuff #
 PREFIX = '&'
 
 LOG_FILE = 'bot.log'
@@ -12,7 +14,13 @@ GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "TRUE"
 
-# Phases
+
+# General Utility Configurations #
+IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
+TRUNGIFY_CACHE = 'trungified.png'
+
+
+# Cycle specific configurations #
 _phase_two = 'Resolution Phase'
 _phase_one = 'Auction Phase'
 

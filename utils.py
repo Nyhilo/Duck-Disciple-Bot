@@ -4,3 +4,10 @@ def trim_quotes(string):
         return string[1:-1]
 
     return string
+
+
+def strip_command(message, command):
+    if not message.startswith(command):
+        return message
+
+    return ' '.join(message.split(' ')[1:])
