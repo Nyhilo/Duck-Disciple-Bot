@@ -12,7 +12,7 @@ GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
                  '...')
 
 # This is set to false to prevent cheating when secretly generating a Sha265
-LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "TRUE"
+LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "FALSE"
 
 
 # General Utility Configurations #

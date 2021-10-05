@@ -91,7 +91,6 @@ async def trungify(ctx):
     async def get_image_source():
         # Check if the message contains an image
         message = ctx.message
-        print(message.content)
         if (
             len(message.attachments) > 0 and
             any(message.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
