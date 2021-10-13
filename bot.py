@@ -80,7 +80,7 @@ async def sha(ctx, *, message=None):
 
 
 @bot.command(
-    brief='Trungifies and image',
+    brief='Trungifies an image',
     help=('Attach or link to an image to trungify it.\n'
           'You can also reply another message that has an image with this '
           'command to trungify that image instead.')
