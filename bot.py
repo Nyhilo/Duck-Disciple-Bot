@@ -13,6 +13,7 @@ import nomic_time
 import sha as shalib
 import utils
 import image
+import db
 
 
 ###########
@@ -134,6 +135,16 @@ async def trungify(ctx):
         await ctx.send(config.GENERIC_ERROR)
 
 
+@bot.command()
+async def remind(ctx, *, message=None):
+    userId = ctx.message.author.name
+    timestamp = int(ctx.message.created_at.timestamp())
+    remindAt = timestamp + 5000
+    id = db.save_reminder(userId, timestamp, remindAt, message)
+    log.info(id)
+    await ctx.send(f'Reminder created with id {id}')
+
+
 # Leaving this for re-implementation in the future
 # @bot.command(
 #     brief='Draw a number of cards.',
@@ -165,6 +176,8 @@ async def trungify(ctx):
 
 def init():
     log.info("Starting bot...")
+    db.set_tables()
+
     bot.run(TOKEN)
 
 

@@ -139,3 +139,7 @@ cython_debug/
 
 # Cutom pipenvs
 env-*/
+
+# Databases
+*.db
+*.db-journal
