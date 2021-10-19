@@ -140,7 +140,7 @@ async def remind(ctx, *, message=None):
     userId = ctx.message.author.name
     timestamp = int(ctx.message.created_at.timestamp())
     remindAt = timestamp + 5000
-    id = db.save_reminder(userId, timestamp, remindAt, message)
+    id = db.add_reminder(userId, timestamp, remindAt, message)
     log.info(id)
     await ctx.send(f'Reminder created with id {id}')
 

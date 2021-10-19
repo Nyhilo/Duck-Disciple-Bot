@@ -25,7 +25,8 @@ def _create_table_reminders(db):
             UserId      TEXT    NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
-            RemindMsg   TEXT    NOT NULL
+            RemindMsg   TEXT    NOT NULL,
+            Active      INT     NOT NULL    DEFAULT 1
         )
         '''
     )
@@ -39,27 +40,46 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def save_reminder(userId, createdAt, remindAfter, remindMsg):
-    return _save_reminder(userId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+def add_reminder(userId, createdAt, remindAfter, remindMsg):
+    return _add_reminder(userId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _save_reminder(userId, createdAt, remindAfter, remindMsg, db, table):
+def _add_reminder(userId, createdAt, remindAfter, remindMsg, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, CreatedAt, RemindAfter, RemindMsg)
-        Values (:userId, :createdAt, :remindAfter, :remindMsg)
+        (UserId, CreatedAt, RemindAfter, RemindMsg, Active)
+        Values (:userId, :createdAt, :remindAfter, :remindMsg, 1)
         ''',
         [userId, createdAt, remindAfter, remindMsg]
     )
 
-    rowid = cursor.lastrowid
+    conn.commit()
+    conn.close()
+
+    return cursor.lastrowid
+
+
+def update_reminder(rowId, userId, createdAt, remindAfter, remindMsg, activeState):
+    return _update_reminder(rowId, userId, createdAt, remindAfter, remindMsg,
+                            activeState, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+
+
+def _update_reminder(rowId, userId, createdAt, remindAfter, remindMsg, activeState, db, table):
+    conn = sqlite3.connect(db)
+    cursor = conn.execute(
+        f'''
+        UPDATE {table}
+        SET Active = 0
+        WHERE ROWID = :rowId
+        ''', [rowId]
+    )
 
     conn.commit()
     conn.close()
 
-    return rowid
+    return cursor.rowcount > 0
 
 
 def get_reminders(where=None):
@@ -72,16 +92,15 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT (UserId, CreatedAt, RemindAfter, RemindMsg)
+        SELECT (rowId, UserId, CreatedAt, RemindAfter, RemindMsg, Active)
         FROM {table}
         {'' if not where else where}
         '''
     )
 
-    res = [dict(row) for row in cursor.fetchall()]
-
     conn.close()
-    return res
+
+    return [dict(row) for row in cursor.fetchall()]
 
 
 # Maintenence Methods
