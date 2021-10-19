@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 import sys
 import os
@@ -41,6 +41,8 @@ async def on_ready():
     log.info(f'Discord API version:  {discord.__version__}')
     log.info(f'Logged in as {bot.user.name}')
     log.info('Bot is ready!')
+
+    task_check.start()
 
 
 ############
@@ -137,12 +139,31 @@ async def trungify(ctx):
 
 @bot.command()
 async def remind(ctx, *, message=None):
+    # Get Info to set
     userId = ctx.message.author.name
-    timestamp = int(ctx.message.created_at.timestamp())
-    remindAt = timestamp + 5000
-    id = db.add_reminder(userId, timestamp, remindAt, message)
-    log.info(id)
-    await ctx.send(f'Reminder created with id {id}')
+    created, remindAt, msg = None  # reminders.get_schedule(ctx.created_at, message)
+
+    # Get message to reply to (if exists)
+
+    id = db.add_reminder(userId, created, remindAt, msg)
+    log.info(f'Reminder created with id {id}')
+    await ctx.send(f'Reminder created with id {id}, use {config.PREFIX}forget <id> to delete this reminder.')
+
+
+@tasks.loop(minutes=1)
+async def task_check():
+    # # Get all active tasks
+    # tasks = db.get_reminders('WHERE ACTIVE = 1')
+
+    # # Check for tasks that need to be set
+    # pending_tasks = [task for task in tasks if task['RemindAfter'] < nomic_time.utc_now()]
+
+    # for task in pending_tasks:
+    #     msg = task['RemindMsg']
+    #     channel = bot.get_channel(task['Channel'])
+    #     await channel.send(f'Reminder triggered for this task: {msg}')
+
+    await log.info('One minute has passed')
 
 
 # Leaving this for re-implementation in the future

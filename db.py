@@ -23,6 +23,7 @@ def _create_table_reminders(db):
         CREATE TABLE {table}
         (
             UserId      TEXT    NOT NULL,
+            Channel     INT     NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
             RemindMsg   TEXT    NOT NULL,
