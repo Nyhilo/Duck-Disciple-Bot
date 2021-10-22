@@ -14,6 +14,7 @@ import sha as shalib
 import utils
 import image
 import db
+import reminders
 
 
 ###########

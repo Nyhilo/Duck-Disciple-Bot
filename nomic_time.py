@@ -35,5 +35,24 @@ def _now():
     return datetime.now()
 
 
+def parse_timespan_by_units(number, unit):
+    if unit.lower().startsith('second'):
+        return timedelta(seconds=number)
+
+    if unit.lower().startswith('minute'):
+        return timedelta(minutes=number)
+
+    if unit.lower().startswith('hour'):
+        return timedelta(hours=number)
+
+    if unit.lower().startswith('day'):
+        return timedelta(days=number)
+
+    if unit.lower().startswith('week'):
+        return timedelta(weeks=number)
+
+    return None
+
+
 def _midnightify(date):
     return date.replace(hour=0, minute=0, second=0, microsecond=0)

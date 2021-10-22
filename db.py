@@ -23,6 +23,7 @@ def _create_table_reminders(db):
         CREATE TABLE {table}
         (
             UserId      TEXT    NOT NULL,
+            CommentId   INT     NOT NULL,
             Channel     INT     NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
@@ -41,19 +42,19 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def add_reminder(userId, createdAt, remindAfter, remindMsg):
-    return _add_reminder(userId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+def add_reminder(userId, commentId, createdAt, remindAfter, remindMsg):
+    return _add_reminder(userId, commentId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _add_reminder(userId, createdAt, remindAfter, remindMsg, db, table):
+def _add_reminder(userId, commentId, createdAt, remindAfter, remindMsg, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, CreatedAt, RemindAfter, RemindMsg, Active)
-        Values (:userId, :createdAt, :remindAfter, :remindMsg, 1)
+        (UserId, CommentId, CreatedAt, RemindAfter, RemindMsg, Active)
+        Values (:userId, :commentId :createdAt, :remindAfter, :remindMsg, 1)
         ''',
-        [userId, createdAt, remindAfter, remindMsg]
+        [userId, commentId, createdAt, remindAfter, remindMsg]
     )
 
     conn.commit()
@@ -62,12 +63,11 @@ def _add_reminder(userId, createdAt, remindAfter, remindMsg, db, table):
     return cursor.lastrowid
 
 
-def update_reminder(rowId, userId, createdAt, remindAfter, remindMsg, activeState):
-    return _update_reminder(rowId, userId, createdAt, remindAfter, remindMsg,
-                            activeState, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+def unset_reminder(rowId):
+    return _unset_reminder(rowId, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _update_reminder(rowId, userId, createdAt, remindAfter, remindMsg, activeState, db, table):
+def _unset_reminder(rowId, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
@@ -93,7 +93,7 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT (rowId, UserId, CreatedAt, RemindAfter, RemindMsg, Active)
+        SELECT (RowId, UserId, CommentId, CreatedAt, RemindAfter, RemindMsg, Active)
         FROM {table}
         {'' if not where else where}
         '''
