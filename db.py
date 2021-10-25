@@ -27,7 +27,7 @@ def _create_table_reminders(db):
             ChannelId   INT     NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
-            RemindMsg   TEXT    NOT NULL,
+            RemindMsg   TEXT,
             Active      INT     NOT NULL    DEFAULT 1
         )
         '''

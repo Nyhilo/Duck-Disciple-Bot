@@ -194,9 +194,10 @@ async def task_check():
 
         try:
             replyTo = await channel.fetch_message(task['MessageId'])
-            await replyTo.reply(f'{mention}, reminding you of the message you sent here.\n\n"{msg}"')
+            await replyTo.reply(f'{mention}, reminding you of the message you sent here.')
         except discord.NotFound:
-            await channel.send(f'{mention}, reminding you of reminder you set in this channel.\n\n"{msg}"')
+            _msg = f'\n\n"{msg}"' if msg else ''
+            await channel.send(f'{mention}, reminding you of reminder you set in this channel.{_msg}')
 
         log.info(reminders.unset_reminder(rowId, overrideId=True))
 

@@ -13,9 +13,6 @@ def set_new_reminder(userId: str,
                      remindMsg: str):
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
-    print(createdAt)
-    print(remindAfter)
-
     _createdAt = nomic_time.get_timestamp(createdAt)
     _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
 
@@ -86,7 +83,7 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
 def parse_remind_message(msg):
     # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
     parts = msg.split(' ')
-    if len(parts) < 3:
+    if len(parts) < 2:
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     try:
@@ -95,7 +92,7 @@ def parse_remind_message(msg):
         return (None, 'Please enter an integer number of time units.')
 
     timeUnit = parts[1]
-    remindMsg = ' '.join(parts[2:])
+    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
 
