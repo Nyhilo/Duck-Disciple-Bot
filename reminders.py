@@ -1,13 +1,14 @@
+from datetime import datetime, timedelta
 import db
 import nomic_time
 from log import log
 from config import PREFIX, SERVER_ADMIN_IDS
 
 
-def set_new_reminder(userId, commentId, createdAt, msg):
-    '''CreatedAt should be a UTC timestamp in seconds'''
-    remindAfter, remindMsg = _parse_remind_message(msg)
-    rowId = db.add_reminder(userId, commentId, createdAt.seconds, remindAfter, remindMsg)
+def set_new_reminder(userId: str, messageId: int, createdAt: datetime, remindAfter: timedelta, remindMsg: str):
+    '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
+
+    rowId = db.add_reminder(userId, messageId, createdAt.seconds, remindAfter.seconds, remindMsg)
 
     if rowId:
         return(f'I\'ll remind you about the following message after <t:{remindAfter}>\n'
@@ -19,13 +20,13 @@ def set_new_reminder(userId, commentId, createdAt, msg):
 
 def check_for_triggered_reminders():
     '''
-    Returns a list of dictionaries [{RowId, CommentId, ReplyMessage}]
+    Returns a list of dictionaries [{RowId, MessageId, ReplyMessage}]
     '''
     reminders = db.get_reminders('WHERE Active = 1')
 
     if reminders:
         return [
-            {'RowId': d['RowId'], 'CommentId': d['CommentId'], 'ReplyMessage': d['ReplyMessage']}
+            {'RowId': d['RowId'], 'MessageId': d['MessageId'], 'ReplyMessage': d['ReplyMessage']}
             for d in reminders
         ]
 
@@ -72,20 +73,20 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
         return 'Only an admin or the person who created a reminder can delete it.'
 
 
-def _parse_remind_message(msg):
+def parse_remind_message(msg):
     # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
     parts = msg.split(' ')
     if len(parts) < 3:
-        return f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.'
+        return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     try:
         number = int(parts[0])
     except ValueError:
-        return 'Please enter an integer number of time units.'
+        return (None, 'Please enter an integer number of time units.')
 
     timeUnit = parts[1]
     remindMsg = ' '.join(parts[2:])
 
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
 
-    return (span.seconds, remindMsg)
+    return (span, remindMsg)

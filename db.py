@@ -23,7 +23,7 @@ def _create_table_reminders(db):
         CREATE TABLE {table}
         (
             UserId      TEXT    NOT NULL,
-            CommentId   INT     NOT NULL,
+            MessageId   INT     NOT NULL,
             Channel     INT     NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
@@ -42,19 +42,19 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def add_reminder(userId, commentId, createdAt, remindAfter, remindMsg):
-    return _add_reminder(userId, commentId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+def add_reminder(userId, messageId, createdAt, remindAfter, remindMsg):
+    return _add_reminder(userId, messageId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _add_reminder(userId, commentId, createdAt, remindAfter, remindMsg, db, table):
+def _add_reminder(userId, messageId, createdAt, remindAfter, remindMsg, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, CommentId, CreatedAt, RemindAfter, RemindMsg, Active)
-        Values (:userId, :commentId :createdAt, :remindAfter, :remindMsg, 1)
+        (UserId, MessageId, CreatedAt, RemindAfter, RemindMsg, Active)
+        Values (:userId, :messageId :createdAt, :remindAfter, :remindMsg, 1)
         ''',
-        [userId, commentId, createdAt, remindAfter, remindMsg]
+        [userId, messageId, createdAt, remindAfter, remindMsg]
     )
 
     conn.commit()
@@ -93,7 +93,7 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT (RowId, UserId, CommentId, CreatedAt, RemindAfter, RemindMsg, Active)
+        SELECT (RowId, UserId, MessageId, CreatedAt, RemindAfter, RemindMsg, Active)
         FROM {table}
         {'' if not where else where}
         '''
