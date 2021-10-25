@@ -1,9 +1,11 @@
 from datetime import datetime, timedelta
+import time
+import calendar
 from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
 
 
 def get_current_utc_string():
-    now = _now()
+    now = utc_now()
     today = _midnightify(now)
     tomorrow = today + timedelta(days=1)
 
@@ -24,11 +26,43 @@ def get_current_utc_string():
     return (f'It is **{time}** on **{weekday}**, UTC\n')
 
 
-def _now():
+def utc_now():
     # for debugging
     # return datetime(month=6, day=23, year=2021, hour=22, minute=13, second=6)
 
     return datetime.utcnow()
+
+
+def unix_now():
+    '''Returns the current unix timestamp in seconds.'''
+    return int(time.time())
+
+
+def get_timestamp(date: datetime):
+    return int(calendar.timegm(date.utctimetuple()))
+
+
+def _now():
+    return datetime.now()
+
+
+def parse_timespan_by_units(number, unit):
+    if unit.lower().startswith('sec'):
+        return timedelta(seconds=number)
+
+    if unit.lower().startswith('min'):
+        return timedelta(minutes=number)
+
+    if unit.lower().startswith('hour'):
+        return timedelta(hours=number)
+
+    if unit.lower().startswith('day'):
+        return timedelta(days=number)
+
+    if unit.lower().startswith('week'):
+        return timedelta(weeks=number)
+
+    return None
 
 
 def _midnightify(date):

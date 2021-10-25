@@ -19,6 +19,19 @@ LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "FALSE"
 IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 TRUNGIFY_CACHE = 'trungified.png'
 
+SQLITE3_DB_NAME = 'sqlite3.db'
+DB_TABLE_REMINDERS_NAME = 'Reminders'
+
+SERVER_ADMIN_IDS = [
+    # Me
+    '<@116698920515534854>',
+
+    # Nomic Moderators
+    '<@179409793885143050>',
+    '<@199307546895450112>',
+    '<@410992730890698757>',
+    '<@339046832195764234>'
+]
 
 # Cycle specific configurations #
 _phase_two = 'Resolution Phase'
