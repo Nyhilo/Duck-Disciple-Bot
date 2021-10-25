@@ -71,7 +71,7 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
     if reminders[0]['Active'] == 0:
         return f'Reminder {rowId} is old and wasn\'t going to trigger anyway'
 
-    if overrideId or requesterId == reminders[0] or requesterId in SERVER_ADMIN_IDS:
+    if overrideId or str(requesterId) == reminders[0]['UserId'] or requesterId in SERVER_ADMIN_IDS:
         if db.unset_reminder(rowId):
             return f'You will no longer be reminded of reminder number {rowId}.'
         else:
