@@ -100,3 +100,7 @@ def parse_remind_message(msg):
         return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
 
     return (span, remindMsg)
+
+
+def can_quick_remind(span: timedelta):
+    return span.total_seconds() < 60 * 10

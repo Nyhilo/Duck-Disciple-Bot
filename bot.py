@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 
 import sys
 import os
+import asyncio
 
 from dotenv import load_dotenv
 # from random import randint
@@ -152,6 +153,16 @@ async def remind(ctx, *, message=None):
     if remindAfter is None:
         return await ctx.send(msg)
 
+    if remindAfter.total_seconds() < 10:
+        return await ctx.send("C'mon, less than 10 seconds is just silly.")
+
+    if reminders.can_quick_remind(remindAfter):
+        seconds = remindAfter.total_seconds()
+        log.info(f'Performing quick remind in {seconds} seconds')
+        await ctx.send(f"Okay, I'll remind you.")
+        await asyncio.sleep(remindAfter.total_seconds())
+        return await ctx.reply('Hey, reminding you about this thing.')
+
     try:
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
         log.info(responseMsg.split('\n')[0])
@@ -197,7 +208,7 @@ async def task_check():
             await replyTo.reply(f'{mention}, reminding you of the message you sent here.')
         except discord.NotFound:
             _msg = f'\n\n"{msg}"' if msg else ''
-            await channel.send(f'{mention}, reminding you of reminder you set in this channel.{_msg}')
+            await channel.send(f'{mention}, reminding you of a reminder you set in this channel.{_msg}')
 
         log.info(reminders.unset_reminder(rowId, overrideId=True))
 
