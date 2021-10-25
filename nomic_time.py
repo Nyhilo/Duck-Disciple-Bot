@@ -47,10 +47,10 @@ def _now():
 
 
 def parse_timespan_by_units(number, unit):
-    if unit.lower().startswith('second'):
+    if unit.lower().startswith('sec'):
         return timedelta(seconds=number)
 
-    if unit.lower().startswith('minute'):
+    if unit.lower().startswith('min'):
         return timedelta(minutes=number)
 
     if unit.lower().startswith('hour'):
