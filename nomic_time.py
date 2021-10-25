@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+import time
+import calendar
 from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
 
 
@@ -31,12 +33,21 @@ def utc_now():
     return datetime.utcnow()
 
 
+def unix_now():
+    '''Returns the current unix timestamp in seconds.'''
+    return int(time.time())
+
+
+def get_timestamp(date: datetime):
+    return int(calendar.timegm(date.utctimetuple()))
+
+
 def _now():
     return datetime.now()
 
 
 def parse_timespan_by_units(number, unit):
-    if unit.lower().startsith('second'):
+    if unit.lower().startswith('second'):
         return timedelta(seconds=number)
 
     if unit.lower().startswith('minute'):

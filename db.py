@@ -24,7 +24,7 @@ def _create_table_reminders(db):
         (
             UserId      TEXT    NOT NULL,
             MessageId   INT     NOT NULL,
-            Channel     INT     NOT NULL,
+            ChannelId   INT     NOT NULL,
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
             RemindMsg   TEXT    NOT NULL,
@@ -42,19 +42,20 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def add_reminder(userId, messageId, createdAt, remindAfter, remindMsg):
-    return _add_reminder(userId, messageId, createdAt, remindAfter, remindMsg, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+def add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg):
+    return _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg,
+                         SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _add_reminder(userId, messageId, createdAt, remindAfter, remindMsg, db, table):
+def _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, MessageId, CreatedAt, RemindAfter, RemindMsg, Active)
-        Values (:userId, :messageId :createdAt, :remindAfter, :remindMsg, 1)
+        (UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active)
+        Values (:userId, :messageId, :channelId, :createdAt, :remindAfter, :remindMsg, 1)
         ''',
-        [userId, messageId, createdAt, remindAfter, remindMsg]
+        [userId, messageId, channelId, createdAt, remindAfter, remindMsg]
     )
 
     conn.commit()
@@ -93,15 +94,16 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT (RowId, UserId, MessageId, CreatedAt, RemindAfter, RemindMsg, Active)
+        SELECT RowId, UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active
         FROM {table}
         {'' if not where else where}
         '''
     )
 
+    rows = cursor.fetchall()
     conn.close()
 
-    return [dict(row) for row in cursor.fetchall()]
+    return [dict(row) for row in rows]
 
 
 # Maintenence Methods

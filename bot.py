@@ -13,7 +13,6 @@ import nomic_time
 import sha as shalib
 import utils
 import image
-import db
 import reminders
 
 
@@ -140,31 +139,66 @@ async def trungify(ctx):
 
 @bot.command()
 async def remind(ctx, *, message=None):
+    if not message:
+        return await ctx.send(f'Please see `{config.PREFIX}help remind` for details on how to use this command.')
+
     # Get Info to set
-    userId = ctx.message.author.name
-    created, remindAt, msg = None  # reminders.get_schedule(ctx.created_at, message)
+    userId = ctx.message.author.mention
+    createdAt = ctx.message.created_at
+    messageId = ctx.message.id
+    channelId = ctx.channel.id
+    remindAfter, msg = reminders.parse_remind_message(message)
 
-    # Get message to reply to (if exists)
+    if remindAfter is None:
+        return await ctx.send(msg)
 
-    id = db.add_reminder(userId, created, remindAt, msg)
-    log.info(f'Reminder created with id {id}')
-    await ctx.send(f'Reminder created with id {id}, use {config.PREFIX}forget <id> to delete this reminder.')
+    try:
+        responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
+        log.info(responseMsg.split('\n')[0])
+        await ctx.send(responseMsg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command()
+async def forget(ctx, rowId=None):
+    if not rowId:
+        return await ctx.send('Please include the id of the reminder to forget.')
+
+    try:
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id)
+        await ctx.send(responseMsg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 @tasks.loop(minutes=1)
 async def task_check():
-    # # Get all active tasks
-    # tasks = db.get_reminders('WHERE ACTIVE = 1')
+    # Get all active tasks
+    tasks = reminders.check_for_triggered_reminders()
 
-    # # Check for tasks that need to be set
-    # pending_tasks = [task for task in tasks if task['RemindAfter'] < nomic_time.utc_now()]
+    for task in tasks:
+        mention = task['UserId']
+        msg = task['RemindMsg']
+        rowId = task['rowid']
+        channelId = task['ChannelId']
+        channel = bot.get_channel(channelId)
+        if channel is None:
+            log.info(f'Channel with id {channelId} does not exist. Setting reminder with id {rowId} to inactive...')
+            if rowId:
+                unsetMsg = reminders.unset_reminder(rowId, overrideId=True)
+                log.info(unsetMsg)
+            continue
 
-    # for task in pending_tasks:
-    #     msg = task['RemindMsg']
-    #     channel = bot.get_channel(task['Channel'])
-    #     await channel.send(f'Reminder triggered for this task: {msg}')
+        try:
+            replyTo = await channel.fetch_message(task['MessageId'])
+            await replyTo.reply(f'{mention}, reminding you of the message you sent here.\n\n"{msg}"')
+        except discord.NotFound:
+            await channel.send(f'{mention}, reminding you of reminder you set in this channel.\n\n"{msg}"')
 
-    await log.info('One minute has passed')
+        log.info(reminders.unset_reminder(rowId, overrideId=True))
 
 
 # Leaving this for re-implementation in the future
@@ -198,7 +232,9 @@ async def task_check():
 
 def init():
     log.info("Starting bot...")
-    db.set_tables()
+
+    from db import set_tables
+    set_tables()
 
     bot.run(TOKEN)
 

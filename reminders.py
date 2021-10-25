@@ -5,14 +5,25 @@ from log import log
 from config import PREFIX, SERVER_ADMIN_IDS
 
 
-def set_new_reminder(userId: str, messageId: int, createdAt: datetime, remindAfter: timedelta, remindMsg: str):
+def set_new_reminder(userId: str,
+                     messageId: int,
+                     channelId: int,
+                     createdAt: datetime,
+                     remindAfter: timedelta,
+                     remindMsg: str):
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
-    rowId = db.add_reminder(userId, messageId, createdAt.seconds, remindAfter.seconds, remindMsg)
+    print(createdAt)
+    print(remindAfter)
+
+    _createdAt = nomic_time.get_timestamp(createdAt)
+    _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
+
+    rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
 
     if rowId:
-        return(f'I\'ll remind you about the following message after <t:{remindAfter}>\n'
-               f'{remindMsg}')
+        return(f'I\'ll remind you about this at about <t:{_remindAfter}>.\n'
+               f'Use `{PREFIX}forget {rowId}` to delete this reminder.\n')
 
     else:
         return 'An error occured trying to set this reminder :(. Some kind of reminder database issue.'
@@ -22,13 +33,9 @@ def check_for_triggered_reminders():
     '''
     Returns a list of dictionaries [{RowId, MessageId, ReplyMessage}]
     '''
-    reminders = db.get_reminders('WHERE Active = 1')
+    reminders = db.get_reminders(f'WHERE Active = 1 AND RemindAfter <= {nomic_time.unix_now()}')
 
-    if reminders:
-        return [
-            {'RowId': d['RowId'], 'MessageId': d['MessageId'], 'ReplyMessage': d['ReplyMessage']}
-            for d in reminders
-        ]
+    return reminders
 
 
 def get_reminder(rowId):
@@ -60,12 +67,15 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
         log.error(f'User gave a bad rowId to delete: "{rowId}"')
         return 'That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before'
 
-    reminders = db.get_reminders(f'WHERE RowId = {rowId}')
+    reminders = db.get_reminders(f'WHERE rowid = {rowId}')
     if len(reminders) == 0:
         return 'No reminder found with id {rowId}.'
 
-    if requesterId == reminders[0] or requesterId in SERVER_ADMIN_IDS:
-        if db.update_reminder(rowId):
+    if reminders[0]['Active'] == 0:
+        return f'Reminder {rowId} is old and wasn\'t going to trigger anyway'
+
+    if overrideId or requesterId == reminders[0] or requesterId in SERVER_ADMIN_IDS:
+        if db.unset_reminder(rowId):
             return f'You will no longer be reminded of reminder number {rowId}.'
         else:
             return 'An error occured trying to delete this reminder. Oof.'
@@ -88,5 +98,8 @@ def parse_remind_message(msg):
     remindMsg = ' '.join(parts[2:])
 
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
+
+    if not span:
+        return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
 
     return (span, remindMsg)
