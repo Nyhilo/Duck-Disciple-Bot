@@ -150,7 +150,7 @@ async def remind(ctx, *, message=None):
         return await ctx.send(f'Please see `{config.PREFIX}help remind` for details on how to use this command.')
 
     # Get Info to set
-    userId = ctx.message.author.mention
+    userId = ctx.message.author.id
     createdAt = ctx.message.created_at
     messageId = ctx.message.id
     channelId = ctx.channel.id
@@ -164,10 +164,18 @@ async def remind(ctx, *, message=None):
 
     if reminders.can_quick_remind(remindAfter):
         seconds = remindAfter.total_seconds()
+        secondsAgo = nomic_time.get_timestamp(createdAt)
         log.info(f'Performing quick remind in {seconds} seconds')
         await ctx.send("Okay, I'll remind you.")
         await asyncio.sleep(remindAfter.total_seconds())
-        return await ctx.reply('Hey, reminding you about this thing.')
+
+        try:
+            replyTo = await ctx.fetch_message(messageId)
+            return await replyTo.reply('Hey, reminding you about this thing.')
+        except discord.NotFound:
+            _msg = f'\n\n"{msg}"' if msg else ''
+            return await ctx.send(f'{userId}, reminding you of a reminder you '
+                                  f'set in this channel <t:{secondsAgo}:R>.{_msg}')
 
     try:
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
@@ -201,7 +209,8 @@ async def task_check():
     tasks = reminders.check_for_triggered_reminders()
 
     for task in tasks:
-        mention = task['UserId']
+        userId = task['UserId']
+        createdAt = task['CreatedAt']
         msg = task['RemindMsg']
         rowId = task['rowid']
         channelId = task['ChannelId']
@@ -215,10 +224,11 @@ async def task_check():
 
         try:
             replyTo = await channel.fetch_message(task['MessageId'])
-            await replyTo.reply(f'{mention}, reminding you of the message you sent here.')
+            await replyTo.reply(f'<@{userId}>, reminding you of the message you sent here.')
         except discord.NotFound:
             _msg = f'\n\n"{msg}"' if msg else ''
-            await channel.send(f'{mention}, reminding you of a reminder you set in this channel.{_msg}')
+            await channel.send(f'<@{userId}>, reminding you of a reminder you '
+                               f'set in this channel <t:{createdAt}:R>.{_msg}')
 
         log.info(reminders.unset_reminder(rowId, overrideId=True))
 
