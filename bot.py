@@ -63,7 +63,7 @@ async def time(ctx):
 
 
 @bot.command(
-    brief='Gets the SHA256 for a given input.',
+    brief='Gets the SHA256 for a given input',
     help=('Gets the SHA256 hash for a given input. Note that including '
           'discord mentions may produce unexpected results.\n'
           'Inputs may be surrounded by double quotes to ensure expected '
@@ -138,7 +138,13 @@ async def trungify(ctx):
         await ctx.send(config.GENERIC_ERROR)
 
 
-@bot.command()
+@bot.command(
+    brief='Have the bot remind you about something in the future',
+    help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
+          'Will save a reminder and reply in the same channel at the specifid point in the future. '
+          'Long-term reminders poll every minute. Adding a message is optional, '
+          'and will be echoed to you in the case that your message gets deleted.')
+)
 async def remind(ctx, *, message=None):
     if not message:
         return await ctx.send(f'Please see `{config.PREFIX}help remind` for details on how to use this command.')
@@ -159,7 +165,7 @@ async def remind(ctx, *, message=None):
     if reminders.can_quick_remind(remindAfter):
         seconds = remindAfter.total_seconds()
         log.info(f'Performing quick remind in {seconds} seconds')
-        await ctx.send(f"Okay, I'll remind you.")
+        await ctx.send("Okay, I'll remind you.")
         await asyncio.sleep(remindAfter.total_seconds())
         return await ctx.reply('Hey, reminding you about this thing.')
 
@@ -172,7 +178,11 @@ async def remind(ctx, *, message=None):
         await ctx.send(config.GENERIC_ERROR)
 
 
-@bot.command()
+@bot.command(
+    brief='Delete a set reminder',
+    help='Specify the id of a long-term reminder to remove it. Only admins and '
+         'the original author of the reminder can delete them.'
+)
 async def forget(ctx, rowId=None):
     if not rowId:
         return await ctx.send('Please include the id of the reminder to forget.')
