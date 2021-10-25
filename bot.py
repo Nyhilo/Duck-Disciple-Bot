@@ -174,7 +174,7 @@ async def remind(ctx, *, message=None):
             return await replyTo.reply('Hey, reminding you about this thing.')
         except discord.NotFound:
             _msg = f'\n\n"{msg}"' if msg else ''
-            return await ctx.send(f'{userId}, reminding you of a reminder you '
+            return await ctx.send(f'<@!{userId}>, reminding you of a reminder you '
                                   f'set in this channel <t:{secondsAgo}:R>.{_msg}')
 
     try:
