@@ -7,28 +7,32 @@ from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
 def get_current_utc_string():
     now = utc_now()
     today = _midnightify(now)
-    tomorrow = today + timedelta(days=1)
 
-    time = now.strftime("%H:%M")
-    weekday = now.strftime("%A")
+    time = now.strftime('%H:%M')
+    weekday = now.strftime('%A')
     phase = PHASES_BY_DAY[weekday]
     nextPhase = PHASE_CYCLE[phase]
     nextDay = PHASE_START[nextPhase]
+    nextDayTimestampStr = ''
+    nextDayRelativeTimestampStr = ''
 
-    if nextDay == tomorrow.strftime("%A"):
-        secondstilmidnight = (tomorrow - now).seconds
-        hours = secondstilmidnight // 3600
-        minutes = (secondstilmidnight % 3600) // 60
-        nextDay = f"*{nextDay}* (in *{hours} hours* and *{minutes} minutes*)"
-    else:
-        nextDay = f'*{nextDay}*'
+    for _daysTil in range(8):
+        nextDayDatetime = (today + timedelta(days=_daysTil))
+        nextDayTimestamp = get_timestamp(nextDayDatetime)
+        if nextDayDatetime.strftime('%A') == nextDay:
+            nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
+            nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
+            break
 
-    return (f'It is **{time}** on **{weekday}**, UTC\n')
+    return (f'It is **{time}** on **{weekday}**, UTC\n'
+            f'That means it is **{phase}**\n\n'
+            f'**{nextPhase}** starts on **{nextDay}**, which is roughly {nextDayRelativeTimestampStr}.\n'
+            f'That is {nextDayTimestampStr} your time.')
 
 
 def utc_now():
     # for debugging
-    # return datetime(month=6, day=23, year=2021, hour=22, minute=13, second=6)
+    # return datetime(month=11, day=3, year=2021, hour=15, minute=41, second=6)
 
     return datetime.utcnow()
 
