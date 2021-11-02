@@ -143,7 +143,7 @@ async def trungify(ctx):
     help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
           'Will save a reminder and reply in the same channel at the specifid point in the future. '
           'Long-term reminders poll every minute. Adding a message is optional, '
-          'and will be echoed to you in the case that your message gets deleted.')
+          'and will be echoed back to you.')
 )
 async def remind(ctx, *, message=None):
     if not message:
