@@ -54,8 +54,8 @@ SERVER_ADMIN_IDS = {
 
 
 # Cycle specific configurations #
-_phase_two = 'Resolution Phase'
-_phase_one = 'Auction Phase'
+_phase_one = 'Phase I'
+_phase_two = 'Phase II'
 
 PHASES_BY_DAY = {
     'Monday': _phase_one,
