@@ -100,9 +100,9 @@ def parse_remind_message(msg):
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     try:
-        number = int(parts[0])
+        number = float(parts[0])
     except ValueError:
-        return (None, 'Please enter an integer number of time units.')
+        return (None, 'Please enter a real number of time units.')
 
     timeUnit = parts[1]
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
