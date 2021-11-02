@@ -83,6 +83,19 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
 def parse_remind_message(msg):
     # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
     parts = msg.split(' ')
+
+    # The time unit might have a newline after it instead of a space.
+    # i.e ['1', 'second\nThis\nmessage', 'here'] should be ['1', 'second', 'This\message', 'here']
+    if len(parts) > 1 and '\n' in parts[1]:
+        # subparts = ['second', 'This', 'message]
+        subparts = parts[1].split('\n')
+        # 'second', 'This\nmessage'
+        timepart, firstWord = subparts[0], '\n'.join(subparts[1:])
+        # parts = ['1', 'second', 'here']
+        parts[1] = timepart
+        # ['1', 'second', 'This\message', 'here']
+        parts.insert(2, firstWord)
+
     if len(parts) < 2:
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
