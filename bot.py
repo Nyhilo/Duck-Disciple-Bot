@@ -169,11 +169,11 @@ async def remind(ctx, *, message=None):
         await ctx.send("Okay, I'll remind you.")
         await asyncio.sleep(remindAfter.total_seconds())
 
+        _msg = f'\n\n"{msg}"' if msg and len(msg) < 1000 else ''
         try:
             replyTo = await ctx.fetch_message(messageId)
-            return await replyTo.reply('Hey, reminding you about this thing.')
+            return await replyTo.reply(f'Hey, reminding you about this thing.{_msg}')
         except discord.NotFound:
-            _msg = f'\n\n"{msg}"' if msg else ''
             return await ctx.send(f'<@!{userId}>, reminding you of a reminder you '
                                   f'set in this channel <t:{secondsAgo}:R>.{_msg}')
 
@@ -222,11 +222,11 @@ async def task_check():
                 log.info(unsetMsg)
             continue
 
+        _msg = f'\n\n"{msg}"' if msg else ''
         try:
             replyTo = await channel.fetch_message(task['MessageId'])
-            await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.')
+            await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.{_msg}')
         except discord.NotFound:
-            _msg = f'\n\n"{msg}"' if msg else ''
             await channel.send(f'<@!{userId}>, reminding you of a reminder you '
                                f'set in this channel <t:{createdAt}:R>.{_msg}')
 
