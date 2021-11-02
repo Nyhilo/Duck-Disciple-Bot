@@ -105,12 +105,16 @@ def parse_remind_message(msg):
         return (None, 'Please enter an integer number of time units.')
 
     timeUnit = parts[1]
-    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
-
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
 
     if not span:
         return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
+
+    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
+
+    # Unescape @'s
+    remindMsg = remindMsg.replace('\\@', '@')
+    remindMsg = remindMsg.replace('\\<', '<')
 
     return (span, remindMsg)
 
