@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 import db
 import nomic_time
 from log import log
-from config import PREFIX, SERVER_ADMIN_IDS
+from config import PREFIX
+import utils
 
 
 def set_new_reminder(userId: str,
@@ -55,7 +56,7 @@ def get_reminder(rowId):
             f"> {remindMsg}")
 
 
-def unset_reminder(rowId, requesterId=None, overrideId=False):
+def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
     '''Either requesterId or overrideId must be set.'''
     try:
         # Also accounts for sql injection attempts
@@ -71,7 +72,7 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
     if reminders[0]['Active'] == 0:
         return f'Reminder {rowId} is old and wasn\'t going to trigger anyway'
 
-    if overrideId or str(requesterId) == reminders[0]['UserId'] or requesterId in SERVER_ADMIN_IDS:
+    if overrideId or str(requesterId) == reminders[0]['UserId'] or utils.is_admin(requesterId, serverId):
         if db.unset_reminder(rowId):
             return f'You will no longer be reminded of reminder number {rowId}.'
         else:

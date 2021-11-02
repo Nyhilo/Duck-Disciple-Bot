@@ -22,16 +22,36 @@ TRUNGIFY_CACHE = 'trungified.png'
 SQLITE3_DB_NAME = 'sqlite3.db'
 DB_TABLE_REMINDERS_NAME = 'Reminders'
 
-SERVER_ADMIN_IDS = [
-    # Me
-    116698920515534854,
+GLOBAL_ADMIN_IDS = [116698920515534854]
+SERVER_ADMIN_IDS = {
+    # Infinite Nomic
+    515560801394753537: [
+        179409793885143050,
+        199307546895450112,
+        410992730890698757,
+        339046832195764234
+    ],
+    # Agora
+    724077429412331560: [
+        164117897025683456,
+        120700893212573696
+    ],
+    # Diplomacy
+    892773002440241153: [
+        95923810062053376
+    ],
+    # Dice
+    121129460018708480: [
+        116698920515534854,
+        331266664270266370,
+        231237666597896192,
+    ],
+    # Test Server
+    443181366184640513: [
 
-    # Nomic Moderators
-    179409793885143050,
-    199307546895450112,
-    410992730890698757,
-    339046832195764234
-]
+    ]
+}
+
 
 # Cycle specific configurations #
 _phase_two = 'Resolution Phase'
