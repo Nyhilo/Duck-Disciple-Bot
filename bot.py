@@ -143,7 +143,7 @@ async def trungify(ctx):
     help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
           'Will save a reminder and reply in the same channel at the specifid point in the future. '
           'Long-term reminders poll every minute. Adding a message is optional, '
-          'and will be echoed to you in the case that your message gets deleted.')
+          'and will be echoed back to you.')
 )
 async def remind(ctx, *, message=None):
     if not message:
@@ -169,11 +169,11 @@ async def remind(ctx, *, message=None):
         await ctx.send("Okay, I'll remind you.")
         await asyncio.sleep(remindAfter.total_seconds())
 
+        _msg = f'\n\n"{msg}"' if msg and len(msg) < 1000 else ''
         try:
             replyTo = await ctx.fetch_message(messageId)
-            return await replyTo.reply('Hey, reminding you about this thing.')
+            return await replyTo.reply(f'Hey, reminding you about this thing.{_msg}')
         except discord.NotFound:
-            _msg = f'\n\n"{msg}"' if msg else ''
             return await ctx.send(f'<@!{userId}>, reminding you of a reminder you '
                                   f'set in this channel <t:{secondsAgo}:R>.{_msg}')
 
@@ -196,7 +196,7 @@ async def forget(ctx, rowId=None):
         return await ctx.send('Please include the id of the reminder to forget.')
 
     try:
-        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id)
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
         await ctx.send(responseMsg)
     except Exception as e:
         log.error(e)
@@ -222,11 +222,11 @@ async def task_check():
                 log.info(unsetMsg)
             continue
 
+        _msg = f'\n\n"{msg}"' if msg else ''
         try:
             replyTo = await channel.fetch_message(task['MessageId'])
-            await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.')
+            await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.{_msg}')
         except discord.NotFound:
-            _msg = f'\n\n"{msg}"' if msg else ''
             await channel.send(f'<@!{userId}>, reminding you of a reminder you '
                                f'set in this channel <t:{createdAt}:R>.{_msg}')
 

@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 import db
 import nomic_time
 from log import log
-from config import PREFIX, SERVER_ADMIN_IDS
+from config import PREFIX
+import utils
 
 
 def set_new_reminder(userId: str,
@@ -55,7 +56,7 @@ def get_reminder(rowId):
             f"> {remindMsg}")
 
 
-def unset_reminder(rowId, requesterId=None, overrideId=False):
+def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
     '''Either requesterId or overrideId must be set.'''
     try:
         # Also accounts for sql injection attempts
@@ -71,7 +72,7 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
     if reminders[0]['Active'] == 0:
         return f'Reminder {rowId} is old and wasn\'t going to trigger anyway'
 
-    if overrideId or str(requesterId) == reminders[0]['UserId'] or requesterId in SERVER_ADMIN_IDS:
+    if overrideId or str(requesterId) == reminders[0]['UserId'] or utils.is_admin(requesterId, serverId):
         if db.unset_reminder(rowId):
             return f'You will no longer be reminded of reminder number {rowId}.'
         else:
@@ -83,21 +84,38 @@ def unset_reminder(rowId, requesterId=None, overrideId=False):
 def parse_remind_message(msg):
     # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
     parts = msg.split(' ')
+
+    # The time unit might have a newline after it instead of a space.
+    # i.e ['1', 'second\nThis\nmessage', 'here'] should be ['1', 'second', 'This\message', 'here']
+    if len(parts) > 1 and '\n' in parts[1]:
+        # subparts = ['second', 'This', 'message]
+        subparts = parts[1].split('\n')
+        # 'second', 'This\nmessage'
+        timepart, firstWord = subparts[0], '\n'.join(subparts[1:])
+        # parts = ['1', 'second', 'here']
+        parts[1] = timepart
+        # ['1', 'second', 'This\message', 'here']
+        parts.insert(2, firstWord)
+
     if len(parts) < 2:
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     try:
-        number = int(parts[0])
+        number = float(parts[0])
     except ValueError:
-        return (None, 'Please enter an integer number of time units.')
+        return (None, 'Please enter a real number of time units.')
 
     timeUnit = parts[1]
-    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
-
     span = nomic_time.parse_timespan_by_units(number, timeUnit)
 
     if not span:
         return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
+
+    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
+
+    # Unescape @'s
+    remindMsg = remindMsg.replace('\\@', '@')
+    remindMsg = remindMsg.replace('\\<', '<')
 
     return (span, remindMsg)
 
