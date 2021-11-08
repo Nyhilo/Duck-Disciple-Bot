@@ -113,10 +113,6 @@ def parse_remind_message(msg):
 
     remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
 
-    # Unescape @'s
-    remindMsg = remindMsg.replace('\\@', '@')
-    remindMsg = remindMsg.replace('\\<', '<')
-
     return (span, remindMsg)
 
 

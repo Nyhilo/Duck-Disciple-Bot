@@ -4,6 +4,7 @@ from discord.ext import commands, tasks
 import sys
 import os
 import asyncio
+import re
 
 from dotenv import load_dotenv
 # from random import randint
@@ -141,9 +142,11 @@ async def trungify(ctx):
 @bot.command(
     brief='Have the bot remind you about something in the future',
     help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
-          'Will save a reminder and reply in the same channel at the specifid point in the future. '
-          'Long-term reminders poll every minute. Adding a message is optional, '
-          'and will be echoed back to you.')
+          'Will save a reminder and reply in the same channel at the specified point in the future.\n'
+          'Long-term reminders are checked once per minute. Adding a message is optional, '
+          'and will be echoed back to you.\n'
+          'Escape users and roles in the creation message with User#ID and @\\Role respectively.\n'
+          'For example, User#0000 and @\\everyone will be echoed back as @User#0000 and @everyone.')
 )
 async def remind(ctx, *, message=None):
     if not message:
@@ -155,6 +158,7 @@ async def remind(ctx, *, message=None):
     messageId = ctx.message.id
     channelId = ctx.channel.id
     remindAfter, msg = reminders.parse_remind_message(message)
+    msg = await filter_escaped_mentions(ctx, msg)
 
     if remindAfter is None:
         return await ctx.send(msg)
@@ -256,6 +260,36 @@ async def task_check():
 #     except Exception as e:
 #         log.error(e)
 #         await ctx.send(config.GENERIC_ERROR)
+
+###########
+# Helpers #
+###########
+
+memberConverter = commands.MemberConverter()
+roleConverter = commands.RoleConverter()
+
+
+async def filter_escaped_mentions(ctx, message):
+    async def resolve_mention(converter, mention):
+        try:
+            member = await converter.convert(ctx, mention)
+            return member.mention
+        except commands.BadArgument:
+            return mention
+
+    # User mentions in the form of Name#0000
+    matches = re.finditer(r'\b\S+#\d+\b', message)
+    for match in matches:
+        replace = await resolve_mention(memberConverter, match.group())
+        message = message.replace(match.group(), replace)
+
+    # Role mentions in the form of @\Role
+    matches = re.finditer(r'@\\\S+\b', message)
+    for match in matches:
+        replace = await resolve_mention(roleConverter, match.group()[2:])
+        message = message.replace(match.group(), replace)
+
+    return message
 
 
 ##############
