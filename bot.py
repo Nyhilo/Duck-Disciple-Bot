@@ -284,9 +284,9 @@ async def filter_escaped_mentions(ctx, message):
         message = message.replace(match.group(), replace)
 
     # Role mentions in the form of @\Role
-    matches = re.finditer(r'@\\\S+\b', message)
+    matches = re.finditer(r'@".*?"', message)
     for match in matches:
-        replace = await resolve_mention(roleConverter, match.group()[2:])
+        replace = await resolve_mention(roleConverter, match.group()[2:-1])
         message = message.replace(match.group(), replace)
 
     return message
