@@ -145,8 +145,8 @@ async def trungify(ctx):
           'Will save a reminder and reply in the same channel at the specified point in the future.\n'
           'Long-term reminders are checked once per minute. Adding a message is optional, '
           'and will be echoed back to you.\n'
-          'Escape users and roles in the creation message with User#ID and @\\Role respectively.\n'
-          'For example, User#0000 and @\\everyone will be echoed back as @User#0000 and @everyone.')
+          'Escape users and roles in the creation message with User#ID and @"Role" respectively.\n'
+          'For example, User#0000 and @"everyone" will be echoed back as @User#0000 and @everyone.')
 )
 async def remind(ctx, *, message=None):
     if not message:
@@ -283,7 +283,7 @@ async def filter_escaped_mentions(ctx, message):
         replace = await resolve_mention(memberConverter, match.group())
         message = message.replace(match.group(), replace)
 
-    # Role mentions in the form of @\Role
+    # Role mentions in the form of @"Role"
     matches = re.finditer(r'@".*?"', message)
     for match in matches:
         replace = await resolve_mention(roleConverter, match.group()[2:-1])
