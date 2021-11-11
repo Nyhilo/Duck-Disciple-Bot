@@ -1,18 +1,34 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import calendar
-from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
+
+from config import PHASES_BY_DAY, _phase_two, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
+import utils
 
 
 def get_current_utc_string():
+    # Okay there's a lot going on here
+    # Get some base reference values
     now = utc_now()
     today = _midnightify(now)
+    _startYear, _startMonth, _startDay = PHASE_START_DATE
+    phaseCountStart = datetime(_startYear, _startMonth, _startDay, tzinfo=timezone.utc)
 
+    # Get string representations of the current time and day
     time = now.strftime('%H:%M')
     weekday = now.strftime('%A')
-    phase = PHASES_BY_DAY[weekday]
-    nextPhase = PHASE_CYCLE[phase]
-    nextDay = PHASE_START[nextPhase]
+
+    # Figure out what phase it is
+    _phase = PHASES_BY_DAY[weekday]
+    _nextPhase = PHASE_CYCLE[_phase]
+    
+    # I don't remember why these -1s and +1s work, but the do so... ¯\_(ツ)_/¯
+    weeksSinceStart = ((now - phaseCountStart).days // 7) + 1
+    phasesSinceStart = weeksSinceStart * 2 + (0 if _phase == _phase_two else -1)
+    phase = 'Phase ' + utils.roman_numeralize(phasesSinceStart)
+    nextPhase = 'Phase ' + utils.roman_numeralize(phasesSinceStart + 1)
+    nextDay = PHASE_START[_nextPhase]
+    
     nextDayTimestampStr = ''
     nextDayRelativeTimestampStr = ''
 
@@ -32,9 +48,9 @@ def get_current_utc_string():
 
 def utc_now():
     # for debugging
-    # return datetime(month=11, day=3, year=2021, hour=15, minute=41, second=6)
+    # return datetime(month=11, day=14, year=2021, hour=23, minute=59, second=1).replace(tzinfo=timezone.utc)
 
-    return datetime.utcnow()
+    return datetime.utcnow().replace(tzinfo=timezone.utc)
 
 
 def unix_now():
