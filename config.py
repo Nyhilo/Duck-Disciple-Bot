@@ -54,6 +54,8 @@ SERVER_ADMIN_IDS = {
 
 
 # Cycle specific configurations #
+PHASE_START_DATE = (2021, 11, 1)
+
 _phase_one = 'Phase I'
 _phase_two = 'Phase II'
 
