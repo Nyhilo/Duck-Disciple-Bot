@@ -157,9 +157,13 @@ async def remind(ctx, *, message=None):
     createdAt = ctx.message.created_at
     messageId = ctx.message.id
     channelId = ctx.channel.id
-    remindAfter, msg = reminders.parse_remind_message(message)
-    msg = await filter_escaped_mentions(ctx, msg)
+    remindAfter, _msg = reminders.parse_remind_message(message)
+    msg = await filter_escaped_mentions(ctx, _msg)
 
+    return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
+
+
+async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg):
     if remindAfter is None:
         return await ctx.send(msg)
 
@@ -184,23 +188,6 @@ async def remind(ctx, *, message=None):
     try:
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
         log.info(responseMsg.split('\n')[0])
-        await ctx.send(responseMsg)
-    except Exception as e:
-        log.error(e)
-        await ctx.send(config.GENERIC_ERROR)
-
-
-@bot.command(
-    brief='Delete a set reminder',
-    help='Specify the id of a long-term reminder to remove it. Only admins and '
-         'the original author of the reminder can delete them.'
-)
-async def forget(ctx, rowId=None):
-    if not rowId:
-        return await ctx.send('Please include the id of the reminder to forget.')
-
-    try:
-        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
         await ctx.send(responseMsg)
     except Exception as e:
         log.error(e)
@@ -235,6 +222,23 @@ async def task_check():
                                f'set in this channel <t:{createdAt}:R>.{_msg}')
 
         log.info(reminders.unset_reminder(rowId, overrideId=True))
+
+
+@bot.command(
+    brief='Delete a set reminder',
+    help='Specify the id of a long-term reminder to remove it. Only admins and '
+         'the original author of the reminder can delete them.'
+)
+async def forget(ctx, rowId=None):
+    if not rowId:
+        return await ctx.send('Please include the id of the reminder to forget.')
+
+    try:
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
+        await ctx.send(responseMsg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 # Leaving this for re-implementation in the future
