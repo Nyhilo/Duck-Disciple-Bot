@@ -140,6 +140,20 @@ async def trungify(ctx):
 
 
 @bot.command(
+    brief='Get unix timestamp for date string.',
+    help=('Literally just runs the given string against the python-dateutil library. '
+          'Can generally be as vague or specific as you want.')
+)
+async def timestamp(ctx, *, message=None):
+    try:
+        timestamp = nomic_time.get_datestring_timestamp(message)
+    except Exception:
+        return await ctx.send('Whoops, I did\'t recognize the date format you sent. Try something else.')
+
+    await ctx.send(f'Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`')
+
+
+@bot.command(
     brief='Have the bot remind you about something in the future',
     help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
           'Will save a reminder and reply in the same channel at the specified point in the future.\n'
@@ -151,6 +165,21 @@ async def trungify(ctx):
 async def remind(ctx, *, message=None):
     if not message:
         return await ctx.send(f'Please see `{config.PREFIX}help remind` for details on how to use this command.')
+
+    # Get Info to set
+    userId = ctx.message.author.id
+    createdAt = ctx.message.created_at
+    messageId = ctx.message.id
+    channelId = ctx.channel.id
+    remindAfter, _msg = reminders.parse_remind_message(message)
+    msg = await filter_escaped_mentions(ctx, _msg)
+
+    return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
+
+
+async def remindAt(ctx, *, message=None):
+    if not message:
+        return await ctx.send(f'Please see `{config.PREFIX}help remindAt` for details on how to use this command.')
 
     # Get Info to set
     userId = ctx.message.author.id

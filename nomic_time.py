@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import time
 import calendar
+import dateutil.parser
 from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
 
 
@@ -67,3 +68,10 @@ def parse_timespan_by_units(number, unit):
 
 def _midnightify(date):
     return date.replace(hour=0, minute=0, second=0, microsecond=0)
+
+
+def get_datestring_timestamp(datestring):
+    if datestring is None or datestring == "" or datestring.lower() == 'now':
+        return unix_now()
+
+    return get_timestamp(dateutil.parser.parse(datestring))
