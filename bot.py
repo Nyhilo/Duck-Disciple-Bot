@@ -140,6 +140,30 @@ async def trungify(ctx):
 
 
 @bot.command(
+    brief='Draw a number of cards.',
+    help=('Automatically roll some dice and report back the dice rolls and '
+          'the cards generated from those dice rolls. Will return 1 set of 1 '
+          'card by default. First argument is number of cards, second argument '
+          'is size of card sets. Maximum draw is 100.\n')
+)
+async def draw(ctx, number=1, size=1):
+    if number * size < 1:
+        return await ctx.send('Positive integers only please.')
+
+    maxcards = 50
+    if number * size > maxcards:
+        return await ctx.send('Sorry, maximum number of cards per draw '
+                              f'is {maxcards}.')
+
+    try:
+        await ctx.send(('Here are your cards!' if number * size > 1 else 'Here is your card!'))
+        await ctx.send(utils.draw_random_card_sets(number, size))
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command(
     brief='Get unix timestamp for date string.',
     help=('Literally just runs the given string against the python-dateutil library. '
           'Can generally be as vague or specific as you want.')
@@ -277,30 +301,6 @@ async def forget(ctx, rowId=None):
         log.error(e)
         await ctx.send(config.GENERIC_ERROR)
 
-
-# Leaving this for re-implementation in the future
-# @bot.command(
-#     brief='Draw a number of cards.',
-#     help=('Automatically roll some dice and report back the dice rolls and '
-#           'the cards generated from those dice rolls. Will return 1 set of 1 '
-#           'card by default. First argument is number of cards, second argument '
-#           'is size of card sets. Maximum draw is 100.\n')
-# )
-# async def draw(ctx, number=1, size=1):
-#     if number * size < 1:
-#         return await ctx.send('Positive integers only please.')
-
-#     maxcards = 100
-#     if number * size > maxcards:
-#         return await ctx.send('Sorry, maximum number of cards per draw '
-#                               f'is {maxcards}.')
-
-#     try:
-#         msg = cards.draw_random_card_sets(number, size)
-#         await ctx.send(msg)
-#     except Exception as e:
-#         log.error(e)
-#         await ctx.send(config.GENERIC_ERROR)
 
 ###########
 # Helpers #
