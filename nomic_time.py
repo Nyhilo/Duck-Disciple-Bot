@@ -86,8 +86,11 @@ def parse_timespan_by_units(number, unit):
     return None
 
 
-def get_timespan_from_timestamp(timestamp):
-    return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc) - utc_now()
+def get_timespan_from_timestamp(timestamp, now=None):
+    if not now:
+        now = utc_now()
+
+    return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc) - now.replace(tzinfo=timezone.utc)
 
 
 def _midnightify(date):

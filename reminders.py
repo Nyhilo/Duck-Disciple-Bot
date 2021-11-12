@@ -83,7 +83,7 @@ def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
         return 'Only an admin or the person who created a reminder can delete it.'
 
 
-def parse_remind_message(_msg):
+def parse_remind_message(_msg, createdAt=None):
     msg = _msg
     span = None
     timestamp = None
@@ -93,7 +93,7 @@ def parse_remind_message(_msg):
     if re.match(criteria, _msg):
         try:
             timestamp = int(re.match(criteria, _msg).group(1))
-            span = nomic_time.get_timespan_from_timestamp(timestamp)
+            span = nomic_time.get_timespan_from_timestamp(timestamp, createdAt)
             parts = _msg.split(' ')
             msg = ' '.join(parts[1:])
         except Exception:
@@ -105,7 +105,7 @@ def parse_remind_message(_msg):
         datestring, msg = parts[0], ','.join(parts[1:])
         try:
             timestamp = int(nomic_time.get_datestring_timestamp(datestring))
-            span = nomic_time.get_timespan_from_timestamp(timestamp)
+            span = nomic_time.get_timespan_from_timestamp(timestamp, createdAt)
         except Exception:
             timestamp = None
 

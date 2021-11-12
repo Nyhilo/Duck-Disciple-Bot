@@ -203,22 +203,7 @@ async def remind(ctx, *, message=None):
     createdAt = ctx.message.created_at
     messageId = ctx.message.id
     channelId = ctx.channel.id
-    remindAfter, _msg = reminders.parse_remind_message(message)
-    msg = await filter_escaped_mentions(ctx, _msg)
-
-    return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
-
-
-async def remindAt(ctx, *, message=None):
-    if not message:
-        return await ctx.send(f'Please see `{config.PREFIX}help remindAt` for details on how to use this command.')
-
-    # Get Info to set
-    userId = ctx.message.author.id
-    createdAt = ctx.message.created_at
-    messageId = ctx.message.id
-    channelId = ctx.channel.id
-    remindAfter, _msg = reminders.parse_remind_message(message)
+    remindAfter, _msg = reminders.parse_remind_message(message, createdAt)
     msg = await filter_escaped_mentions(ctx, _msg)
 
     return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
