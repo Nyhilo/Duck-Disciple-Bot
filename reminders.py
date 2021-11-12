@@ -127,12 +127,15 @@ def parse_remind_message(_msg):
             parts.insert(2, firstWord)
 
         if len(parts) < 2:
-            return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
+            return (None, ('Incorrect syntax for reminder or I couldn\'t understand your date format. '
+                           'See `{PREFIX}help remind` for more details.'))
 
         try:
             number = float(parts[0])
         except ValueError:
-            return (None, 'Please enter a real number of time units.')
+            return (None, ('Couldn\'t understand your time format. '
+                           'You might have an extra comma in there confusing things. '
+                           f'See `{PREFIX}help remind` for more details.'))
 
         timeUnit = parts[1]
         span = nomic_time.parse_timespan_by_units(number, timeUnit)
@@ -140,7 +143,10 @@ def parse_remind_message(_msg):
         msg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     if not span:
-        return (None, 'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
+        return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
+
+    if span.total_seconds() < 1:
+        return (None, 'Please give a time that is in the future (remember to give a timezone if not in UTC).')
 
     return (span, msg)
 
