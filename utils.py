@@ -1,4 +1,5 @@
-from config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS
+from config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS
+from random import choice
 
 
 def trim_quotes(string):
@@ -38,3 +39,11 @@ def roman_numeralize(num):
             num -= val[i]
         i += 1
     return roman_num
+
+
+def draw_random_card_sets(width, groups):
+    out = ''
+    for i in range(groups):
+        out += ''.join([choice(CARDS) for _ in range(width)]) + ('\n' if i < groups else '')
+
+    return out
