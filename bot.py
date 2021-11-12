@@ -140,13 +140,34 @@ async def trungify(ctx):
 
 
 @bot.command(
+    brief='Get unix timestamp for date string.',
+    help=('Literally just runs the given string against the python-dateutil library. '
+          'Can generally be as vague or specific as you want.')
+)
+async def timestamp(ctx, *, message=None):
+    try:
+        timestamp = nomic_time.get_datestring_timestamp(message)
+    except Exception:
+        return await ctx.send('Whoops, I did\'t recognize the date format you sent. Try something else.')
+
+    await ctx.send(f'Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`')
+
+
+@bot.command(
     brief='Have the bot remind you about something in the future',
-    help=('Usage: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
+    help=('Usages: <number> <second(s)|minute(s)|hour(s)|day(s)|week(s)> [message]\n'
+          '        <timestamp>, [message]\n'
+          '        <datestring>, [message]\n'
           'Will save a reminder and reply in the same channel at the specified point in the future.\n'
           'Long-term reminders are checked once per minute. Adding a message is optional, '
-          'and will be echoed back to you.\n'
+          'and will be echoed back to you.\n\n'
           'Escape users and roles in the creation message with User#ID and @"Role" respectively.\n'
-          'For example, User#0000 and @"everyone" will be echoed back as @User#0000 and @everyone.')
+          'For example, User#0000 and @"everyone" will be echoed back as @User#0000 and @everyone.\n\n'
+          'Examples:\n'
+          f'\t{config.PREFIX}remind 5 days'
+          f'\t{config.PREFIX}remind december 15th,'
+          f'\t{config.PREFIX}'
+          )
 )
 async def remind(ctx, *, message=None):
     if not message:
@@ -157,9 +178,28 @@ async def remind(ctx, *, message=None):
     createdAt = ctx.message.created_at
     messageId = ctx.message.id
     channelId = ctx.channel.id
-    remindAfter, msg = reminders.parse_remind_message(message)
-    msg = await filter_escaped_mentions(ctx, msg)
+    remindAfter, _msg = reminders.parse_remind_message(message)
+    msg = await filter_escaped_mentions(ctx, _msg)
 
+    return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
+
+
+async def remindAt(ctx, *, message=None):
+    if not message:
+        return await ctx.send(f'Please see `{config.PREFIX}help remindAt` for details on how to use this command.')
+
+    # Get Info to set
+    userId = ctx.message.author.id
+    createdAt = ctx.message.created_at
+    messageId = ctx.message.id
+    channelId = ctx.channel.id
+    remindAfter, _msg = reminders.parse_remind_message(message)
+    msg = await filter_escaped_mentions(ctx, _msg)
+
+    return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg)
+
+
+async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg):
     if remindAfter is None:
         return await ctx.send(msg)
 
@@ -184,23 +224,6 @@ async def remind(ctx, *, message=None):
     try:
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
         log.info(responseMsg.split('\n')[0])
-        await ctx.send(responseMsg)
-    except Exception as e:
-        log.error(e)
-        await ctx.send(config.GENERIC_ERROR)
-
-
-@bot.command(
-    brief='Delete a set reminder',
-    help='Specify the id of a long-term reminder to remove it. Only admins and '
-         'the original author of the reminder can delete them.'
-)
-async def forget(ctx, rowId=None):
-    if not rowId:
-        return await ctx.send('Please include the id of the reminder to forget.')
-
-    try:
-        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
         await ctx.send(responseMsg)
     except Exception as e:
         log.error(e)
@@ -235,6 +258,23 @@ async def task_check():
                                f'set in this channel <t:{createdAt}:R>.{_msg}')
 
         log.info(reminders.unset_reminder(rowId, overrideId=True))
+
+
+@bot.command(
+    brief='Delete a set reminder',
+    help='Specify the id of a long-term reminder to remove it. Only admins and '
+         'the original author of the reminder can delete them.'
+)
+async def forget(ctx, rowId=None):
+    if not rowId:
+        return await ctx.send('Please include the id of the reminder to forget.')
+
+    try:
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
+        await ctx.send(responseMsg)
+    except Exception as e:
+        log.error(e)
+        await ctx.send(config.GENERIC_ERROR)
 
 
 # Leaving this for re-implementation in the future

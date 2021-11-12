@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+import re
+
 import db
 import nomic_time
 from log import log
@@ -81,39 +83,72 @@ def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
         return 'Only an admin or the person who created a reminder can delete it.'
 
 
-def parse_remind_message(msg):
-    # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
-    parts = msg.split(' ')
+def parse_remind_message(_msg):
+    msg = _msg
+    span = None
+    timestamp = None
 
-    # The time unit might have a newline after it instead of a space.
-    # i.e ['1', 'second\nThis\nmessage', 'here'] should be ['1', 'second', 'This\message', 'here']
-    if len(parts) > 1 and '\n' in parts[1]:
-        # subparts = ['second', 'This', 'message]
-        subparts = parts[1].split('\n')
-        # 'second', 'This\nmessage'
-        timepart, firstWord = subparts[0], '\n'.join(subparts[1:])
-        # parts = ['1', 'second', 'here']
-        parts[1] = timepart
-        # ['1', 'second', 'This\message', 'here']
-        parts.insert(2, firstWord)
+    # Check if we were just given a timestamp
+    criteria = r'^\s*<?t?:?(\d{10})'
+    if re.match(criteria, _msg):
+        try:
+            timestamp = int(re.match(criteria, _msg).group(1))
+            span = nomic_time.get_timespan_from_timestamp(timestamp)
+            parts = _msg.split(' ')
+            msg = ' '.join(parts[1:])
+        except Exception:
+            timestamp = None
 
-    if len(parts) < 2:
-        return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
+    # Check if we have an arbitrary date format on our hands
+    if timestamp is None and ',' in _msg:
+        parts = _msg.split(',')
+        datestring, msg = parts[0], ','.join(parts[1:])
+        try:
+            timestamp = int(nomic_time.get_datestring_timestamp(datestring))
+            span = nomic_time.get_timespan_from_timestamp(timestamp)
+        except Exception:
+            timestamp = None
 
-    try:
-        number = float(parts[0])
-    except ValueError:
-        return (None, 'Please enter a real number of time units.')
+    # If we still don't have a timestamp, parse it by relative time
+    if timestamp is None:
+        # Parse the timestamp as <integer> <minutes|hours|days|weeks|months>
+        parts = msg.split(' ')
 
-    timeUnit = parts[1]
-    span = nomic_time.parse_timespan_by_units(number, timeUnit)
+        # The time unit might have a newline after it instead of a space.
+        # i.e ['1', 'second\nThis\nmessage', 'here'] should be ['1', 'second', 'This\message', 'here']
+        if len(parts) > 1 and '\n' in parts[1]:
+            # subparts = ['second', 'This', 'message]
+            subparts = parts[1].split('\n')
+            # 'second', 'This\nmessage'
+            timepart, firstWord = subparts[0], '\n'.join(subparts[1:])
+            # parts = ['1', 'second', 'here']
+            parts[1] = timepart
+            # ['1', 'second', 'This\message', 'here']
+            parts.insert(2, firstWord)
+
+        if len(parts) < 2:
+            return (None, ('Incorrect syntax for reminder or I couldn\'t understand your date format. '
+                           'See `{PREFIX}help remind` for more details.'))
+
+        try:
+            number = float(parts[0])
+        except ValueError:
+            return (None, ('Couldn\'t understand your time format. '
+                           'You might have an extra comma in there confusing things. '
+                           f'See `{PREFIX}help remind` for more details.'))
+
+        timeUnit = parts[1]
+        span = nomic_time.parse_timespan_by_units(number, timeUnit)
+
+        msg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     if not span:
-        return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
+        return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
-    remindMsg = None if len(parts) < 2 else ' '.join(parts[2:])
+    if span.total_seconds() < 1:
+        return (None, 'Please give a time that is in the future (remember to give a timezone if not in UTC).')
 
-    return (span, remindMsg)
+    return (span, msg)
 
 
 def can_quick_remind(span: timedelta):
