@@ -1,37 +1,57 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import time
 import calendar
 import dateutil.parser
-from config import PHASES_BY_DAY, PHASE_CYCLE, PHASE_START
+
+from config import PHASES_BY_DAY, _phase_two, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
+import utils
 
 
 def get_current_utc_string():
+    # Okay there's a lot going on here
+    # Get some base reference values
     now = utc_now()
     today = _midnightify(now)
-    tomorrow = today + timedelta(days=1)
+    _startYear, _startMonth, _startDay = PHASE_START_DATE
+    phaseCountStart = datetime(_startYear, _startMonth, _startDay, tzinfo=timezone.utc)
 
-    time = now.strftime("%H:%M")
-    weekday = now.strftime("%A")
-    phase = PHASES_BY_DAY[weekday]
-    nextPhase = PHASE_CYCLE[phase]
-    nextDay = PHASE_START[nextPhase]
+    # Get string representations of the current time and day
+    time = now.strftime('%H:%M')
+    weekday = now.strftime('%A')
 
-    if nextDay == tomorrow.strftime("%A"):
-        secondstilmidnight = (tomorrow - now).seconds
-        hours = secondstilmidnight // 3600
-        minutes = (secondstilmidnight % 3600) // 60
-        nextDay = f"*{nextDay}* (in *{hours} hours* and *{minutes} minutes*)"
-    else:
-        nextDay = f'*{nextDay}*'
+    # Figure out what phase it is
+    _phase = PHASES_BY_DAY[weekday]
+    _nextPhase = PHASE_CYCLE[_phase]
+    
+    # I don't remember why these -1s and +1s work, but the do so... ¯\_(ツ)_/¯
+    weeksSinceStart = ((now - phaseCountStart).days // 7) + 1
+    phasesSinceStart = weeksSinceStart * 2 + (0 if _phase == _phase_two else -1)
+    phase = 'Phase ' + utils.roman_numeralize(phasesSinceStart)
+    nextPhase = 'Phase ' + utils.roman_numeralize(phasesSinceStart + 1)
+    nextDay = PHASE_START[_nextPhase]
+    
+    nextDayTimestampStr = ''
+    nextDayRelativeTimestampStr = ''
 
-    return (f'It is **{time}** on **{weekday}**, UTC\n')
+    for _daysTil in range(8):
+        nextDayDatetime = (today + timedelta(days=_daysTil))
+        nextDayTimestamp = get_timestamp(nextDayDatetime)
+        if nextDayDatetime.strftime('%A') == nextDay:
+            nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
+            nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
+            break
+
+    return (f'It is **{time}** on **{weekday}**, UTC\n'
+            f'That means it is **{phase}**\n\n'
+            f'**{nextPhase}** starts on **{nextDay}**, which is roughly {nextDayRelativeTimestampStr}.\n'
+            f'That is {nextDayTimestampStr} your time.')
 
 
 def utc_now():
     # for debugging
-    # return datetime(month=6, day=23, year=2021, hour=22, minute=13, second=6)
+    # return datetime(month=11, day=14, year=2021, hour=23, minute=59, second=1).replace(tzinfo=timezone.utc)
 
-    return datetime.utcnow()
+    return datetime.utcnow().replace(tzinfo=timezone.utc)
 
 
 def unix_now():
