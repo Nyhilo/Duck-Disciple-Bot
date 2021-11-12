@@ -94,15 +94,15 @@ def parse_remind_message(_msg):
         try:
             timestamp = int(re.match(criteria, _msg).group(1))
             span = nomic_time.get_timespan_from_timestamp(timestamp)
-            parts = msg.split(' ')
+            parts = _msg.split(' ')
             msg = ' '.join(parts[1:])
         except Exception:
             timestamp = None
 
     # Check if we have an arbitrary date format on our hands
-    if timestamp is None and '|' in _msg:
-        parts = _msg.split('|')
-        datestring, msg = parts[0], '|'.join(parts[1:])
+    if timestamp is None and ',' in _msg:
+        parts = _msg.split(',')
+        datestring, msg = parts[0], ','.join(parts[1:])
         try:
             timestamp = int(nomic_time.get_datestring_timestamp(datestring))
             span = nomic_time.get_timespan_from_timestamp(timestamp)
@@ -140,7 +140,7 @@ def parse_remind_message(_msg):
         msg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     if not span:
-        return (None, 'Please specify a time in the form of `<number> <second(s)|minute(s)|hour(s)|day(s)|week(s)>.`')
+        return (None, 'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     return (span, msg)
 
