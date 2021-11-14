@@ -93,10 +93,6 @@ async def stopdoingnomic(ctx):
         await ctx.send(file=f)
 
 
-def somejunk():
-    return 'This was written by someone dumb'
-
-
 @bot.command(
     brief='Trungifies an image',
     help=('Attach or link to an image to trungify it.\n'
