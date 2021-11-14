@@ -84,6 +84,15 @@ async def sha(ctx, *, message=None):
         await ctx.send(config.GENERIC_ERROR)
 
 
+@bot.command()
+async def stopdoingnomic(ctx):
+    async with ctx.typing():
+        with open('stop_doing_nomic.png', 'rb') as file:
+            f = discord.File(file, filename='stop_doing_nomic.png')
+
+        await ctx.send(file=f)
+
+
 @bot.command(
     brief='Trungifies an image',
     help=('Attach or link to an image to trungify it.\n'
