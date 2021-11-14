@@ -84,10 +84,6 @@ async def sha(ctx, *, message=None):
         await ctx.send(config.GENERIC_ERROR)
 
 
-def somejunk():
-    return 'This was written by someone dumb'
-
-
 @bot.command(
     brief='Trungifies an image',
     help=('Attach or link to an image to trungify it.\n'
