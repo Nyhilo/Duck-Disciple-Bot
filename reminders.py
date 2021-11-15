@@ -100,9 +100,9 @@ def parse_remind_message(_msg, createdAt=None):
             timestamp = None
 
     # Check if we have an arbitrary date format on our hands
-    if timestamp is None and ',' in _msg:
-        parts = _msg.split(',')
-        datestring, msg = parts[0], ','.join(parts[1:])
+    if timestamp is None and ';' in _msg:
+        parts = _msg.split(';')
+        datestring, msg = parts[0], ';'.join(parts[1:])
         try:
             timestamp = int(nomic_time.get_datestring_timestamp(datestring))
             span = nomic_time.get_timespan_from_timestamp(timestamp, createdAt)
