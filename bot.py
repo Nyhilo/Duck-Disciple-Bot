@@ -191,9 +191,9 @@ async def timestamp(ctx, *, message=None):
 
 @bot.command(
     brief='Have the bot remind you about something in the future',
-    help=('Usages: [number] [second(s)|minute(s)|hour(s)|day(s)|week(s)] <message>\n'
-          '        [timestamp], <message>\n'
-          '        [datestring], <message>\n'
+    help=(f'Usages: &remind [number] [second(s)|minute(s)|hour(s)|day(s)|week(s)] <message>\n'
+          f'        &remind [timestamp] <message>\n'
+          f'        &remind [datestring]; <message>\n'
           'Will save a reminder and reply in the same channel at the specified point in the future.\n'
           'Long-term reminders are checked once per minute. Adding a message is optional, '
           'and will be echoed back to you.\n\n'
@@ -202,7 +202,7 @@ async def timestamp(ctx, *, message=None):
           'Examples:\n'
           f"\t{config.PREFIX}remind 5 days\n"
           f"\t{config.PREFIX}remind 7 days Hey @\"everyone\" it's time!\n"
-          f"\t{config.PREFIX}remind december 25th 8:00am, don't forget to do the thing.\n"
+          f"\t{config.PREFIX}remind december 25th, 8:00am; don't forget to do the thing.\n"
           f"\t{config.PREFIX}remind 1640419200 The time has come\n"
           )
 )

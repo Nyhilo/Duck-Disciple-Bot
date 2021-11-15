@@ -100,9 +100,9 @@ def parse_remind_message(_msg, createdAt=None):
             timestamp = None
 
     # Check if we have an arbitrary date format on our hands
-    if timestamp is None and ',' in _msg:
-        parts = _msg.split(',')
-        datestring, msg = parts[0], ','.join(parts[1:])
+    if timestamp is None and ';' in _msg:
+        parts = _msg.split(';')
+        datestring, msg = parts[0], ';'.join(parts[1:])
         try:
             timestamp = int(nomic_time.get_datestring_timestamp(datestring))
             span = nomic_time.get_timespan_from_timestamp(timestamp, createdAt)
@@ -146,7 +146,7 @@ def parse_remind_message(_msg, createdAt=None):
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     if span.total_seconds() < 1:
-        return (None, 'Please give a time that is in the future (remember to give a timezone if not in UTC).')
+        return (None, 'Please give a time that is in the future (remember that times are in UTC).')
 
     return (span, msg)
 
