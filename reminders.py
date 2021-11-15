@@ -146,7 +146,7 @@ def parse_remind_message(_msg, createdAt=None):
         return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
 
     if span.total_seconds() < 1:
-        return (None, 'Please give a time that is in the future (remember to give a timezone if not in UTC).')
+        return (None, 'Please give a time that is in the future (remember that times are in UTC).')
 
     return (span, msg)
 
