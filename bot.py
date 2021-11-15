@@ -84,7 +84,10 @@ async def sha(ctx, *, message=None):
         await ctx.send(config.GENERIC_ERROR)
 
 
-@bot.command()
+@bot.command(
+    brief='Stop doing nomic.',
+    help='Stop doing it'
+)
 async def stopdoingnomic(ctx):
     async with ctx.typing():
         with open('stop_doing_nomic.png', 'rb') as file:
