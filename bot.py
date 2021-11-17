@@ -31,8 +31,8 @@ TOKEN = os.getenv('TOKEN')
 
 help_command = commands.DefaultHelpCommand(no_category='Commands')
 bot = commands.Bot(command_prefix=config.PREFIX,
-                   description=('Poker bot doubles down. A general-use bot '
-                                'for the Infinite Nomic on discord.'),
+                   description=('Day Trader gets those tendies. A general-use bot '
+                                'for the Infinite Nomic discord server.'),
                    help_command=help_command)
 
 
