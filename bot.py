@@ -288,8 +288,10 @@ async def forget(ctx, rowId=None):
     if not rowId:
         return await ctx.send('Please include the id of the reminder to forget.')
 
+    guildId = ctx.guild.id if ctx.guild else None
+
     try:
-        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, guildId)
         await ctx.send(responseMsg)
     except Exception as e:
         log.exception(e)
