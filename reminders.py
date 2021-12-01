@@ -43,7 +43,7 @@ def get_reminder(rowId):
         # Also accounts for sql injection attempts
         rowId = int(rowId)
     except ValueError:
-        log.error(f'User gave a bad rowId to delete: "{rowId}"')
+        log.exception(f'User gave a bad rowId to delete: "{rowId}"')
         return 'That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before'
 
     _reminders = db.get_reminders(f'WHERE RowId = {rowId}')
@@ -64,7 +64,7 @@ def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
         # Also accounts for sql injection attempts
         rowId = int(rowId)
     except ValueError:
-        log.error(f'User gave a bad rowId to delete: "{rowId}"')
+        log.exception(f'User gave a bad rowId to delete: "{rowId}"')
         return 'That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before'
 
     reminders = db.get_reminders(f'WHERE rowid = {rowId}')
