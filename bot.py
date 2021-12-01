@@ -149,6 +149,61 @@ async def trungify(ctx):
 
 
 @bot.command(
+    brief='Detrungifies an image',
+    help=('Attach or link to an image to detrungify it.\n'
+          'You can also reply another message that has an image with this '
+          'command to detrungify that image instead.')
+)
+async def detrungify(ctx):
+    commandName = f'{config.PREFIX}trungify'
+
+    async def get_image_source():
+        # Check if the message contains an image
+        message = ctx.message
+        if (
+            len(message.attachments) > 0 and
+            any(message.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
+           ):
+            return message.attachments[0].url
+
+        if any(message.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
+            return utils.strip_command(message.content, commandName)
+
+        # Check if a replied to message contains an image
+        if message.reference:
+            reply = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+            if (
+                len(reply.attachments) > 0 and
+                any(reply.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
+               ):
+                return reply.attachments[0].url
+
+            if any(reply.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
+                return utils.strip_command(reply.content, commandName)
+
+        # No valid image found
+        return None
+
+    source = await get_image_source()
+    if source is None:
+        await ctx.send('Either I don\'t support that image type or you didn\'t send or reply to an image.')
+        return
+
+    try:
+        async with ctx.typing():
+            image.detrungify_and_save(source, config.TRUNGIFY_CACHE)
+
+            with open(config.TRUNGIFY_CACHE, 'rb') as file:
+                f = discord.File(file, filename=config.TRUNGIFY_CACHE)
+
+            await ctx.send(file=f)
+    except Exception as e:
+        log.exception(e)
+        await ctx.send(config.GENERIC_ERROR)
+
+
+@bot.command(
     brief='Draw a number of cards.',
     help=('Automatically roll some dice and report back the dice rolls and '
           'the cards generated from those dice rolls. Will return 1 set of 1 '
