@@ -81,15 +81,9 @@ def detrungify(source, updown=False):
     return dest
 
 
-def trungify_and_save(url, destination):
+def trungify_and_save(url, destination, detrung: bool, updown: bool):
     source = get_image(url)
-    output = trungify(source)
-    output.save(destination)
-
-
-def detrungify_and_save(url, destination):
-    source = get_image(url)
-    output = detrungify(source)
+    output = detrungify(source, updown) if detrung else trungify(source, updown)
     output.save(destination)
 
 
