@@ -10,7 +10,7 @@ def get_image(url):
     return Image.open(BytesIO(response.content))
 
 
-def trungify(source):
+def trungify(source, updown=False):
     dest = Image.new("RGBA", source.size, (0, 0, 0, 0))
 
     w, h = source.size
@@ -21,6 +21,7 @@ def trungify(source):
 
     # iterate over each row of the image.
     for i in range(source.height):
+        row = i if not updown else h - i - 1
 
         # we start filling in pixels at i units to the left of center.
         start = w / 2 - unit * i
@@ -37,14 +38,14 @@ def trungify(source):
 
             # finally fill in the pixel.
             dest.putpixel(
-                (int(start + j), i),
-                source.getpixel((sx, i))
+                (int(start + j), row),
+                source.getpixel((sx, row))
             )
 
     return dest
 
 
-def detrungify(source):
+def detrungify(source, updown=False):
     dest = Image.new("RGBA", source.size, (0, 0, 0, 0))
 
     w, h = source.size
@@ -55,6 +56,7 @@ def detrungify(source):
 
     # iterate over each row of the image.
     for i in range(source.height):
+        row = i if not updown else h - i - 1
 
         # we start filling in pixels at i units to the left of center.
         start = w / 2 - unit * i
@@ -72,8 +74,8 @@ def detrungify(source):
 
             # finally fill in the pixel.
             dest.putpixel(
-                (j, i),
-                source.getpixel((start + region_num, i))
+                (j, row),
+                source.getpixel((start + region_num, row))
             )
 
     return dest
@@ -92,7 +94,12 @@ def detrungify_and_save(url, destination):
 
 
 if __name__ == '__main__':
-    commands = {"t": trungify, "d": detrungify}
+    commands = {
+        "t": trungify,
+        "tu": lambda x: trungify(x, True),
+        "d": detrungify,
+        "du": lambda x: detrungify(x, True),
+    }
 
     funct = commands[argv[1]]
     source = Image.open(argv[2])
