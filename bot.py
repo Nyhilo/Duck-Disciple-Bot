@@ -59,7 +59,7 @@ async def time(ctx):
     try:
         await ctx.send(nomic_time.get_current_utc_string())
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -80,7 +80,7 @@ async def sha(ctx, *, message=None):
         hash = shalib.get_sha_256(filteredMessage)
         await ctx.send(f'The hash for the above message is:\n{hash}')
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -144,7 +144,7 @@ async def trungify(ctx):
 
             await ctx.send(file=f)
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -168,7 +168,7 @@ async def draw(ctx, number=1, size=1):
         await ctx.send(('Here are your cards!' if number * size > 1 else 'Here is your card!'))
         await ctx.send(utils.draw_random_card_sets(number, size))
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -245,7 +245,7 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
         log.info(responseMsg.split('\n')[0])
         await ctx.send(responseMsg)
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
@@ -288,11 +288,13 @@ async def forget(ctx, rowId=None):
     if not rowId:
         return await ctx.send('Please include the id of the reminder to forget.')
 
+    guildId = ctx.guild.id if ctx.guild else None
+
     try:
-        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, ctx.guild.id)
+        responseMsg = reminders.unset_reminder(rowId, ctx.message.author.id, guildId)
         await ctx.send(responseMsg)
     except Exception as e:
-        log.error(e)
+        log.exception(e)
         await ctx.send(config.GENERIC_ERROR)
 
 
