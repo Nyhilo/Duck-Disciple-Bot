@@ -44,12 +44,6 @@ def trungify(source):
     return dest
 
 
-def trungify_and_save(url, destination):
-    source = get_image(url)
-    output = trungify(source)
-    output.save(destination)
-
-
 def detrungify(source):
     dest = Image.new("RGBA", source.size, (0, 0, 0, 0))
 
@@ -83,6 +77,18 @@ def detrungify(source):
             )
 
     return dest
+
+
+def trungify_and_save(url, destination):
+    source = get_image(url)
+    output = trungify(source)
+    output.save(destination)
+
+
+def detrungify_and_save(url, destination):
+    source = get_image(url)
+    output = detrungify(source)
+    output.save(destination)
 
 
 if __name__ == '__main__':
