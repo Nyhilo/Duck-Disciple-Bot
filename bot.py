@@ -84,7 +84,7 @@ async def sha(ctx, *, message=None):
         await ctx.send(config.GENERIC_ERROR)
 
 
-@bot.command()
+@bot.command(brief='Stop doing nomic.', aliases=['sdn'])
 async def stopdoingnomic(ctx):
     async with ctx.typing():
         with open('stop_doing_nomic.png', 'rb') as file:
@@ -97,7 +97,8 @@ async def stopdoingnomic(ctx):
     brief='Trungifies an image',
     help=('Attach or link to an image to trungify it.\n'
           'You can also reply another message that has an image with this '
-          'command to trungify that image instead.')
+          'command to trungify that image instead.'),
+    aliases=['trung', 'tr', 'triangle', 'trungle', 'trunglo']
 )
 async def trungify(ctx):
     commandName = f'{config.PREFIX}trungify'
@@ -152,7 +153,8 @@ async def trungify(ctx):
     brief='Detrungifies an image',
     help=('Attach or link to an image to detrungify it.\n'
           'You can also reply another message that has an image with this '
-          'command to detrungify that image instead.')
+          'command to detrungify that image instead.'),
+    aliases=['detrung', 'dtr', 'dt', 'bigbrain', 'antitrung']
 )
 async def detrungify(ctx):
     commandName = f'{config.PREFIX}trungify'
@@ -256,7 +258,8 @@ async def timestamp(ctx, *, message=None):
           f"\t{config.PREFIX}remind 7 days Hey @\"everyone\" it's time!\n"
           f"\t{config.PREFIX}remind december 25th, 8:00am; don't forget to do the thing.\n"
           f"\t{config.PREFIX}remind 1640419200 The time has come\n"
-          )
+          ),
+    aliases=['rem', 'member', 'rember']
 )
 async def remind(ctx, *, message=None):
     if not message:
@@ -336,8 +339,9 @@ async def task_check():
 
 @bot.command(
     brief='Delete a set reminder',
-    help='Specify the id of a long-term reminder to remove it. Only admins and '
-         'the original author of the reminder can delete them.'
+    help=('Specify the id of a long-term reminder to remove it. Only admins and '
+          'the original author of the reminder can delete them.'),
+    aliases=['forgor']
 )
 async def forget(ctx, rowId=None):
     if not rowId:
