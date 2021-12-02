@@ -48,7 +48,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
             log.exception(e)
             await ctx.send(config.GENERIC_ERROR)
 
-    @commands.command(brief='Stop doing nomic.', aliases=['sdn'])
+    @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['sdn', 'stahp'])
     async def stopdoingnomic(self, ctx):
         async with ctx.typing():
             with open('stop_doing_nomic.png', 'rb') as file:
@@ -57,7 +57,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
             await ctx.send(file=f)
 
     @commands.command(
-        brief='Draw a number of cards.',
+        brief='Draw a number of cards',
         help=('Automatically roll some dice and report back the dice rolls and '
               'the cards generated from those dice rolls. Will return 1 set of 1 '
               'card by default. First argument is number of cards, second argument '
@@ -80,7 +80,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
             await ctx.send(config.GENERIC_ERROR)
 
     @commands.command(
-        brief='Get unix timestamp for date string.',
+        brief='Get unix timestamp for date string',
         help=('Literally just runs the given string against the python-dateutil library. '
               'Can generally be as vague or specific as you want.')
     )

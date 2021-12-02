@@ -20,7 +20,7 @@ class Reminders(commands.Cog, name='Reminders'):
         self.check_reminders.start()
 
     @commands.command(
-        brief='Have the bot remind you about something in the future',
+        brief='Have the bot remind you about something',
         help=(f'Usages: &remind [number] [second(s)|minute(s)|hour(s)|day(s)|week(s)] <message>\n'
               f'        &remind [timestamp] <message>\n'
               f'        &remind [datestring]; <message>\n'

@@ -31,7 +31,7 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to bottom trungify it.\n'
               'You can also reply another message that has an image with this '
               'command to bottom trungify that image instead.'),
-        aliases=['bottrung', 'btr', 'updowntrung', 'updown'],
+        aliases=['bottrung', 'btr', 'updowntrung', 'updown', 'smallbrain'],
         cog_name='Image Manipulation'
     )
     async def bottomtrung(self, ctx):
