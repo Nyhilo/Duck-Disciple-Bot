@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 import re
 
-import db
-import nomic_time
-from log import log
-from config import PREFIX
-import utils
+import core.db as db
+import core.nomic_time as nomic_time
+from core.log import log
+from config.config import PREFIX
+import core.utils as utils
 
 
 def set_new_reminder(userId: str,
