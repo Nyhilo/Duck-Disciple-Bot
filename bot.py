@@ -10,12 +10,12 @@ from dotenv import load_dotenv
 # from random import randint
 
 import config
-from log import log
-import nomic_time
-import sha as shalib
-import utils
-import image
-import reminders
+from core.log import log
+import core.nomic_time as nomic_time
+import core.sha as shalib
+import core.utils as utils
+import core.image as image
+import core.reminders as reminders
 
 
 ###########
@@ -376,7 +376,7 @@ async def filter_escaped_mentions(ctx, message):
 def init():
     log.info("Starting bot...")
 
-    from db import set_tables
+    from core.db import set_tables
     set_tables()
 
     bot.run(TOKEN)

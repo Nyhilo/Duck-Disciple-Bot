@@ -1,5 +1,5 @@
 import sqlite3
-from log import log
+from core.log import log
 from config import SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME
 
 
