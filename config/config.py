@@ -6,7 +6,7 @@ load_dotenv()
 # Discord API related stuff #
 PREFIX = '&'
 
-LOG_FILE = 'bot.log'
+LOG_FILE = 'log.txt'
 GENERIC_ERROR = ('Whoops! An error occured while executing this command. You '
                  'should probably tell the bot author about it or something'
                  '...')

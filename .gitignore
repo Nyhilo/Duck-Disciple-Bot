@@ -150,3 +150,6 @@ env-*/
 
 # Dev environment specific
 .vscode/
+
+# Explicit logs
+log.txt
