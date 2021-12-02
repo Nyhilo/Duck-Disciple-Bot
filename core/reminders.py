@@ -4,7 +4,7 @@ import re
 import core.db as db
 import core.nomic_time as nomic_time
 from core.log import log
-from config import PREFIX
+from config.config import PREFIX
 import core.utils as utils
 
 

@@ -9,7 +9,7 @@ import re
 from dotenv import load_dotenv
 # from random import randint
 
-import config
+import config.config as config
 from core.log import log
 import core.nomic_time as nomic_time
 import core.sha as shalib

@@ -3,7 +3,7 @@ import time
 import calendar
 import dateutil.parser
 
-from config import PHASES_BY_DAY, _phase_two, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
+from config.config import PHASES_BY_DAY, _phase_two, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
 import core.utils as utils
 
 

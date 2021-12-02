@@ -1,6 +1,6 @@
 import logging
 
-from config import LOG_FILE, LOG_DEBUG_TO_FILE
+from config.config import LOG_FILE, LOG_DEBUG_TO_FILE
 
 # Courtesy https://stackoverflow.com/a/49562361
 log = logging.getLogger('discord')
