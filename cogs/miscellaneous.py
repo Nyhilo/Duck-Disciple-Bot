@@ -51,7 +51,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['sdn', 'stahp'])
     async def stopdoingnomic(self, ctx):
         async with ctx.typing():
-            with open('stop_doing_nomic.png', 'rb') as file:
+            with open(f'{config.SDN_DIR}/stop_doing_nomic.png', 'rb') as file:
                 f = discord.File(file, filename='stop_doing_nomic.png')
 
             await ctx.send(file=f)

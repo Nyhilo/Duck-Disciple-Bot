@@ -19,6 +19,7 @@ LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "FALSE"
 IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
 CACHE_FOLDER = 'cached'
 TRUNGIFY_CACHE = 'cached/out-trungified.png'
+SDN_DIR = 'imgs/stopdoingnomic'
 
 SQLITE3_DB_NAME = 'sqlite3.db'
 DB_TABLE_REMINDERS_NAME = 'Reminders'
