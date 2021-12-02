@@ -6,7 +6,7 @@ import os
 
 from dotenv import load_dotenv
 
-from config.config import PREFIX
+from config.config import PREFIX, CACHE_FOLDER
 from core.log import log
 
 ###########
@@ -43,9 +43,15 @@ async def on_ready():
 def init():
     log.info("Starting bot...")
 
+    # Setup caching folder
+    if not os.path.exists(CACHE_FOLDER):
+        os.makedirs(CACHE_FOLDER)
+
+    # Setup database
     from core.db import set_tables
     set_tables()
 
+    # Load cogs
     cogs = ['cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous']
 
     for cog in cogs:
@@ -55,6 +61,7 @@ def init():
         except Exception as e:
             log.exception(e)
 
+    # Let it fly
     bot.run(TOKEN)
 
 

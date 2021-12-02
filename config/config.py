@@ -17,7 +17,8 @@ LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "FALSE"
 
 # General Utility Configurations #
 IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png']
-TRUNGIFY_CACHE = 'out-trungified.png'
+CACHE_FOLDER = 'cached'
+TRUNGIFY_CACHE = 'cached/out-trungified.png'
 
 SQLITE3_DB_NAME = 'sqlite3.db'
 DB_TABLE_REMINDERS_NAME = 'Reminders'
