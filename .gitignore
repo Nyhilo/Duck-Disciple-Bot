@@ -1,6 +1,5 @@
 ### DO NOT INCLUDE GENERATED IMAGES
-
-out*.png
+cached/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
