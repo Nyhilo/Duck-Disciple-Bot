@@ -20,8 +20,7 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to trungify it.\n'
               'You can also reply another message that has an image with this '
               'command to trungify that image instead.'),
-        aliases=['trung', 'tr', 'triangle', 'trungle', 'trunglo'],
-        cog_name='Image Manipulation'
+        aliases=['trung', 'tr', 'triangle', 'trungle', 'trunglo']
     )
     async def trungify(self, ctx):
         await _trung_handler(ctx, False, False)
@@ -31,8 +30,7 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to bottom trungify it.\n'
               'You can also reply another message that has an image with this '
               'command to bottom trungify that image instead.'),
-        aliases=['bottrung', 'btr', 'updowntrung', 'updown', 'smallbrain'],
-        cog_name='Image Manipulation'
+        aliases=['bottrung', 'btr', 'updowntrung', 'updown', 'smallbrain', 'thicc']
     )
     async def bottomtrung(self, ctx):
         await _trung_handler(ctx, False, True)
@@ -42,8 +40,7 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to detrungify it.\n'
               'You can also reply another message that has an image with this '
               'command to detrungify that image instead.'),
-        aliases=['detrung', 'dtr', 'dt', 'bigbrain', 'antitrung'],
-        cog_name='Image Manipulation'
+        aliases=['detrung', 'dtr', 'dt', 'bigbrain', 'antitrung']
     )
     async def detrungify(self, ctx):
         await _trung_handler(ctx, True, False)
@@ -53,8 +50,7 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to bottom detrungify it.\n'
               'You can also reply another message that has an image with this '
               'command to bottom detrungify that image instead.'),
-        aliases=['botdetrung', 'bdtr', 'bdt', 'updowndetrung'],
-        cog_name='Image Manipulation'
+        aliases=['botdetrung', 'bdtr', 'bdt', 'updowndetrung']
     )
     async def bottomdetrung(self, ctx):
         await _trung_handler(ctx, True, True)
