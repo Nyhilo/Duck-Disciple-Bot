@@ -40,9 +40,9 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to detrungify it.\n'
               'You can also reply another message that has an image with this '
               'command to detrungify that image instead.'),
-        aliases=['detrung', 'dtr', 'dt', 'bigbrain', 'antitrung']
+        aliases=['detrungify', 'detrung', 'dtr', 'dt', 'antitrung']
     )
-    async def detrungify(self, ctx):
+    async def bigbrain(self, ctx):
         await _trung_handler(ctx, True, False)
 
     @commands.command(
@@ -50,9 +50,9 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to bottom detrungify it.\n'
               'You can also reply another message that has an image with this '
               'command to bottom detrungify that image instead.'),
-        aliases=['botdetrung', 'bdtr', 'bdt', 'updowndetrung', 'thicc']
+        aliases=['bottomdetrungify', 'bottomdetrung', 'botdetrung', 'bdtr', 'bdt', 'updowndetrung']
     )
-    async def bottomdetrung(self, ctx):
+    async def thicc(self, ctx):
         await _trung_handler(ctx, True, True)
 
 
