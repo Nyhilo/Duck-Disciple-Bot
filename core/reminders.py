@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import re
 
-import core.db as db
+import core.db.reminders_db as db
 import core.nomic_time as nomic_time
 from core.log import log
 from config.config import PREFIX

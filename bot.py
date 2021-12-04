@@ -48,8 +48,8 @@ def init():
         os.makedirs(CACHE_FOLDER)
 
     # Setup database
-    from core.db import set_tables
-    set_tables()
+    import core.db.reminders_db as db_reminders
+    db_reminders.set_tables()
 
     # Load cogs
     cogs = ['cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous']
