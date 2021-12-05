@@ -52,7 +52,7 @@ def init():
     db_reminders.set_tables()
 
     # Load cogs
-    cogs = ['cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.pool']
+    cogs = ['cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
 
     for cog in cogs:
         try:

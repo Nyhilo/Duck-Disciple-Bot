@@ -74,10 +74,10 @@ def create(serverId, creatorId, poolName, isGlobal=False):
         return 'Whoops, something went wrong trying to create that pool.'
 
 
-def remove(poolName, userId):
+def delete(poolName, serverId, userId):
     pool = db.get_pool(poolName)
-    if not pool:
-        return f'Pool named `{poolName}` not found.'
+    if not pool or (pool.server_id != serverId and pool.server_id != 0):
+        return f'Pool named `{poolName}` not found in this server.'
 
     if pool.creator_id != userId and not utils.is_admin(userId):
         return 'You do not have permission to delete that pool.'
