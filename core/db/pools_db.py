@@ -156,6 +156,16 @@ def add_entry(poolId, description, amount):
     )
 
 
+def update_entry(entryId, amount):
+    return db_modify(
+        f'''
+        UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
+        SET Amount = :amount
+        WHERE Id = :entryId
+        ''', [amount, entryId]
+    )
+
+
 def unset_pool(poolId):
     return db_modify(
         f'''
