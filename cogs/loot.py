@@ -42,7 +42,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(config.GENERIC_ERROR)
 
     async def handle_pool(self, ctx, comm, pool, arg, amount):
-        comm = comm.tolower()
+        comm = comm.lower()
         guildId = ctx.guild.id if ctx.guild else 0
         authorId = ctx.message.author.id
 
@@ -59,7 +59,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(loot.roll(guildId, pool, arg, amount))
 
         if comm == 'create':
-            isGlobal = arg.tolower == 'global'
+            isGlobal = arg.lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
