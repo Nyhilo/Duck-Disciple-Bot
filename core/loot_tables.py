@@ -5,7 +5,7 @@ import core.utils as utils
 
 def list(serverId=0):
     pools = db.get_all_pools(serverId)
-    if pools is not None and len(pools) < 0:
+    if pools is not None and len(pools) > 0:
         return 'Pools available for this server:\n' + '\n'.join([f'\t{pool.name}' for pool in pools])
     else:
         return 'There are no pools available on this server.'
