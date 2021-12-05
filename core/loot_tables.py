@@ -36,25 +36,28 @@ def add(serverId, poolName, entryDesc, amount=1):
 
     # Add a new result to the table
     if matchingResult is None:
-        if db.add_entry(pool.id, entryDesc, amount):
+        try:
+            db.add_entry(pool.id, entryDesc, amount)
             return f'Successfullly added result to {pool.name}'
-        else:
-            log.info(f'Failed to add result {matchingResult.name} with id {matchingResult.id} to pool {pool.name}')
+        except Exception:
+            log.info(f'Failed to add result `{entryDesc}` to pool {pool.name}')
             return 'Whoops, something went wrong trying to add this result.'
 
     # Updating an existing result.
     matchingResult.amount += amount
     if matchingResult.amount < 0:
-        if db.unset_entry(matchingResult.id):
+        try:
+            db.unset_entry(matchingResult.id)
             return 'Removed result.'
-        else:
+        except Exception:
             log.info(f'Failed to remove result {matchingResult.name} with id {matchingResult.id} from database')
             return 'Whoops, something went wrong trying to remove the result.'
 
-    if db.update_entry(matchingResult.id, matchingResult.amount):
+    try:
+        db.update_entry(matchingResult.id, matchingResult.amount)
         return 'Updated result with new amount.'
-    else:
-        log.info(f'Failed to update result {matchingResult.name} with id {matchingResult.id} from database')
+    except Exception:
+        log.info(f'Failed to update result with id {matchingResult.id} in database')
         return 'Whoops, something went wrong trying to update the result.'
 
 
@@ -67,9 +70,10 @@ def create(serverId, creatorId, poolName, isGlobal=False):
     if existing is not None:
         return 'Pool with that name already existss.'
 
-    if db.add_pool(serverId, creatorId, poolName):
+    try:
+        db.add_pool(serverId, creatorId, poolName)
         return f'Created new pool {poolName}'
-    else:
+    except Exception:
         log.info(f'Failed to creat pool {poolName}.')
         return 'Whoops, something went wrong trying to create that pool.'
 
@@ -82,8 +86,9 @@ def delete(poolName, serverId, userId):
     if pool.creator_id != userId and not utils.is_admin(userId):
         return 'You do not have permission to delete that pool.'
 
-    if db.unset_pool(pool.id):
+    try:
+        db.unset_pool(pool.id)
         return f'{pool.name} pool removed.'
-    else:
+    except Exception:
         log.info(f'Failed to remove pool {pool.name} with id {pool.id} from database')
         return f'Whoops, something went wrong trying to remove the pool named {pool.name}.'
