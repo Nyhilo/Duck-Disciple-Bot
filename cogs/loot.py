@@ -1,4 +1,3 @@
-import discord
 from discord.ext import commands
 
 from core.log import log
@@ -56,6 +55,18 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 await ctx.send(loot.info(guildId, pool))
 
         if comm == 'roll':
+            if arg is not None and amount is None:
+                amount = 1
+
+            try:
+                if arg is not None:
+                    amount = int(amount)
+            except Exception:
+                return await ctx.send('The last argument in the command should be a positive integer.')
+
+            if arg is not None and amount < 0:
+                return await ctx.send('Please send a positive integer for the extra result.')
+                
             await ctx.send(loot.roll(guildId, pool, arg, amount))
 
         if comm == 'create':
