@@ -17,13 +17,39 @@ def roll(serverId, pool, extraEntry=None, extraAmount=None):
     pass
 
 
-def add(serverId, poolName, entry, amount=1):
+def add(serverId, poolName, entryDesc, amount=1):
     '''
     Adds a number of entries to a given pool
     '''
     pool = db.get_pool(poolName)
-    db.add_entry(pool.id, entry, amount)
+    if pool is None or (pool.server_id != serverId and pool.server_id != 0):
+        return 'Could not find a pool with that name for this server.'
 
+    matchingResults = [e for e in pool.entries if e.description == entryDesc]
+    matchingResult = matchingResults[0] if len(matchingResults) else None
+
+    # Add a new result to the table
+    if matchingResult is None:
+        if db.add_entry(pool.id, entryDesc, amount):
+            return f'Successfullly added result to {pool.name}'
+        else:
+            log.info(f'Failed to add result {matchingResult.name} with id {matchingResult.id} to pool {pool.name}')
+            return 'Whoops, something went wrong trying to add this result.'
+
+    # Updating an existing result.
+    matchingResult.amount += amount
+    if matchingResult.amount < 0:
+        if db.unset_entry(matchingResult.id):
+            return 'Removed result.'
+        else:
+            log.info(f'Failed to remove result {matchingResult.name} with id {matchingResult.id} from database')
+            return 'Whoops, something went wrong trying to remove the result.'
+
+    if db.update_entry(matchingResult.id, matchingResult.amount):
+        return 'Updated result with new amount.'
+    else:
+        log.info(f'Failed to update result {matchingResult.name} with id {matchingResult.id} from database')
+        return 'Whoops, something went wrong trying to update the result.'
 
 
 def create(serverId, creatorId, poolName, isGlobal=False):
