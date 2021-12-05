@@ -22,7 +22,7 @@ def info(serverId, pool):
         return 'Could not find a pool with that name for this server.'
 
 
-def roll(serverId, poolName, extraEntry=None, extraAmount=1):
+def roll(serverId, poolName, numRolls=1, extraEntry=None, extraAmount=1):
     pool = db.get_pool(serverId, poolName)
     if pool is None:
         return 'Could not find a pool with that name for this server.'
@@ -36,9 +36,33 @@ def roll(serverId, poolName, extraEntry=None, extraAmount=1):
     if extraEntry is not None:
         pool.entries.append(Entry(0, 0, extraAmount, extraEntry))
 
-    choice = choices(pool.entries, weights=[entry.amount for entry in pool.entries])[0]
+    chosenEntries = choices(pool.entries, weights=[entry.amount for entry in pool.entries], k=numRolls)
 
-    return choice.description
+    # This might go over the discord character limits, so we need to break the message up
+    messageLimit = 2000
+
+    # A list of all result strings, bullet pointed
+    results = [f'* {entry.description}\n' for entry in chosenEntries]
+
+    # Initialize the first message in the body
+    body = [f'Result pulling from {pool.name}:\n```\n']
+
+    index = 0
+    for result in results:
+        if len(body[index] + result) > messageLimit:
+            # Close the current message
+            body[index] += '```'
+            # Add a new message to the list
+            body.append('```\n')
+            # Increment counter so we can add to the new message
+            index += 1
+
+        body[index] += result
+
+    # Close the most recent message in the list
+    body[index] += '```'
+
+    return body
 
 
 def add(serverId, poolName, entryDesc, amount=1):

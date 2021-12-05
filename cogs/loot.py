@@ -22,7 +22,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '    Get a description of the entries in a given pool\n\n'
               '  pool roll <poolName>\n'
               '    Pull a random entry from the given pool\n\n'
-              '  pool roll <poolName> <"Extra Result"> <amount>\n'
+              '  pool roll <poolName> <amount>\n'
+              '    Pull multiple random entries from the given pool. Limit 100.\n\n'
+              '  pool roll <poolName> <amount> <"Extra Result"> <amount>\n'
               '    Add a number of temporary entries before pulling\n\n'
               '  pool create <poolName>\n'
               '    Create a new pool in the current server\n\n'
@@ -33,14 +35,14 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '  pool remove <poolName> <"Result"> <amount>\n'
               '    Remove entries from a result. Deletes the result if it drops below 0.\n')
     )
-    async def pool(self, ctx, comm=None, pool=None, arg=None, amount=None):
+    async def pool(self, ctx, comm=None, pool=None, arg1=None, arg2=None, arg3=None):
         try:
-            await self.handle_pool(ctx, comm, pool, arg, amount)
+            await self.handle_pool(ctx, comm, pool, arg1, arg2, arg3)
         except Exception as e:
             log.exception(e)
             await ctx.send(config.GENERIC_ERROR)
 
-    async def handle_pool(self, ctx, comm, pool, arg, amount):
+    async def handle_pool(self, ctx, comm, pool, arg1, arg2, arg3):
         comm = comm.lower()
         guildId = ctx.guild.id if ctx.guild else 0
         authorId = ctx.message.author.id
@@ -55,28 +57,55 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 await ctx.send(loot.info(guildId, pool))
 
         if comm == 'roll':
-            if arg is not None and amount is None:
+            numRolls = arg1
+            extraEntry = arg2
+            amount = arg3
+
+            if numRolls is None:
+                numRolls = 1
+
+            if extraEntry is not None and amount is None:
                 amount = 1
 
             try:
-                if arg is not None:
-                    amount = int(amount)
-            except Exception:
-                return await ctx.send('The last argument in the command should be a positive integer.')
+                numRolls = int(numRolls)
 
-            if arg is not None and amount < 0:
-                return await ctx.send('Please send a positive integer for the extra result.')
-                
-            await ctx.send(loot.roll(guildId, pool, arg, amount))
+                if extraEntry is not None:
+                    amount = int(amount)
+
+            except Exception:
+                return await ctx.send('The number of rolls and extra entries should be integers.')
+
+            if numRolls < 0 or (extraEntry is not None and amount < 0):
+                return await ctx.send('The number of rolls and extra entries should be positive integers.')
+
+            if numRolls > 20:
+                return await ctx.send('Pulling from pools is limited to 20 pulls.')
+
+            async with ctx.typing():
+                pages = loot.roll(guildId, pool, numRolls, extraEntry, amount)
+                for page in pages:
+                    await ctx.send(page)
+
+                return
 
         if comm == 'create':
-            isGlobal = arg is not None and arg.lower() == 'global'
+            if len(pool) > 100:
+                return await ctx.send('Please limit pool names to 100 characters')
+
+            isGlobal = arg1 is not None and arg1.lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
             await ctx.send(loot.delete(pool, guildId, authorId))
 
         if comm == 'add':
+            resultDesc = arg1
+            amount = arg2
+
+            if len(resultDesc) > 1000:
+                return await ctx.send('Pleas limit result descriptions to 1000 characters')
+
             if amount is None:
                 amount = 1
 
@@ -91,9 +120,12 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if amount is not None and int(amount) > 1000:
                 return await ctx.send('Adding entries to a result is limited to 1000 entries at a time.')
 
-            await ctx.send(loot.add(guildId, pool, arg, amount))
+            await ctx.send(loot.add(guildId, pool, resultDesc, amount))
 
         if comm == 'remove':
+            resultDesc = arg1
+            amount = arg2
+
             if amount is None:
                 amount = 1
 
@@ -105,7 +137,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if amount < 0:
                 return await ctx.send('Please send a positive integer.')
 
-            await ctx.send(loot.add(guildId, pool, arg, -amount))
+            await ctx.send(loot.add(guildId, pool, resultDesc, -amount))
 
 
 def setup(bot):
