@@ -210,6 +210,6 @@ def db_modify(query, params, db=SQLITE3_DB_NAME):
 
 
 # Maintenance Methods
-def set_table():
+def set_tables():
     _create_table_pools(SQLITE3_DB_NAME)
     _create_table_pool_entries(SQLITE3_DB_NAME)
