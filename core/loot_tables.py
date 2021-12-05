@@ -78,6 +78,9 @@ def add(serverId, poolName, entryDesc, amount=1):
 
     # Add a new result to the table
     if matchingResult is None:
+        if amount < 1:
+            return f'Cannot remove from result "{entryDesc}" because it does not exist.'
+
         try:
             db.add_entry(pool.id, entryDesc, amount)
             return f'Successfullly added result to {pool.name}'
