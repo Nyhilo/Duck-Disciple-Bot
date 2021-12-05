@@ -66,9 +66,22 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(loot.delete(pool, guildId, authorId))
 
         if comm == 'add':
+            try:
+                amount = int(amount)
+            except Exception:
+                return await ctx.send('The last argument in the command should be an integer.')
+
+            if amount is not None and int(amount) > 1000:
+                return await ctx.send('Adding entries to a result is limited to 1000 entries at a time.')
+
             await ctx.send(loot.add(guildId, pool, arg, amount))
 
         if comm == 'remove':
+            try:
+                amount = int(amount)
+            except Exception:
+                return await ctx.send('The last argument in the command should be an integer.')
+
             await ctx.send(loot.add(guildId, pool, arg, -amount))
 
 
