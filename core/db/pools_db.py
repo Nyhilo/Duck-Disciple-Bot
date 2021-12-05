@@ -87,9 +87,9 @@ def _create_table_pool_entries(db):
 def get_all_pools(serverId):
     results = db_get(
         f'''
-        SELECT Id, ServerId, CreatorId, Name
+        SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
-        WHERE ServerId = :serverId OR ServerId = 0
+        WHERE Active = 1 AND ServerId = :serverId OR ServerId = 0
         ''', [serverId]
     )
 
@@ -105,9 +105,9 @@ def get_all_pools(serverId):
 def get_pool(poolName):
     results = db_get(
         f'''
-        SELECT Id, ServerId, CreatorId, Name
+        SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
-        WHERE Name = :poolName
+        WHERE Active = 1 AND Name = :poolName
         ''', [poolName]
     )
 
@@ -123,9 +123,9 @@ def get_pool(poolName):
 def get_entries(poolId, parentPool=None):
     results = db_get(
         f'''
-        SELECT Id, ParentPoolId, Description, Amount
+        SELECT Id, ParentPoolId, Description, Amount, Active
         FROM {DB_TABLE_POOL_ENTRIES_NAME}
-        WHERE ParentPoolId = :poolId
+        WHERE Active = 1 AND ParentPoolId = :poolId
         ''', [poolId]
     )
 
@@ -153,6 +153,26 @@ def add_entry(poolId, description, amount):
         (ParentPoolId, Description, Amount)
         Values (:poolId, :description, :amount)
         ''', [poolId, description, amount]
+    )
+
+
+def unset_pool(poolId):
+    return db_modify(
+        f'''
+        UPDATE {DB_TABLE_POOLS_NAME}
+        SET Active = 0
+        WHERE Id = :poolId
+        ''', [poolId]
+    )
+
+
+def unset_entry(entryId):
+    return db_modify(
+        f'''
+        UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
+        SET Active = 0
+        WHERE Id = :entryId
+        ''', [entryId]
     )
 
 
