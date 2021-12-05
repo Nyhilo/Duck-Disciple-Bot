@@ -18,19 +18,19 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
         brief='Pull from weighted pools of options',
         help=('This command supports the following options:\n'
               '  pool list\n'
-              '    List avaialable pools you can pull from.\n'
+              '    List avaialable pools you can pull from.\n\n'
               '  pool info <poolName>\n'
-              '    Get a description of the entries in a given pool\n'
+              '    Get a description of the entries in a given pool\n\n'
               '  pool roll <poolName>\n'
-              '    Pull a random entry from the given pool\n'
+              '    Pull a random entry from the given pool\n\n'
               '  pool roll <poolName> <"Extra Result"> <amount>\n'
-              '    Add a number of temporary entries before pulling\n'
+              '    Add a number of temporary entries before pulling\n\n'
               '  pool create <poolName>\n'
-              '    Create a new pool in the current server\n'
+              '    Create a new pool in the current server\n\n'
               '  pool delete <poolName>\n'
-              '    Delete a pool. Can only be deleted by the original author or an admin\n'
+              '    Delete a pool. Can only be deleted by the original author or an admin\n\n'
               '  pool add <poolName> <"Result"> <amount>\n'
-              '    Add a number of result entries to a given pool\n'
+              '    Add a number of result entries to a given pool\n\n'
               '  pool remove <poolName> <"Result"> <amount>\n'
               '    Remove entries from a result. Deletes the result if it drops below 0.\n')
     )
@@ -59,7 +59,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(loot.roll(guildId, pool, arg, amount))
 
         if comm == 'create':
-            isGlobal = arg.lower() == 'global'
+            isGlobal = arg is not None and arg.lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
