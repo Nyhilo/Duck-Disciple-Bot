@@ -53,7 +53,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if pool is None:
                 await ctx.send(loot.list(guildId))
             else:
-                await ctx.send(loot.info(pool))
+                await ctx.send(loot.info(guildId, pool))
 
         if comm == 'roll':
             await ctx.send(loot.roll(guildId, pool, arg, amount))

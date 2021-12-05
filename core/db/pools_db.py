@@ -102,13 +102,13 @@ def get_all_pools(serverId):
     return pools
 
 
-def get_pool(poolName):
+def get_pool(serverId, poolName):
     results = db_get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
-        WHERE Active = 1 AND Name = :poolName
-        ''', [poolName]
+        WHERE Active = 1 AND (ServerId = :serverId OR ServerId = 0) AND Name = :poolName
+        ''', [serverId, poolName]
     )
 
     r = results[0] if len(results) > 0 else None
