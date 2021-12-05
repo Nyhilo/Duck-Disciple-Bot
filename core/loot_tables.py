@@ -58,8 +58,14 @@ def create(serverId, creatorId, poolName, isGlobal=False):
 
     existing = db.get_pool(poolName)
 
-    if not existing:
-        db.add_pool(serverId, creatorId, poolName)
+    if existing is not None:
+        return 'Pool with that name already existss.'
+
+    if db.add_pool(serverId, creatorId, poolName):
+        return f'Created new pool {poolName}'
+    else:
+        log.info(f'Failed to creat pool {poolName}.')
+        return 'Whoops, something went wrong trying to create that pool.'
 
 
 def remove(poolName, userId):
