@@ -83,99 +83,94 @@ def _create_table_pool_entries(db):
 
 
 # Repository Methods
-def get_all_pools(serverId, db=SQLITE3_DB_NAME, table=DB_TABLE_POOLS_NAME):
-    conn = sqlite3.connect(db)
-    conn.row_factory = sqlite3.Row
-
-    cursor = conn.execute(
+def get_all_pools(serverId):
+    results = db_get(
         f'''
         SELECT Id, ServerId, CreatorId, Name
-        FROM {table}
+        FROM {DB_TABLE_POOLS_NAME}
         WHERE ServerId = :serverId OR ServerId = 0
         ''', [serverId]
     )
 
-    rows = cursor.fetchall()
-    conn.close()
-
     pools = []
-    for d in [dict(row) for row in rows]:
-        pool = Pool(d['Id'], d['Name'], d['ServerId'], d['CreatorId'], None)
-        pool.entries = get_entries(d['Id'], pool)
+    for r in results:
+        pool = Pool(r['Id'], r['Name'], r['ServerId'], r['CreatorId'], None)
+        pool.entries = get_entries(r['Id'], pool)
         pools.append(pool)
 
     return pools
 
 
-def get_pool(poolName, db=SQLITE3_DB_NAME, table=DB_TABLE_POOLS_NAME):
-    conn = sqlite3.connect(db)
-    conn.row_factory = sqlite3.Row
-    
-    cursor = conn.execute(
+def get_pool(poolName):
+    results = db_get(
         f'''
         SELECT Id, ServerId, CreatorId, Name
-        FROM {table}
+        FROM {DB_TABLE_POOLS_NAME}
         WHERE Name = :poolName
         ''', [poolName]
     )
 
-    rows = cursor.fetchall()
-    conn.close()
+    r = results[0] if len(results) > 0 else None
+    pool = Pool(r['Id'], r['Name'], r['ServerId'], r['CreatorId'], None) if r else None
 
-    d = [dict(row) for row in rows][0]
-    pool = Pool(d['Id'], d['Name'], d['ServerId'], d['CreatorId'], None)
-    pool.entries = get_entries(d['Id'], pool)
+    if pool:
+        pool.entries = get_entries(r['Id'], pool)
 
     return pool
 
 
-def get_entries(poolId, parentPool=None, db=SQLITE3_DB_NAME, table=DB_TABLE_POOL_ENTRIES_NAME):
-    conn = sqlite3.connect(db)
-    conn.row_factory = sqlite3.Row
-
-    cursor = conn.execute(
+def get_entries(poolId, parentPool=None):
+    results = db_get(
         f'''
         SELECT Id, ParentPoolId, Description, Amount
-        FROM {table}
+        FROM {DB_TABLE_POOL_ENTRIES_NAME}
         WHERE ParentPoolId = :poolId
         ''', [poolId]
     )
 
-    rows = cursor.fetchall()
-    conn.close()
-
     entries = []
-    for d in [dict(row) for row in rows]:
-        entries.append(Entry(d['Id'], parentPool, d['Amount'], d['Description']))
+    for r in results:
+        entries.append(Entry(r['Id'], parentPool, r['Amount'], r['Description']))
 
     return entries
 
 
-def add_pool(serverId, creatorId, poolName, db=SQLITE3_DB_NAME, table=DB_TABLE_POOLS_NAME):
-    conn = sqlite3.connect(db)
-    cursor = conn.execute(
+def add_pool(serverId, creatorId, poolName):
+    return db_modify(
         f'''
-        INSERT INTO {table}
+        INSERT INTO {DB_TABLE_POOLS_NAME}
         (ServerId, CreatorId, Name)
         Values (:serverId, :creatorId, :poolName)
         ''', [serverId, creatorId, poolName]
     )
 
-    conn.commit()
-    conn.close()
 
-    return cursor.lastrowid
-
-
-def add_entry(poolId, description, amount, db=SQLITE3_DB_NAME, table=DB_TABLE_POOL_ENTRIES_NAME):
-    conn = sqlite3.connect(db)
-    cursor = conn.execute(
+def add_entry(poolId, description, amount):
+    return db_modify(
         f'''
-        INSERT INTO {table}
+        INSERT INTO {DB_TABLE_POOL_ENTRIES_NAME}
         (ParentPoolId, Description, Amount)
         Values (:poolId, :description, :amount)
         ''', [poolId, description, amount]
     )
+
+
+# Database Access
+def db_get(query, params, db=SQLITE3_DB_NAME):
+    conn = sqlite3.connect(db)
+    conn.row_factory = sqlite3.Row
+
+    cursor = conn.execute(query, params)
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [dict(row) for row in rows]
+
+
+def db_modify(query, params, db=SQLITE3_DB_NAME):
+    conn = sqlite3.connect(db)
+    cursor = conn.execute(query, params)
 
     conn.commit()
     conn.close()

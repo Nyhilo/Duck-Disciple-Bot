@@ -11,10 +11,9 @@ class Pool():
         for entry in self.entries:
             body += f'{entry.amount:>7} | {entry.description}\n'
 
-        return body
+        body = f'{self.name.title()} Pool:\n```\n{body}\n```'
 
-    def __repr__(self):
-        return self.__str__()
+        return body
 
 
 class Entry():
