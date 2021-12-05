@@ -7,6 +7,9 @@ class Pool():
         self.entries = entries
 
     def __str__(self):
+        if len(self.entries) == 0:
+            return '```This pool is empty.```'
+
         body = 'Entries | Description\n'
         for entry in self.entries:
             body += f'{entry.amount:>7} | {entry.description}\n'
