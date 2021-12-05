@@ -34,9 +34,9 @@ def _create_table_pools(db):
         CREATE TABLE {table}
         (
             Id          INTEGER PRIMARY KEY     AUTOINCREMENT,
-            ServerId    TEXT    NOT NULL,
-            CreatorId   TEXT    NOT NULL,
-            Name        INT     NOT NULL,
+            ServerId    INT     NOT NULL,
+            CreatorId   INT     NOT NULL,
+            Name        TEXT    NOT NULL,
             Active      INT     NOT NULL    DEFAULT 1
         )
         '''
@@ -67,9 +67,10 @@ def _create_table_pool_entries(db):
         CREATE TABLE {table}
         (
             Id              INTEGER PRIMARY KEY     AUTOINCREMENT,
-            ParentPoolId    TEXT    NOT NULL,
-            Description     INT     NOT NULL,
-            Amount          INT     NOT NULL    DEFAULT 1
+            ParentPoolId    INT     NOT NULL,
+            Description     TEXT    NOT NULL,
+            Amount          INT     NOT NULL    DEFAULT 1,
+            Active          INT     NOT NULL    DEFAULT 1
         )
         '''
     )
