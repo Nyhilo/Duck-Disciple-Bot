@@ -89,7 +89,7 @@ def get_all_pools(serverId):
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
-        WHERE Active = 1 AND ServerId = :serverId OR ServerId = 0
+        WHERE Active = 1 AND (ServerId = :serverId OR ServerId = 0)
         ''', [serverId]
     )
 
