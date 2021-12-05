@@ -1,5 +1,8 @@
+from random import choices
+
 from core.log import log
 import core.db.pools_db as db
+from core.db.models.pool_models import Entry
 import core.utils as utils
 
 
@@ -19,8 +22,23 @@ def info(serverId, pool):
         return 'Could not find a pool with that name for this server.'
 
 
-def roll(serverId, pool, extraEntry=None, extraAmount=None):
-    pass
+def roll(serverId, poolName, extraEntry=None, extraAmount=1):
+    pool = db.get_pool(serverId, poolName)
+    if pool is None:
+        return 'Could not find a pool with that name for this server.'
+
+    if len(pool.entries) == 0 and extraEntry is None:
+        return 'There are no results in this pool to roll on.'
+
+    if len(pool.entries) == 0 and extraEntry is not None:
+        return extraEntry
+
+    if extraEntry is not None:
+        pool.entries.append(Entry(0, 0, extraAmount, extraEntry))
+
+    choice = choices(pool.entries, weights=[entry.amount for entry in pool.entries])[0]
+
+    return choice.description
 
 
 def add(serverId, poolName, entryDesc, amount=1):
