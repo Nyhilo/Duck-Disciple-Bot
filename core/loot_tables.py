@@ -87,7 +87,7 @@ def add(serverId, poolName, entryDesc, amount=1):
 
     # Updating an existing result.
     matchingResult.amount += amount
-    if matchingResult.amount < 0:
+    if matchingResult.amount < 1:
         try:
             db.unset_entry(matchingResult.id)
             return 'Removed result.'
