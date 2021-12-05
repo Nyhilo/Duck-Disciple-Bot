@@ -17,21 +17,22 @@ def roll(serverId, pool, extraEntry=None, extraAmount=None):
 
 
 def add(serverId, poolName, entry, amount=1):
+    '''
+    Adds a number of entries to a given pool
+    '''
     pool = db.get_pool(poolName)
     db.add_entry(pool.id, entry, amount)
 
 
-def remove(serverId, pool, entry, amount=-1):
-    pass
 
-
-def create(serverId, creatorId, pool, isGlobal=False):
+def create(serverId, creatorId, poolName, isGlobal=False):
     if isGlobal and utils.is_admin(creatorId):
         serverId = 0
 
-    # TODO: Check if pool already exists
-    db.add_pool(serverId, creatorId, pool)
+    existing = db.get_pool(poolName)
 
+    if not existing:
+        db.add_pool(serverId, creatorId, poolName)
 
 def remove(serverId, creatorId, pool):
     pass
