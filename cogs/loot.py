@@ -114,7 +114,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             except Exception:
                 return await ctx.send('The last argument in the command should be a positive integer.')
 
-            if amount < 0:
+            if amount < 1:
                 return await ctx.send('Please send a positive integer.')
 
             if amount is not None and int(amount) > 1000:
