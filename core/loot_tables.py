@@ -113,7 +113,7 @@ def create(serverId, creatorId, poolName, isGlobal=False):
     existing = db.get_pool(serverId, poolName)
 
     if existing is not None:
-        return 'Pool with that name already existss.'
+        return 'Pool with that name already exists.'
 
     try:
         db.add_pool(serverId, creatorId, poolName)
