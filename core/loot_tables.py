@@ -110,6 +110,9 @@ def create(serverId, creatorId, poolName, isGlobal=False):
     if isGlobal and utils.is_admin(creatorId):
         serverId = 0
 
+    if isGlobal and not utils.is_admin(creatorId):
+        return 'You do not have permission to create global pools.'
+
     existing = db.get_pool(serverId, poolName)
 
     if existing is not None:
