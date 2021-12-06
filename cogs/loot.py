@@ -43,6 +43,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(config.GENERIC_ERROR)
 
     async def handle_pool(self, ctx, comm, pool, arg1, arg2, arg3):
+        if pool is None:
+            return await ctx.send('Please specify the name of the pool you wish operate on.')
+
         comm = comm.lower()
         guildId = ctx.guild.id if ctx.guild else 0
         authorId = ctx.message.author.id
@@ -91,7 +94,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
         if comm == 'create':
             if len(pool) > 100:
-                return await ctx.send('Please limit pool names to 100 characters')
+                return await ctx.send('Please limit pool names to 100 characters.')
 
             isGlobal = arg1 is not None and arg1.lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
@@ -102,6 +105,12 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
         if comm == 'add':
             resultDesc = arg1
             amount = arg2
+            
+            if pool is None:
+                return await ctx.send('Please specify a pool to remove from.')
+
+            if resultDesc is None:
+                return await ctx.send('Please specify a result to remove.')
 
             if len(resultDesc) > 1000:
                 return await ctx.send('Pleas limit result descriptions to 1000 characters')
@@ -125,6 +134,12 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
         if comm == 'remove':
             resultDesc = arg1
             amount = arg2
+
+            if pool is None:
+                return await ctx.send('Please specify a pool to remove from.')
+
+            if resultDesc is None:
+                return await ctx.send('Please specify a result to remove.')
 
             if amount is None:
                 amount = 1
