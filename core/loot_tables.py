@@ -83,7 +83,7 @@ def add(serverId, poolName, entryDesc, amount=1):
 
         try:
             db.add_entry(pool.id, entryDesc, amount)
-            return f'Successfullly added result to {pool.name}'
+            return f'Successfully added result to {pool.name}'
         except Exception:
             log.info(f'Failed to add result `{entryDesc}` to pool {pool.name}')
             return 'Whoops, something went wrong trying to add this result.'
