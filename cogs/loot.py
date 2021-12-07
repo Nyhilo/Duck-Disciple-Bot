@@ -57,6 +57,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 await ctx.send(loot.info(guildId, pool))
 
         if comm == 'roll':
+            if pool is None:
+                return await ctx.send('Please specify the name of the pool you wish operate on.')
+
             numRolls = arg1
             extraEntry = arg2
             amount = arg3
@@ -90,8 +93,11 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 return
 
         if comm == 'create':
+            if pool is None:
+                return await ctx.send('Please specify the name of the pool you wish operate on.')
+
             if len(pool) > 100:
-                return await ctx.send('Please limit pool names to 100 characters')
+                return await ctx.send('Please limit pool names to 100 characters.')
 
             isGlobal = arg1 is not None and arg1.lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
@@ -102,6 +108,12 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
         if comm == 'add':
             resultDesc = arg1
             amount = arg2
+
+            if pool is None:
+                return await ctx.send('Please specify a pool to remove from.')
+
+            if resultDesc is None:
+                return await ctx.send('Please specify a result to remove.')
 
             if len(resultDesc) > 1000:
                 return await ctx.send('Pleas limit result descriptions to 1000 characters')
@@ -114,7 +126,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             except Exception:
                 return await ctx.send('The last argument in the command should be a positive integer.')
 
-            if amount < 0:
+            if amount < 1:
                 return await ctx.send('Please send a positive integer.')
 
             if amount is not None and int(amount) > 1000:
@@ -123,8 +135,17 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(loot.add(guildId, pool, resultDesc, amount))
 
         if comm == 'remove':
+            if pool is None:
+                return await ctx.send('Please specify the name of the pool you wish operate on.')
+
             resultDesc = arg1
             amount = arg2
+
+            if pool is None:
+                return await ctx.send('Please specify a pool to remove from.')
+
+            if resultDesc is None:
+                return await ctx.send('Please specify a result to remove.')
 
             if amount is None:
                 amount = 1

@@ -9,7 +9,9 @@ import core.utils as utils
 def list(serverId=0):
     pools = db.get_all_pools(serverId)
     if pools is not None and len(pools) > 0:
-        return 'Pools available for this server:\n' + '\n'.join([f'\t{pool.name}' for pool in pools])
+        print([pool.id for pool in pools])
+        body = '\n'.join([f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
+        return f'Pools available for this server:\n{body}'
     else:
         return 'There are no pools available on this server.'
 
@@ -78,16 +80,19 @@ def add(serverId, poolName, entryDesc, amount=1):
 
     # Add a new result to the table
     if matchingResult is None:
+        if amount < 1:
+            return f'Cannot remove from result "{entryDesc}" because it does not exist.'
+
         try:
             db.add_entry(pool.id, entryDesc, amount)
-            return f'Successfullly added result to {pool.name}'
+            return f'Successfully added result to {pool.name}'
         except Exception:
             log.info(f'Failed to add result `{entryDesc}` to pool {pool.name}')
             return 'Whoops, something went wrong trying to add this result.'
 
     # Updating an existing result.
     matchingResult.amount += amount
-    if matchingResult.amount < 0:
+    if matchingResult.amount < 1:
         try:
             db.unset_entry(matchingResult.id)
             return 'Removed result.'
@@ -104,13 +109,16 @@ def add(serverId, poolName, entryDesc, amount=1):
 
 
 def create(serverId, creatorId, poolName, isGlobal=False):
-    if isGlobal and utils.is_admin(creatorId):
+    if isGlobal and utils.is_admin(creatorId, serverId):
         serverId = 0
+
+    if isGlobal and not utils.is_admin(creatorId, serverId):
+        return 'You do not have permission to create global pools.'
 
     existing = db.get_pool(serverId, poolName)
 
     if existing is not None:
-        return 'Pool with that name already existss.'
+        return 'Pool with that name already exists.'
 
     try:
         db.add_pool(serverId, creatorId, poolName)
