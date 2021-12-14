@@ -85,16 +85,13 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if numRolls > 20:
                 return await ctx.send('Pulling from pools is limited to 20 pulls.')
 
-            async with ctx.typing():
-                pages = loot.roll(guildId, pool, numRolls, extraEntry, amount)
+            pages = loot.roll(guildId, pool, numRolls, extraEntry, amount)
 
-                if type(pages) != list:
-                    return await ctx.send(pages)
+            if type(pages) != list:
+                return await ctx.send(pages)
 
-                for page in pages:
-                    await ctx.send(page)
-
-                return
+            for page in pages:
+                await ctx.send(page)
 
         if comm == 'create':
             if pool is None:
