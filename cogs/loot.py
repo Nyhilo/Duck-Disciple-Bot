@@ -87,6 +87,10 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
             async with ctx.typing():
                 pages = loot.roll(guildId, pool, numRolls, extraEntry, amount)
+
+                if type(pages) != list:
+                    return await ctx.send(pages)
+
                 for page in pages:
                     await ctx.send(page)
 
