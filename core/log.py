@@ -4,7 +4,7 @@ from config.config import LOG_FILE, LOG_DEBUG_TO_FILE
 
 # Courtesy https://stackoverflow.com/a/49562361
 log = logging.getLogger('discord')
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 formatter = logging.Formatter(
     '%(asctime)s:%(levelname)s:%(name)s: %(message)s'
