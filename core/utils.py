@@ -1,4 +1,4 @@
-from config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS
+from config.config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS
 from random import choice
 
 
