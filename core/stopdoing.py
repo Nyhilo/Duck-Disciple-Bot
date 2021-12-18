@@ -1,5 +1,7 @@
 import discord
 from random import choices, random
+from time import sleep
+import asyncio
 
 import config.config as config
 from core.log import log
@@ -18,9 +20,9 @@ class Option():
         return await self.func(ctx)
 
 
-async def choose(ctx):
+async def choose(bot, ctx):
     # We have a fixed chance of just posting the usual image
-    if random() < .75:
+    if random() < .6:
         return await send_image(ctx, 'stop doing nomic.png')
 
     # If we don't post that one, we select from the following list
@@ -42,6 +44,7 @@ async def choose(ctx):
         Option(thistbh, 10),
         Option(amogus, 10),
         Option(bossy, 1),
+        Option(downloadupdate, 5, bot)
     ]
 
     option = choices(options, weights=[option.weight for option in options])[0]
@@ -77,3 +80,50 @@ async def amogus(ctx):
 async def bossy(ctx):
     await ctx.send('*"Stop doing nomic", "what time is it?", "trungify this meme", "pool roll some bullshit".*\n\n'
                    "Don't you all have anything better to do?")
+
+
+async def downloadupdate(ctx, bot):
+    await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, would you like to download it?')
+
+    yeses = ['yes', 'ye', 'yeah', 'y']
+    nos = ['no', 'nah', 'nope', 'n']
+
+    def check(m):
+        return m.channel == ctx.channel and (m.content.lower() in yeses or m.content.lower() in nos)
+
+    try:
+        response = await bot.wait_for('message', timeout=60, check=check)
+
+        if response.content in nos:
+            sleep(1)
+            return await ctx.send('well, fine then. be that way I guess...')
+
+        if response.content in yeses:
+            msg = await ctx.send('Downloading: `[          ]` ')
+            sleep(1)
+            await msg.edit(content='Downloading: `[||        ]` 20%')
+            sleep(2.5)
+            await msg.edit(content='Downloading: `[||||      ]` 42%')
+            sleep(2.5)
+            await msg.edit(content='Downloading: `[|||||||   ]` 69% (nice)')
+            sleep(2.5)
+            await msg.edit(content='Downloading: `[||||||||| ]` 91%')
+            sleep(3)
+            await msg.edit(content='Downloading: `[||||||||||]` 96%')
+            sleep(4)
+            await msg.edit(content='Downloading: `[||||||||||]` 99%')
+            sleep(1.5)
+            await msg.edit(content='Downloading: `[||||||||||]` 99%.')
+            sleep(1.5)
+            await msg.edit(content='Downloading: `[||||||||||]` 99%..')
+            sleep(1.5)
+            await msg.edit(content='Downloading: `[||||||||||]` 99%...')
+            sleep(3)
+            await msg.edit(content='Downloading: `[||||||||||]` 99%... ERROR')
+            sleep(2)
+            await ctx.send('shit.')
+            sleep(2)
+            await ctx.send("uhh... let's just try that again later")
+
+    except asyncio.TimeoutError:
+        await ctx.send("Well fine then. Ignore me why don't you...")

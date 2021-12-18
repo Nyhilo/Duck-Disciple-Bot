@@ -51,7 +51,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['sdn', 'stahp'])
     async def stopdoingnomic(self, ctx):
-        await stopdoing.choose(ctx)
+        await stopdoing.choose(self.bot, ctx)
 
     @commands.command(
         brief='Draw a number of cards',
