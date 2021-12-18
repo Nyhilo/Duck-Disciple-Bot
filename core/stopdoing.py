@@ -1,5 +1,5 @@
 import discord
-from random import choices
+from random import choices, random
 
 import config.config as config
 from core.log import log
@@ -19,8 +19,12 @@ class Option():
 
 
 async def choose(ctx):
+    # We have a fixed chance of just posting the usual image
+    if random() < .75:
+        return await send_image(ctx, 'stop doing nomic.png')
+
+    # If we don't post that one, we select from the following list
     options = [
-        Option(send_image, 500, 'stop doing nomic.png'),
         Option(send_image, 10, 'absolute fools.png'),
         Option(send_image, 10, 'become unpoderable.png'),
         Option(send_image, 10, 'big brain granny.png'),
