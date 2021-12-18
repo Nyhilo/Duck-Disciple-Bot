@@ -70,7 +70,7 @@ async def hi(ctx):
 
 
 async def thistbh(ctx):
-    await ctx.send('<:this:730549270532325456>')
+    await ctx.send('<:thistbh:921574440813346897>')
 
 
 async def amogus(ctx):
