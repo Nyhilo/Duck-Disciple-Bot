@@ -12,7 +12,10 @@ class Option():
         self.arg = arg
 
     async def execute(self, ctx):
-        await self.func(ctx, self.arg)
+        if self.arg:
+            return await self.func(ctx, self.arg)
+
+        return await self.func(ctx)
 
 
 async def choose(ctx):
@@ -31,6 +34,10 @@ async def choose(ctx):
         Option(send_image, 10, 'stop doing.png'),
         Option(send_image, 10, 'trungified stop doing.png'),
         Option(send_image, 10, 'you could make a nomic.png'),
+        Option(hi, 5),
+        Option(thistbh, 10),
+        Option(amogus, 10),
+        Option(bossy, 1),
     ]
 
     option = choices(options, weights=[option.weight for option in options])[0]
@@ -49,3 +56,20 @@ async def send_image(ctx, filename):
             f = discord.File(file, filename=filename)
 
         await ctx.send(file=f)
+
+
+async def hi(ctx):
+    await ctx.send('hi```\n```')
+
+
+async def thistbh(ctx):
+    await ctx.send('<:this:730549270532325456>')
+
+
+async def amogus(ctx):
+    await ctx.send('ඞ')
+
+
+async def bossy(ctx):
+    await ctx.send('*"Stop doing nomic", "what time is it?", "trungify this meme", "pool roll some bullshit".*\n\n'
+                   "Don't you all have anything better to do?")
