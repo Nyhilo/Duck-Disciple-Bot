@@ -7,6 +7,7 @@ from core.log import log
 import core.nomic_time as nomic_time
 import core.sha as shalib
 import core.utils as utils
+import core.stopdoing as stopdoing
 
 
 class Misc(commands.Cog, name='Miscellaneous'):
@@ -50,11 +51,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['sdn', 'stahp'])
     async def stopdoingnomic(self, ctx):
-        async with ctx.typing():
-            with open(f'{config.SDN_DIR}/stop_doing_nomic.png', 'rb') as file:
-                f = discord.File(file, filename='stop_doing_nomic.png')
-
-            await ctx.send(file=f)
+        await stopdoing.choose(ctx)
 
     @commands.command(
         brief='Draw a number of cards',
