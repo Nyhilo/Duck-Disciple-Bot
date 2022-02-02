@@ -133,9 +133,8 @@ def parse_remind_message(_msg, createdAt=None):
         try:
             number = float(parts[0])
         except ValueError:
-            return (None, ('Couldn\'t understand your time format. '
-                           'You might have an extra comma in there confusing things. '
-                           f'See `{PREFIX}help remind` for more details.'))
+            return (None, ('Couldn\'t understand your time format or you might have an extra semicolon in there '
+                           f'confusing things. See `{PREFIX}help remind` for more details.'))
 
         timeUnit = parts[1]
         span = nomic_time.parse_timespan_by_units(number, timeUnit)
