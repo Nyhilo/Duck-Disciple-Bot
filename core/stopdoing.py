@@ -28,7 +28,7 @@ async def choose(bot, ctx):
     # If we don't post that one, we select from the following list
     options = [
         Option(send_image, 10, 'absolute fools.png'),
-        Option(send_image, 10, 'become unpoderable.png'),
+        Option(send_image, 10, 'become unponderable.png'),
         Option(send_image, 10, 'big brain granny.png'),
         Option(send_image, 10, 'birb vs ml.png'),
         Option(send_image, 10, 'mexican hankerchief.gif'),
@@ -40,6 +40,7 @@ async def choose(bot, ctx):
         Option(send_image, 10, 'stop doing.png'),
         Option(send_image, 10, 'trungified stop doing.png'),
         Option(send_image, 10, 'you could make a nomic.png'),
+        Option(send_image, 10, 'stop digging here.png'),
         Option(hi, 5),
         Option(thistbh, 10),
         Option(amogus, 10),

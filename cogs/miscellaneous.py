@@ -49,7 +49,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
             log.exception(e)
             await ctx.send(config.GENERIC_ERROR)
 
-    @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['sdn', 'stahp'])
+    @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['stop', 'stahp'])
     async def stopdoingnomic(self, ctx):
         await stopdoing.choose(self.bot, ctx)
 

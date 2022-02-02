@@ -36,6 +36,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '    Remove entries from a result. Deletes the result if it drops below 0.\n')
     )
     async def pool(self, ctx, comm=None, pool=None, arg1=None, arg2=None, arg3=None):
+        if comm is None:
+            return ctx.send(f'Please provide an argument. See {config.PREFIX}help pool for details.')
+
         try:
             await self.handle_pool(ctx, comm, pool, arg1, arg2, arg3)
         except Exception as e:
