@@ -48,7 +48,7 @@ def get_reminder(rowId):
 
     _reminders = db.get_reminders(f'WHERE RowId = {rowId}')
     if len(_reminders) == 0:
-        return 'No reminder found with id {rowId}.'
+        return f'No reminder found with id {rowId}.'
 
     reminder = _reminders[0]
     remindAfter = reminder['RemindAfter']
