@@ -15,9 +15,9 @@ class Cycle(commands.Cog, name='Current Cycle'):
         self.bot = bot
 
     @commands.command(
-        brief='Get information about the current relevant Cycle time',
+        brief='Get information about the time relevant to the current Cycle',
         help=('Get current time and day in UTC, as well asn any relevant '
-              'cycle information')
+              'information regarding time in the current Cycle')
     )
     async def time(self, ctx):
         try:
