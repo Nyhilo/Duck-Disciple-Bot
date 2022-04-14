@@ -19,18 +19,6 @@ class Misc(commands.Cog, name='Miscellaneous'):
         self.bot = bot
 
     @commands.command(
-        brief='Get information about the current relevant Cycle time',
-        help=('Get current time and day in UTC, as well asn any relevant '
-              'cycle information')
-    )
-    async def time(self, ctx):
-        try:
-            await ctx.send(nomic_time.get_current_utc_string())
-        except Exception as e:
-            log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
-
-    @commands.command(
         brief='Gets the SHA256 for a given input',
         help=('Gets the SHA256 hash for a given input. Note that including '
               'discord mentions may produce unexpected results.\n'
