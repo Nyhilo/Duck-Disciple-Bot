@@ -19,8 +19,9 @@ class Misc(commands.Cog, name='Miscellaneous'):
         self.bot = bot
 
     @commands.command(
-        brief='Get current time and day in UTC',
-        help='Get current time and day in UTC'
+        brief='Get information about the current relevant Cycle time',
+        help=('Get current time and day in UTC, as well asn any relevant '
+              'cycle information')
     )
     async def time(self, ctx):
         try:

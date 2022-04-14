@@ -23,9 +23,9 @@ def get_current_utc_string():
     _phase = PHASES_BY_DAY[weekday]
     _nextPhase = PHASE_CYCLE[_phase]
 
-    # I don't remember why these -1s and +1s work, but the do so... ¯\_(ツ)_/¯
-    weeksSinceStart = ((now - phaseCountStart).days // 7) + 1
-    phasesSinceStart = weeksSinceStart * 2 + (0 if _phase == _phase_two else -1)
+    # I don't remember why these -1s and +1s work, but they do so... ¯\_(ツ)_/¯
+    weeksSinceStart = ((now - phaseCountStart).days // 7)
+    phasesSinceStart = weeksSinceStart * 2 + (1 if _phase == _phase_two else 0)
     phase = 'Phase ' + utils.roman_numeralize(phasesSinceStart)
     nextPhase = 'Phase ' + utils.roman_numeralize(phasesSinceStart + 1)
     nextDay = PHASE_START[_nextPhase]
@@ -49,7 +49,7 @@ def get_current_utc_string():
 
 def utc_now():
     # for debugging
-    # return datetime(month=11, day=14, year=2021, hour=23, minute=59, second=1).replace(tzinfo=timezone.utc)
+    # return datetime(month=4, day=18, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 
     return datetime.utcnow().replace(tzinfo=timezone.utc)
 
