@@ -43,7 +43,7 @@ def get_current_utc_string():
 
     return (f'It is **{time}** on **{weekday}**, UTC\n'
             f'That means it is **{phase}**\n\n'
-            f'**{nextPhase}** starts on **{nextDay}**, which is roughly {nextDayRelativeTimestampStr}.\n'
+            f'*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\n'
             f'That is {nextDayTimestampStr} your time.')
 
 
