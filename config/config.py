@@ -112,7 +112,7 @@ CARDS = [
 
 
 # Cycle specific configurations #
-PHASE_START_DATE = (2021, 11, 1)
+PHASE_START_DATE = (2022, 4, 4)
 
 _phase_one = 'Phase I'
 _phase_two = 'Phase II'
