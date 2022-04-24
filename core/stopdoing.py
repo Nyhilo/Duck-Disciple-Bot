@@ -86,20 +86,20 @@ async def bossy(ctx):
 async def downloadupdate(ctx, bot):
     await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, would you like to download it?')
 
-    yeses = ['yes', 'ye', 'yeah', 'y']
-    nos = ['no', 'nah', 'nope', 'n']
+    yes_list = ['yes', 'ye', 'yeah', 'y']
+    no_list = ['no', 'nah', 'nope', 'n']
 
     def check(m):
-        return m.channel == ctx.channel and (m.content.lower() in yeses or m.content.lower() in nos)
+        return (m.channel == ctx or m.channel == ctx.channel) and (m.content.lower() in yes_list or m.content.lower() in no_list)
 
     try:
         response = await bot.wait_for('message', timeout=60, check=check)
 
-        if response.content in nos:
+        if response.content in no_list:
             sleep(1)
             return await ctx.send('well, fine then. be that way I guess...')
 
-        if response.content in yeses:
+        if response.content in yes_list:
             msg = await ctx.send('Downloading: `[          ]` ')
             sleep(1)
             await msg.edit(content='Downloading: `[||        ]` 20%')
