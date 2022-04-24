@@ -27,25 +27,27 @@ async def choose(bot, ctx):
 
     # If we don't post that one, we select from the following list
     options = [
-        Option(send_image, 10, 'absolute fools.png'),
-        Option(send_image, 10, 'become unponderable.png'),
+        Option(send_image, 15, 'absolute fools.png'),
+        Option(send_image, 5, 'become unponderable.png'),
         Option(send_image, 10, 'big brain granny.png'),
-        Option(send_image, 10, 'birb vs ml.png'),
-        Option(send_image, 10, 'mexican hankerchief.gif'),
-        Option(send_image, 10, 'square stop doing nomic.png'),
-        Option(send_image, 10, 'stop doing cfjs.png'),
+        Option(send_image, 5, 'birb vs ml.png'),
+        Option(send_image, 5, 'mexican hankerchief.gif'),
+        Option(send_image, 15, 'square stop doing nomic.png'),
+        Option(send_image, 15, 'stop doing cfjs.png'),
         Option(send_image, 10, 'stop doing math.png'),
-        Option(send_image, 10, 'stop doing medicine.jpg'),
+        Option(send_image, 5, 'stop doing medicine.jpg'),
         Option(send_image, 10, 'stop doing plantnomic.png'),
         Option(send_image, 10, 'stop doing.png'),
-        Option(send_image, 10, 'trungified stop doing.png'),
+        Option(send_image, 15, 'trungified stop doing.png'),
         Option(send_image, 10, 'you could make a nomic.png'),
-        Option(send_image, 10, 'stop digging here.png'),
+        Option(send_image, 5, 'stop digging here.png'),
+        Option(send_image, 10, 'stop driving cars.png'),
+        Option(send_image, 5, 'stop doing keyboards.jpg'),
         Option(hi, 5),
-        Option(thistbh, 10),
+        Option(thistbh, 15),
         Option(amogus, 10),
         Option(bossy, 1),
-        Option(downloadupdate, 5, bot)
+        Option(downloadupdate, 2, bot)
     ]
 
     option = choices(options, weights=[option.weight for option in options])[0]
