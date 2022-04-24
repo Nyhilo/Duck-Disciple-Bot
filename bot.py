@@ -23,7 +23,7 @@ TOKEN = os.getenv('TOKEN')
 
 help_command = commands.DefaultHelpCommand(no_category='Other')
 bot = commands.Bot(command_prefix=PREFIX,
-                   description=('Day Trader gets those tendies. A general-use bot '
+                   description=('Cartogrpher shows you the way. A general-use bot '
                                 'for the Infinite Nomic discord server.'),
                    help_command=help_command)
 
