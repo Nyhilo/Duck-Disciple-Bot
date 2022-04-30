@@ -3,6 +3,7 @@ from discord.ext import commands
 from core.log import log
 import config.config as config
 import core.loot_tables as loot
+from core.db.models.pool_models import Entry
 from config.config import PREFIX
 
 
@@ -90,11 +91,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if numRolls > 20:
                 return await ctx.send('Pulling from pools is limited to 20 pulls.')
 
-            # TODO: This won't be neccessary after completion of this feature
-            if extraEntries is None:
-                extraEntries = [{'result': None, 'amount': None}]
-
-            pages = loot.roll(guildId, pool, numRolls, extraEntries[0]['result'], extraEntries[0]['amount'])
+            pages = loot.roll(guildId, pool, numRolls, extraEntries)
 
             if type(pages) != list:
                 return await ctx.send(pages)
@@ -203,9 +200,11 @@ def parse_arbitrary_options(*args):
             if tail < 1:
                 raise RuntimeError
         except ValueError:
-            return (None, None, 'The number of rolls and extra entries should be integers.')
+            return (None, None, 'The number of rolls and extra entries should be integers. '
+                                f'See `{PREFIX}help pool` for more info.')
         except RuntimeError:
-            return (None, None, 'The number of rolls and extra entries should be positive integers.')
+            return (None, None, 'The number of rolls and extra entries should be positive integers. '
+                                f'See `{PREFIX}help pool` for more info.')
 
     # If the tail is our only arg, then we're good to go
     if len(args) == 1:
@@ -219,18 +218,19 @@ def parse_arbitrary_options(*args):
 
     # Just like above, all integer arguments should be positive integers
     try:
-        print(int_args)
         for i, value in enumerate(int_args):
             int_args[i] = int(value)
             if int_args[i] < 0:
                 raise RuntimeError
     except ValueError:
-        return (None, None, 'The number of rolls and extra entries should be integers.')
+        return (None, None, 'The number of rolls and extra entries should be integers. '
+                            f'See `{PREFIX}help pool` for more info.')
     except RuntimeError:
-        return (None, None, 'The number of rolls and extra entries should be positive integers.')
+        return (None, None, 'The number of rolls and extra entries should be positive integers. '
+                            f'See `{PREFIX}help pool` for more info.')
 
     # int_args and string_args are expected to be the same length, since the are derived from an even-number of elements
-    return ([{'result': string_args[i], 'amount': int_args[i]} for i, _ in enumerate(int_args)], tail, None)
+    return ([Entry(amount=int_args[i], description=string_args[i]) for i, _ in enumerate(int_args)], tail, None)
 
 
 def setup(bot):

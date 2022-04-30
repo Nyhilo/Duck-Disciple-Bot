@@ -1,5 +1,5 @@
 class Pool():
-    def __init__(self, id, name, server_id, creator_id, entries):
+    def __init__(self, id=None, name=None, server_id=None, creator_id=None, entries=[]):
         self.id = id
         self.name = name
         self.server_id = server_id
@@ -20,7 +20,7 @@ class Pool():
 
 
 class Entry():
-    def __init__(self, id, parent_pool, amount, description):
+    def __init__(self, id=None, parent_pool=None, amount=None, description=None):
         self.id = id
         self.parent_pool = parent_pool
         self.amount = amount
