@@ -17,22 +17,28 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
     @commands.command(
         brief='Pull from weighted pools of options',
         help=('Pull an <amount> of options from a specified pool. '
-              'Results are not removed between pulls when pulling multiple opitons.\n\n'
+              'Results are not removed between pulls when pulling multiple options.\n\n'
               'This command supports the following options:\n'
               '  pool list\n'
               '    List avaialable pools you can pull from.\n\n'
               '  pool info <poolName>\n'
               '    Get a description of the entries in a given pool.\n\n'
               '  pool roll <poolName> [amount]\n'
-              '    Pull a random entry from the given pool, with an optional [amount], limit 100.\n\n'
-              '  pool roll <poolName> <amount>\n'
-              '    Pull multiple random entries from the given pool. Limit 100.\n\n'
-              '  pool roll <poolName> <amount> <"Extra Result"> <amount>\n'
-              '    Add a number of temporary entries before pulling\n\n'
+              '    Pull a random entry from the given pool, with an optional [amount], limit 20.\n\n'
+
+              '  pool roll <poolName> <extraAmount> <"Extra Result"> <amount>\n'
+              '    Add a number of temporary entries before pulling.\n\n'
+              '  pool roll <poolName> <extraAmount> <"Extra Result"> <extraAmount 2> '
+              '<"Extra Restult 2"> [...] <amount>\n'
+              '    Any number of unique additional entries are allowed.\n\n'
+
               '  pool create <poolName>\n'
-              '    Create a new pool in the current server\n\n'
+              '    Create a new pool in the current server.\n\n'
+              '  pool create <poolName> global\n'
+              '    Create a new global pool visible in all servers. Only usable by admins.\n\n'
               '  pool delete <poolName>\n'
-              '    Delete a pool. Can only be deleted by the original author or an admin\n\n'
+              '    Delete a pool. Can only be deleted by the original author or an admin.\n\n'
+
               '  pool add <poolName> <"Result"> <amount>\n'
               '    Add a number of result entries to a given pool\n\n'
               '  pool remove <poolName> <"Result"> <amount>\n'
@@ -73,32 +79,22 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if pool is None:
                 return await ctx.send('Please specify the name of the pool you wish operate on.')
 
-            numRolls = args[0] if len(args) > 0 else None
-            extraEntry = args[1] if len(args) > 1 else None
-            amount = args[2] if len(args) > 2 else None
+            extraEntries, numRolls, errorMsg = parse_arbitrary_options(*args)
+
+            if errorMsg is not None:
+                return await ctx.send(errorMsg)
 
             if numRolls is None:
                 numRolls = 1
 
-            if extraEntry is not None and amount is None:
-                amount = 1
-
-            try:
-                numRolls = int(numRolls)
-
-                if extraEntry is not None:
-                    amount = int(amount)
-
-            except Exception:
-                return await ctx.send('The number of rolls and extra entries should be integers.')
-
-            if numRolls < 0 or (extraEntry is not None and amount < 0):
-                return await ctx.send('The number of rolls and extra entries should be positive integers.')
-
             if numRolls > 20:
                 return await ctx.send('Pulling from pools is limited to 20 pulls.')
 
-            pages = loot.roll(guildId, pool, numRolls, extraEntry, amount)
+            # TODO: This won't be neccessary after completion of this feature
+            if extraEntries is None:
+                extraEntries = [{'result': None, 'amount': None}]
+
+            pages = loot.roll(guildId, pool, numRolls, extraEntries[0]['result'], extraEntries[0]['amount'])
 
             if type(pages) != list:
                 return await ctx.send(pages)
@@ -181,6 +177,60 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 return await ctx.send('Please send a positive integer.')
 
             await ctx.send(loot.add(guildId, pool, resultDesc, -amount))
+
+
+def parse_arbitrary_options(*args):
+    '''
+    This expects a list of integer-string pairs, with an optional final integer.
+    For example: (5 "option 1" 6 "option 2" 10 "option 3" 15)
+
+    Returns three packaged values, (argumentPairList, optionalTailInt, optionalError)
+    Any of these may be None when recieved.
+    '''
+
+    # The list could just be empty...
+    if len(args) == 0:
+        return (None, None, None)
+
+    # There is potentially a valid tail argument if the length of the list is odd
+    # This tail could also possibly be the only argument, which is vali as well
+    tail = args[-1] if len(args) % 2 == 1 else None
+
+    # If there is a tail, it is expected to be a positive integer
+    if tail is not None:
+        try:
+            tail = int(tail)
+            if tail < 1:
+                raise RuntimeError
+        except ValueError:
+            return (None, None, 'The number of rolls and extra entries should be integers.')
+        except RuntimeError:
+            return (None, None, 'The number of rolls and extra entries should be positive integers.')
+
+    # If the tail is our only arg, then we're good to go
+    if len(args) == 1:
+        return (None, tail, None)
+
+    # If there are other arguments, every even argument is expected to be an integer amount,
+    # and every odd amount is expected to be a string (keeping in mind that we're 0-indexed)
+    # And of course we trim off the tail if it exists
+    int_args = list(args[0::2] if len(args) % 2 == 0 else args[:-1][0::2])
+    string_args = list(args[1::2])
+
+    # Just like above, all integer arguments should be positive integers
+    try:
+        print(int_args)
+        for i, value in enumerate(int_args):
+            int_args[i] = int(value)
+            if int_args[i] < 0:
+                raise RuntimeError
+    except ValueError:
+        return (None, None, 'The number of rolls and extra entries should be integers.')
+    except RuntimeError:
+        return (None, None, 'The number of rolls and extra entries should be positive integers.')
+
+    # int_args and string_args are expected to be the same length, since the are derived from an even-number of elements
+    return ([{'result': string_args[i], 'amount': int_args[i]} for i, _ in enumerate(int_args)], tail, None)
 
 
 def setup(bot):
