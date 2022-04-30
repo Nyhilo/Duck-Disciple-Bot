@@ -15,13 +15,15 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
     @commands.command(
         brief='Pull from weighted pools of options',
-        help=('This command supports the following options:\n'
+        help=('Pull an <amount> of options from a specified pool. '
+              'Results are not removed between pulls when pulling multiple opitons.\n\n'
+              'This command supports the following options:\n'
               '  pool list\n'
               '    List avaialable pools you can pull from.\n\n'
               '  pool info <poolName>\n'
-              '    Get a description of the entries in a given pool\n\n'
-              '  pool roll <poolName>\n'
-              '    Pull a random entry from the given pool\n\n'
+              '    Get a description of the entries in a given pool.\n\n'
+              '  pool roll <poolName> [amount]\n'
+              '    Pull a random entry from the given pool, with an optional [amount], limit 100.\n\n'
               '  pool roll <poolName> <amount>\n'
               '    Pull multiple random entries from the given pool. Limit 100.\n\n'
               '  pool roll <poolName> <amount> <"Extra Result"> <amount>\n'
@@ -35,17 +37,17 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '  pool remove <poolName> <"Result"> <amount>\n'
               '    Remove entries from a result. Deletes the result if it drops below 0.\n')
     )
-    async def pool(self, ctx, comm=None, pool=None, arg1=None, arg2=None, arg3=None):
-        if comm is None:
+    async def pool(self, ctx, command=None, pool=None, *args):
+        if command is None:
             return ctx.send(f'Please provide an argument. See {config.PREFIX}help pool for details.')
 
         try:
-            await self.handle_pool(ctx, comm, pool, arg1, arg2, arg3)
+            await self.handle_pool(ctx, command, pool, *args)
         except Exception as e:
             log.exception(e)
             await ctx.send(config.GENERIC_ERROR)
 
-    async def handle_pool(self, ctx, comm, pool, arg1, arg2, arg3):
+    async def handle_pool(self, ctx, comm, pool, *args):
         comm = comm.lower()
         guildId = ctx.guild.id if ctx.guild else 0
         authorId = ctx.message.author.id
@@ -63,9 +65,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if pool is None:
                 return await ctx.send('Please specify the name of the pool you wish operate on.')
 
-            numRolls = arg1
-            extraEntry = arg2
-            amount = arg3
+            numRolls = args[0] if len(args) > 0 else None
+            extraEntry = args[1] if len(args) > 1 else None
+            amount = args[2] if len(args) > 2 else None
 
             if numRolls is None:
                 numRolls = 1
@@ -103,15 +105,15 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if len(pool) > 100:
                 return await ctx.send('Please limit pool names to 100 characters.')
 
-            isGlobal = arg1 is not None and arg1.lower() == 'global'
+            isGlobal = args[0] is not None and args[0].lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
             await ctx.send(loot.delete(pool, guildId, authorId))
 
         if comm == 'add':
-            resultDesc = arg1
-            amount = arg2
+            resultDesc = args[0]
+            amount = args[1]
 
             if pool is None:
                 return await ctx.send('Please specify a pool to remove from.')
@@ -142,8 +144,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if pool is None:
                 return await ctx.send('Please specify the name of the pool you wish operate on.')
 
-            resultDesc = arg1
-            amount = arg2
+            resultDesc = args[0]
+            amount = args[1]
 
             if pool is None:
                 return await ctx.send('Please specify a pool to remove from.')
