@@ -3,6 +3,7 @@ from discord.ext import commands
 from core.log import log
 import config.config as config
 import core.loot_tables as loot
+from config.config import PREFIX
 
 
 class Loot(commands.Cog, name='Pools/Loot Tables'):
@@ -53,9 +54,16 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
         authorId = ctx.message.author.id
 
         if comm == 'list':
+            if pool is not None:
+                return await ctx.send('The `list` command does not take any additional arguments.')
+
             await ctx.send(loot.list(guildId))
 
         if comm == 'info':
+            if len(args) > 0:
+                return await ctx.send('The `info` command only takes a pool name as an argument. '
+                                      f'See `{PREFIX}help pool` for more info.')
+
             if pool is None:
                 await ctx.send(loot.list(guildId))
             else:
@@ -99,16 +107,24 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 await ctx.send(page)
 
         if comm == 'create':
+            if len(args) > 1:
+                return await ctx.send('The `info` command a pool name and an optional (global) flag as arguments. '
+                                      f'See `{PREFIX}help pool` for more info.')
+
             if pool is None:
                 return await ctx.send('Please specify the name of the pool you wish operate on.')
 
             if len(pool) > 100:
                 return await ctx.send('Please limit pool names to 100 characters.')
 
-            isGlobal = args[0] is not None and args[0].lower() == 'global'
+            isGlobal = len(args) < 0 and args[0].lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
+            if len(args) > 0:
+                return await ctx.send('The `info` command only takes a pool name as an argument. '
+                                      f'See `{PREFIX}help pool` for more info.')
+
             await ctx.send(loot.delete(pool, guildId, authorId))
 
         if comm == 'add':
