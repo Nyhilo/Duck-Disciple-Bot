@@ -11,9 +11,9 @@ def list(serverId=0):
     if pools is not None and len(pools) > 0:
 
         body = '\n'.join([f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
-        return f'Pools available for this server:\n{body}'
+        return f'Pools available in this server:\n{body}'
     else:
-        return 'There are no pools available on this server.'
+        return 'There are no pools available in this server.'
 
 
 def info(serverId, pool):
@@ -21,13 +21,13 @@ def info(serverId, pool):
     if pool is not None:
         return pool.__str__()
     else:
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
 
 def roll(serverId, poolName, numRolls=1, extraEntry=None, extraAmount=1):
     pool = db.get_pool(serverId, poolName)
     if pool is None:
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
     if len(pool.entries) == 0 and extraEntry is None:
         return 'There are no results in this pool to roll on.'
@@ -73,7 +73,7 @@ def add(serverId, poolName, entryDesc, amount=1):
     '''
     pool = db.get_pool(serverId, poolName)
     if pool is None or (pool.server_id != serverId and pool.server_id != 0):
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
     matchingResults = [e for e in pool.entries if e.description == entryDesc]
     matchingResult = matchingResults[0] if len(matchingResults) else None
@@ -124,7 +124,7 @@ def create(serverId, creatorId, poolName, isGlobal=False):
         db.add_pool(serverId, creatorId, poolName)
         return f'Created new pool {poolName}'
     except Exception:
-        log.info(f'Failed to creat pool {poolName}.')
+        log.info(f'Failed to create pool {poolName}.')
         return 'Whoops, something went wrong trying to create that pool.'
 
 
