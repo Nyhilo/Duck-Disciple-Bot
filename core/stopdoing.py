@@ -27,25 +27,27 @@ async def choose(bot, ctx):
 
     # If we don't post that one, we select from the following list
     options = [
-        Option(send_image, 10, 'absolute fools.png'),
-        Option(send_image, 10, 'become unponderable.png'),
+        Option(send_image, 15, 'absolute fools.png'),
+        Option(send_image, 5, 'become unponderable.png'),
         Option(send_image, 10, 'big brain granny.png'),
-        Option(send_image, 10, 'birb vs ml.png'),
-        Option(send_image, 10, 'mexican hankerchief.gif'),
-        Option(send_image, 10, 'square stop doing nomic.png'),
-        Option(send_image, 10, 'stop doing cfjs.png'),
+        Option(send_image, 5, 'birb vs ml.png'),
+        Option(send_image, 5, 'mexican hankerchief.gif'),
+        Option(send_image, 15, 'square stop doing nomic.png'),
+        Option(send_image, 15, 'stop doing cfjs.png'),
         Option(send_image, 10, 'stop doing math.png'),
-        Option(send_image, 10, 'stop doing medicine.jpg'),
+        Option(send_image, 5, 'stop doing medicine.jpg'),
         Option(send_image, 10, 'stop doing plantnomic.png'),
         Option(send_image, 10, 'stop doing.png'),
-        Option(send_image, 10, 'trungified stop doing.png'),
+        Option(send_image, 15, 'trungified stop doing.png'),
         Option(send_image, 10, 'you could make a nomic.png'),
-        Option(send_image, 10, 'stop digging here.png'),
+        Option(send_image, 5, 'stop digging here.png'),
+        Option(send_image, 10, 'stop driving cars.png'),
+        Option(send_image, 5, 'stop doing keyboards.jpg'),
         Option(hi, 5),
-        Option(thistbh, 10),
+        Option(thistbh, 15),
         Option(amogus, 10),
         Option(bossy, 1),
-        Option(downloadupdate, 5, bot)
+        Option(downloadupdate, 2, bot)
     ]
 
     option = choices(options, weights=[option.weight for option in options])[0]
@@ -86,20 +88,20 @@ async def bossy(ctx):
 async def downloadupdate(ctx, bot):
     await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, would you like to download it?')
 
-    yeses = ['yes', 'ye', 'yeah', 'y']
-    nos = ['no', 'nah', 'nope', 'n']
+    yes_list = ['yes', 'ye', 'yeah', 'y']
+    no_list = ['no', 'nah', 'nope', 'n']
 
     def check(m):
-        return m.channel == ctx.channel and (m.content.lower() in yeses or m.content.lower() in nos)
+        return (m.channel == ctx or m.channel == ctx.channel) and (m.content.lower() in yes_list or m.content.lower() in no_list)
 
     try:
         response = await bot.wait_for('message', timeout=60, check=check)
 
-        if response.content in nos:
+        if response.content in no_list:
             sleep(1)
             return await ctx.send('well, fine then. be that way I guess...')
 
-        if response.content in yeses:
+        if response.content in yes_list:
             msg = await ctx.send('Downloading: `[          ]` ')
             sleep(1)
             await msg.edit(content='Downloading: `[||        ]` 20%')

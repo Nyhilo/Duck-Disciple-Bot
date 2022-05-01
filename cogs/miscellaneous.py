@@ -42,6 +42,14 @@ class Misc(commands.Cog, name='Miscellaneous'):
     async def stopdoingnomic(self, ctx):
         await stopdoing.choose(self.bot, ctx)
 
+    @commands.Cog.listener('on_message')
+    async def stopdoingnomic_inline(self, message):
+        # Don't ever reply to bots
+        if message.author.bot: return
+        
+        if 'stop doing nomic' in message.content.lower():
+            await stopdoing.choose(self.bot, message.channel)
+
     @commands.command(
         brief='Draw a number of cards',
         help=('Automatically roll some dice and report back the dice rolls and '
