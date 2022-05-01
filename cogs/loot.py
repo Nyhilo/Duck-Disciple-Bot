@@ -41,9 +41,11 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '    Delete a pool. Can only be deleted by the original author or an admin.\n\n'
 
               '  pool add <poolName> <"Result"> <amount>\n'
-              '    Add a number of result entries to a given pool\n\n'
+              '    Add a number of result entries to a given pool.\n\n'
               '  pool remove <poolName> <"Result"> <amount>\n'
-              '    Remove entries from a result. Deletes the result if it drops below 0.\n')
+              '    Remove entries from a result. Deletes the result if it drops below 0.\n\n'
+              '  pool [add/remove] <poolName> <"Result 1"> <amount 1> <"Result 2"> <amount 2> [...]\n'
+              '    Multiple entries can be added or removed from a pool at a time.')
     )
     async def pool(self, ctx, command=None, pool=None, *args):
         if command is None:
@@ -121,59 +123,58 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             await ctx.send(loot.delete(pool, guildId, authorId))
 
         if comm == 'add':
-            resultDesc = args[0]
-            amount = args[1]
-
             if pool is None:
-                return await ctx.send('Please specify a pool to remove from.')
+                return await ctx.send('Please specify a pool to add to.')
 
-            if resultDesc is None:
-                return await ctx.send('Please specify a result to remove.')
+            if len(args) == 0:
+                return await ctx.send('Please specify a result to add to this pool')
 
-            if len(resultDesc) > 1000:
+            # If just a description is given, we just add one Entry of that result to the pool
+            entries = [Entry(description=args[0])]
+            if len(args) > 1:
+                entries, tail, error = parse_arbitrary_options(*args)
+
+                if tail is not None:
+                    return await ctx.send('Please list additions by amount, then result description. '
+                                          f'See `{PREFIX}help pool` for more info.')
+
+                if error is not None:
+                    return await ctx.send(error)
+
+            descriptionLengths = [len(entry.description) for entry in entries]
+            if max(descriptionLengths) > 1000:
                 return await ctx.send('Pleas limit result descriptions to 1000 characters')
 
-            if amount is None:
-                amount = 1
-
-            try:
-                amount = int(amount)
-            except Exception:
-                return await ctx.send('The last argument in the command should be a positive integer.')
-
-            if amount < 1:
-                return await ctx.send('Please send a positive integer.')
-
-            if amount is not None and int(amount) > 1000:
+            amounts = [entry.amount for entry in entries]
+            if max(amounts) > 1000:
                 return await ctx.send('Adding entries to a result is limited to 1000 entries at a time.')
 
-            await ctx.send(loot.add(guildId, pool, resultDesc, amount))
+            await ctx.send(loot.add(guildId, pool, entries))
 
         if comm == 'remove':
             if pool is None:
-                return await ctx.send('Please specify the name of the pool you wish operate on.')
-
-            resultDesc = args[0]
-            amount = args[1]
-
-            if pool is None:
                 return await ctx.send('Please specify a pool to remove from.')
 
-            if resultDesc is None:
-                return await ctx.send('Please specify a result to remove.')
+            if len(args) == 0:
+                return await ctx.send('Please specify a result to remove from this pool')
 
-            if amount is None:
-                amount = 1
+            # If just a description is given, we just remove one Entry of that result to the pool
+            entries = [Entry(description=args[0])]
+            if len(args) > 1:
+                entries, tail, error = parse_arbitrary_options(*args)
 
-            try:
-                amount = int(amount)
-            except Exception:
-                return await ctx.send('The last argument in the command should be a positive integer.')
+                if tail is not None:
+                    return await ctx.send('Please list removals by amount, then result description. '
+                                          f'See `{PREFIX}help pool` for more info.')
 
-            if amount < 0:
-                return await ctx.send('Please send a positive integer.')
+                if error is not None:
+                    return await ctx.send(error)
 
-            await ctx.send(loot.add(guildId, pool, resultDesc, -amount))
+            amounts = [entry.amount for entry in entries]
+            if max(amounts) > 1000:
+                return await ctx.send('Removing entries from a result is limited to 1000 entries at a time.')
+
+            await ctx.send(loot.add(guildId, pool, entries, deleteMode=True))
 
 
 def parse_arbitrary_options(*args):
