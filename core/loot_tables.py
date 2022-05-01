@@ -2,7 +2,7 @@ from random import choices
 
 from core.log import log
 import core.db.pools_db as db
-from core.db.models.pool_models import Entry
+from core.db.models.pool_models import Pool, Entry
 import core.utils as utils
 
 
@@ -11,9 +11,9 @@ def list(serverId=0):
     if pools is not None and len(pools) > 0:
 
         body = '\n'.join([f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
-        return f'Pools available for this server:\n{body}'
+        return f'Pools available in this server:\n{body}'
     else:
-        return 'There are no pools available on this server.'
+        return 'There are no pools available in this server.'
 
 
 def info(serverId, pool):
@@ -21,22 +21,20 @@ def info(serverId, pool):
     if pool is not None:
         return pool.__str__()
     else:
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
 
-def roll(serverId, poolName, numRolls=1, extraEntry=None, extraAmount=1):
+def roll(serverId, poolName, numRolls=1, extraEntries=None):
     pool = db.get_pool(serverId, poolName)
     if pool is None:
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
-    if len(pool.entries) == 0 and extraEntry is None:
+    if len(pool.entries) == 0 and extraEntries is None:
         return 'There are no results in this pool to roll on.'
 
-    if len(pool.entries) == 0 and extraEntry is not None:
-        return extraEntry
-
-    if extraEntry is not None:
-        pool.entries.append(Entry(0, 0, extraAmount, extraEntry))
+    if extraEntries is not None:
+        for entry in extraEntries:
+            pool.entries.append(entry)
 
     chosenEntries = choices(pool.entries, weights=[entry.amount for entry in pool.entries], k=numRolls)
 
@@ -67,45 +65,69 @@ def roll(serverId, poolName, numRolls=1, extraEntry=None, extraAmount=1):
     return body
 
 
-def add(serverId, poolName, entryDesc, amount=1):
+def add(serverId, poolName, entries, deleteMode=False):
     '''
     Adds a number of entries to a given pool
     '''
     pool = db.get_pool(serverId, poolName)
     if pool is None or (pool.server_id != serverId and pool.server_id != 0):
-        return 'Could not find a pool with that name for this server.'
+        return 'Could not find a pool with that name in this server.'
 
-    matchingResults = [e for e in pool.entries if e.description == entryDesc]
-    matchingResult = matchingResults[0] if len(matchingResults) else None
+    # Additions
+    if not deleteMode:
+        for entry in entries:
+            matchingResults = [e for e in pool.entries if e.description == entry.description]
+            matchingResult = matchingResults[0] if len(matchingResults) else None
 
-    # Add a new result to the table
-    if matchingResult is None:
-        if amount < 1:
-            return f'Cannot remove from result "{entryDesc}" because it does not exist.'
+            # Add a new result to the pool
+            if matchingResult is None:
+                try:
+                    db.add_entry(pool.id, entry.description, entry.amount)
+                except Exception:
+                    log.info(f'Failed to add result `{entry.description}` to pool {pool.name}')
+                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
+                            f'"{entry.description}"')
+            else:
+                try:
+                    matchingResult.amount += entry.amount
+                    db.update_entry(matchingResult.id, matchingResult.amount)
+                except Exception:
+                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
+                            f'"{entry.description}"')
 
-        try:
-            db.add_entry(pool.id, entryDesc, amount)
-            return f'Successfully added result to {pool.name}'
-        except Exception:
-            log.info(f'Failed to add result `{entryDesc}` to pool {pool.name}')
-            return 'Whoops, something went wrong trying to add this result.'
+        return f'Successfully updated result{"s" if len(entries) > 1 else ""} in {pool.name}'
+    # Deletions
+    else:
+        deletionResponse = ""
+        for entry in entries:
+            matchingResults = [e for e in pool.entries if e.description == entry.description]
+            matchingResult = matchingResults[0] if len(matchingResults) else None
 
-    # Updating an existing result.
-    matchingResult.amount += amount
-    if matchingResult.amount < 1:
-        try:
-            db.unset_entry(matchingResult.id)
-            return 'Removed result.'
-        except Exception:
-            log.info(f'Failed to remove result {matchingResult.name} with id {matchingResult.id} from database')
-            return 'Whoops, something went wrong trying to remove the result.'
+            if matchingResult is not None:
+                matchingResult.amount -= entry.amount
+                if matchingResult.amount < 1:
+                    try:
+                        db.unset_entry(matchingResult.id)
+                    except Exception:
+                        log.info(f'Failed to remove result {matchingResult.name} '
+                                 f'with id {matchingResult.id} from database')
+                        return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
+                                f'"{entry.description}"')
 
-    try:
-        db.update_entry(matchingResult.id, matchingResult.amount)
-        return 'Updated result with new amount.'
-    except Exception:
-        log.info(f'Failed to update result with id {matchingResult.id} in database')
-        return 'Whoops, something went wrong trying to update the result.'
+                try:
+                    db.update_entry(matchingResult.id, matchingResult.amount)
+                except Exception:
+                    log.info(f'Failed to update result with id {matchingResult.id} in database')
+                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
+                            f'"{entry.description}"')
+            else:
+                if len(entries) == 1:
+                    return 'Could not remove result. Entry does not exist in pool.'
+
+                deletionResponse += f'"{entry.description}" does not exist in pool. Skipping...\n'
+
+        deletionResponse += 'Successfully removed specified results.'
+        return deletionResponse
 
 
 def create(serverId, creatorId, poolName, isGlobal=False):
@@ -124,7 +146,7 @@ def create(serverId, creatorId, poolName, isGlobal=False):
         db.add_pool(serverId, creatorId, poolName)
         return f'Created new pool {poolName}'
     except Exception:
-        log.info(f'Failed to creat pool {poolName}.')
+        log.info(f'Failed to create pool {poolName}.')
         return 'Whoops, something went wrong trying to create that pool.'
 
 
