@@ -43,6 +43,7 @@ async def choose(bot, ctx):
         Option(send_image, 5, 'stop digging here.png'),
         Option(send_image, 10, 'stop driving cars.png'),
         Option(send_image, 5, 'stop doing keyboards.jpg'),
+        Options(send_image, 15, 'all the players gone.png'),
         Option(hi, 5),
         Option(thistbh, 15),
         Option(amogus, 10),
