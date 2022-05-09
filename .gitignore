@@ -152,3 +152,6 @@ env-*/
 
 # Explicit logs
 log.txt
+
+# environment file
+envfile

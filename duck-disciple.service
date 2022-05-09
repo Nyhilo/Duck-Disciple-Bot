@@ -1,0 +1,16 @@
+[Unit]
+Description=Duck Disciple
+Documentation=https://github.com/Nyhilo/Duck-Disciple-Bot
+# Wants=dhcpcd.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/opc/duck-disciple
+EnvironmentFile=/home/opc/duck-disciple/envfile
+ExecStart=/home/opc/duck-disciple/.venv/bin/python3 bot.py
+ExecReload=/usr/bin/kill -HUP $MAINPID
+RestartSec=10s
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
