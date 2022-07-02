@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from math import ceil, sqrt
+
 from core.log import log
 import core.nomic_time as nomic_time
 import config.config as config
@@ -25,6 +27,28 @@ class Cycle(commands.Cog, name='Current Cycle'):
         except Exception as e:
             log.exception(e)
             await ctx.send(config.GENERIC_ERROR)
+
+    @commands.command(
+        brief='Calculate photosynthesis length for the plant',
+        help=('Calculate photosynthesis length for the plant and provide the '
+              'forumla that derives that value'),
+        aliases=['psynth']
+    )
+    async def photosynthesis(self, ctx, length=None, leaves=None):
+        try:
+            length = int(length)
+            leaves = int(leaves)
+        except TypeError:
+            return await ctx.send('Please provide an numerical length and '
+                                  'number of leaves')
+        except ValueError:
+            return await ctx.send('Please provide an numerical length and '
+                                  'number of leaves')
+
+        days = ceil(length/sqrt(leaves))
+        await ctx.send(f'With a total length of `{length}` and `{leaves}` '
+                       f'leaves, photosynthesis will last '
+                       f'`ceil({length}/√{leaves}) = {days}` days.')
 
 
 def setup(bot):
