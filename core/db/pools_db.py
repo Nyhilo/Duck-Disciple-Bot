@@ -1,6 +1,6 @@
-from db_base import Database
-from config.config import SQLITE3_DB_NAME, DB_TABLE_POOLS_NAME, DB_TABLE_POOL_ENTRIES_NAME
+from core.db.db_base import Database
 from core.db.models.pool_models import Pool, Entry
+from config.config import SQLITE3_DB_NAME, DB_TABLE_POOLS_NAME, DB_TABLE_POOL_ENTRIES_NAME
 
 db = Database(SQLITE3_DB_NAME)
 
@@ -23,7 +23,7 @@ def _create_table_pools():
         CreatorId   INT     NOT NULL,
         Name        TEXT    NOT NULL,
         Active      INT     NOT NULL    DEFAULT 1
-        '''
+        ''', DB_TABLE_POOLS_NAME
     )
 
 
@@ -39,7 +39,7 @@ def _create_table_pool_entries():
         Description     TEXT    NOT NULL,
         Amount          INT     NOT NULL    DEFAULT 1,
         Active          INT     NOT NULL    DEFAULT 1
-        '''
+        ''', DB_TABLE_POOL_ENTRIES_NAME
     )
 
     return
