@@ -1,18 +1,12 @@
-import sqlite3
-from core.log import log
+from db_base import Database
 from config.config import SQLITE3_DB_NAME, DB_TABLE_POOLS_NAME, DB_TABLE_POOL_ENTRIES_NAME
 from core.db.models.pool_models import Pool, Entry
 
-
-# Database definitions
-def _table_exists(conn, table):
-    cursor = conn.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table}' ''')
-
-    return cursor.fetchone()[0] == 1
+db = Database(SQLITE3_DB_NAME)
 
 
-def _create_table_pools(db):
-    '''
+def _create_table_pools():
+    """
     Notes on database architecture:
 
     ServerId - The ID of the guild in which the table was instantiated.
@@ -20,72 +14,40 @@ def _create_table_pools(db):
                An ID of -1 indicates that the table is hidden
     CreatorId - The ID of the user that created the table
     Name - The user readable name of the table
-    '''
+    """
 
-    table = DB_TABLE_POOLS_NAME
-    conn = sqlite3.connect(db)
-
-    if _table_exists(conn, table):
-        conn.close()
-        return
-
-    conn.execute(
-        f'''
-        CREATE TABLE {table}
-        (
-            Id          INTEGER PRIMARY KEY     AUTOINCREMENT,
-            ServerId    INT     NOT NULL,
-            CreatorId   INT     NOT NULL,
-            Name        TEXT    NOT NULL,
-            Active      INT     NOT NULL    DEFAULT 1
-        )
+    db.idempotent_add_table(
+        '''
+        Id          INTEGER PRIMARY KEY     AUTOINCREMENT,
+        ServerId    INT     NOT NULL,
+        CreatorId   INT     NOT NULL,
+        Name        TEXT    NOT NULL,
+        Active      INT     NOT NULL    DEFAULT 1
         '''
     )
 
-    conn.commit()
-    conn.close()
 
-    log.info(f'Created sqlite3 table {table} in {db}')
-
-    return
-
-
-def _create_table_pool_entries(db):
-    '''
+def _create_table_pool_entries():
+    """
     This has a many-to-one relationship with the 'Pools' table.
-    '''
+    """
 
-    table = DB_TABLE_POOL_ENTRIES_NAME
-    conn = sqlite3.connect(db)
-
-    if _table_exists(conn, table):
-        conn.close()
-        return
-
-    conn.execute(
-        f'''
-        CREATE TABLE {table}
-        (
-            Id              INTEGER PRIMARY KEY     AUTOINCREMENT,
-            ParentPoolId    INT     NOT NULL,
-            Description     TEXT    NOT NULL,
-            Amount          INT     NOT NULL    DEFAULT 1,
-            Active          INT     NOT NULL    DEFAULT 1
-        )
+    db.idempotent_add_table(
+        '''
+        Id              INTEGER PRIMARY KEY     AUTOINCREMENT,
+        ParentPoolId    INT     NOT NULL,
+        Description     TEXT    NOT NULL,
+        Amount          INT     NOT NULL    DEFAULT 1,
+        Active          INT     NOT NULL    DEFAULT 1
         '''
     )
-
-    conn.commit()
-    conn.close()
-
-    log.info(f'Created sqlite3 table {table} in {db}')
 
     return
 
 
 # Repository Methods
 def get_all_pools(serverId):
-    results = db_get(
+    results = db.get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
@@ -103,7 +65,7 @@ def get_all_pools(serverId):
 
 
 def get_pool(serverId, poolName):
-    results = db_get(
+    results = db.get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
         FROM {DB_TABLE_POOLS_NAME}
@@ -121,7 +83,7 @@ def get_pool(serverId, poolName):
 
 
 def get_entries(poolId, parentPool=None):
-    results = db_get(
+    results = db.get(
         f'''
         SELECT Id, ParentPoolId, Description, Amount, Active
         FROM {DB_TABLE_POOL_ENTRIES_NAME}
@@ -137,7 +99,7 @@ def get_entries(poolId, parentPool=None):
 
 
 def add_pool(serverId, creatorId, poolName):
-    return db_modify(
+    return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOLS_NAME}
         (ServerId, CreatorId, Name)
@@ -147,7 +109,7 @@ def add_pool(serverId, creatorId, poolName):
 
 
 def add_entry(poolId, description, amount):
-    return db_modify(
+    return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOL_ENTRIES_NAME}
         (ParentPoolId, Description, Amount)
@@ -157,7 +119,7 @@ def add_entry(poolId, description, amount):
 
 
 def update_entry(entryId, amount):
-    return db_modify(
+    return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
         SET Amount = :amount
@@ -167,7 +129,7 @@ def update_entry(entryId, amount):
 
 
 def unset_pool(poolId):
-    return db_modify(
+    return db.modify(
         f'''
         UPDATE {DB_TABLE_POOLS_NAME}
         SET Active = 0
@@ -177,7 +139,7 @@ def unset_pool(poolId):
 
 
 def unset_entry(entryId):
-    return db_modify(
+    return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
         SET Active = 0
@@ -186,30 +148,7 @@ def unset_entry(entryId):
     )
 
 
-# Database Access
-def db_get(query, params, db=SQLITE3_DB_NAME):
-    conn = sqlite3.connect(db)
-    conn.row_factory = sqlite3.Row
-
-    cursor = conn.execute(query, params)
-
-    rows = cursor.fetchall()
-    conn.close()
-
-    return [dict(row) for row in rows]
-
-
-def db_modify(query, params, db=SQLITE3_DB_NAME):
-    conn = sqlite3.connect(db)
-    cursor = conn.execute(query, params)
-
-    conn.commit()
-    conn.close()
-
-    return cursor.lastrowid
-
-
 # Maintenance Methods
 def set_tables():
-    _create_table_pools(SQLITE3_DB_NAME)
-    _create_table_pool_entries(SQLITE3_DB_NAME)
+    _create_table_pools()
+    _create_table_pool_entries()
