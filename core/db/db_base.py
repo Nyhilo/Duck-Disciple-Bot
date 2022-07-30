@@ -21,9 +21,11 @@ class Database():
             WHERE type='table' AND name='{table}'
             ''')
 
+        exists = cursor.fetchone()[0] == 1
+
         conn.close()
 
-        return cursor.fetchone()[0] == 1
+        return exists
 
     def idempotent_add_table(self, column_defs: str, table: str) -> None:
         """Checks if the provided table exists, and adds it to the database with
@@ -38,10 +40,10 @@ class Database():
         :param column_defs: A formatted string of column definitions
         :param table:       Name of the table to be created (case-sensitive)
         """
-        conn = sqlite3.connect(self.database_name)
-
-        if self._table_exists(conn, table):
+        if self._table_exists(table):
             return
+
+        conn = sqlite3.connect(self.database_name)
 
         conn.execute(f'CREATE TABLE {table} ({column_defs})')
 
