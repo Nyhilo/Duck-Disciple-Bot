@@ -52,7 +52,7 @@ class Database():
 
         log.info(f'Created sqlite3 table {table} in {self.database_name}')
 
-    def get(self, query: str, params: List[str]) -> List[Dict[str, object]]:
+    def get(self, query: str, params: List[str] = None) -> List[Dict[str, object]]:
         """
         Opens a connection to the object database and gets some rows from it
         for the given query. Takes parameters for sql-injection safety.
@@ -67,7 +67,7 @@ class Database():
         conn = sqlite3.connect(self.database_name)
         conn.row_factory = sqlite3.Row
 
-        cursor = conn.execute(query, params)
+        cursor = conn.execute(query, params) if params is not None else conn.execute(query)
 
         rows = cursor.fetchall()
         conn.close()
@@ -87,7 +87,8 @@ class Database():
         :return:       The row number of the last row modified.
         """
         conn = sqlite3.connect(self.database_name)
-        cursor = conn.execute(query, params)
+
+        cursor = conn.execute(query, params) if params is not None else conn.execute(query)
 
         conn.commit()
         conn.close()
