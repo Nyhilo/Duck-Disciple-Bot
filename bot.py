@@ -54,6 +54,8 @@ def init():
     reminders_db.set_tables()
     import core.db.pools_db as pools_db
     pools_db.set_tables()
+    import core.db.schedule_db as schedule_db
+    schedule_db.set_tables()
 
     # Load cogs
     cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
