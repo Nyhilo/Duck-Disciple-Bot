@@ -36,15 +36,14 @@ def _list_schedules():
     return msg
 
 
-def add_schedule(userId: int, id: str, name: str, channel: str, start_timestamp: int,
+def add_schedule(userId: int, name: str, channel: str, start_timestamp: int,
                  day_of_year: int, day_of_month: int, day_of_week: int,
                  hour_of_day: int) -> str:
     """
     Add a schedule oblect to the database. All arguments are required or None.
 
     :param userId: User Id of the person running this command
-    :param id: Schedule Id. Does not need to be unique.
-    :param name: Human-readable hepler-name
+    :param name: Schedule group name. Related schedules have the same names
     :param channel: Channel Id to send schedule to
     :param start_timestamp: UTC timestamp to start calculating schedule from
     :param day_of_year: 1-365. Day of the year a schedule should trigger

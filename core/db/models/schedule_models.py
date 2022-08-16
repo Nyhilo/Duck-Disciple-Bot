@@ -1,5 +1,5 @@
 class Schedule():
-    def __init__(self, schedule_id, schedule_name, schedule_channel, start_timestamp,
+    def __init__(self, schedule_id=None, schedule_name=None, schedule_channel=None, start_timestamp=None,
                  day_of_the_year=None, day_of_the_month=None, day_of_the_week=None, hour_of_the_day=None,
                  next_activation=None, active=1):
 

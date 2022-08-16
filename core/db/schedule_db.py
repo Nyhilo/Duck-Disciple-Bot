@@ -13,8 +13,8 @@ def _create_table_schedule():
     override properties with lower specificity.
     (i.e., DayOfTheWeek takes priority DayOfTheYear)
 
-    Schedules that share the same ID will all be relevant triggers.
-    For example, if you have two entries that share the same ID, and one entry
+    Schedules that share the same Name will all be relevant triggers.
+    For example, if you have two entries that share the same Name, and one entry
     has DayOfTheMonth set to 1 the other has DayOfTheMonth set to 15, the event
     will be triggered on the 1st and 15th.
     If a DayOfThe* property and the HourOfTheDay property are both defined, the
@@ -29,7 +29,7 @@ def _create_table_schedule():
     '''
     db.idempotent_add_table(
         '''
-            ScheduleId      TEXT    NOT NULL,
+            Id              INT     PRIMARY KEY AUTOINCREMENT,
             ScheduleName    TEXT    NOT NULL,
             ScheduleChannel TEXT,
             StartTimestamp  INT     NOT NULL,
