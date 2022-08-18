@@ -1,3 +1,5 @@
+import discord
+
 from datetime import datetime, timedelta, timezone
 import time
 import calendar
@@ -51,7 +53,7 @@ def utc_now():
     # for debugging
     # return datetime(month=4, day=18, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 
-    return datetime.utcnow().replace(tzinfo=timezone.utc)
+    return discord.utils.utcnow()
 
 
 def unix_now():
