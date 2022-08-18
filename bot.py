@@ -22,19 +22,24 @@ TOKEN = os.getenv('TOKEN')
 #########
 
 help_command = commands.DefaultHelpCommand(no_category='Other')
-bot = commands.Bot(command_prefix=PREFIX,
-                   description=('Cartogrpher shows you the way. A general-use bot '
-                                'for the Infinite Nomic discord server.'),
-                   help_command=help_command,
-                   activity=discord.Activity(type=discord.ActivityType.listening, name=PREFIX)
-                   )
+intents = discord.Intents.default()
+intents.message_content = True
+activity = discord.ActivityType.listening
+client = commands.Bot(command_prefix=PREFIX,
+                      description=(
+                        'Cartogrpher shows you the way. A general-use bot for '
+                        'the Infinite Nomic discord server.'),
+                      help_command=help_command,
+                      activity=discord.Activity(type=activity, name=PREFIX),
+                      intents=intents
+                      )
 
 
-@bot.event
+@client.event
 async def on_ready():
     log.info(f'Python version {sys.version}')
     log.info(f'Discord API version:  {discord.__version__}')
-    log.info(f'Logged in as {bot.user.name}')
+    log.info(f'Logged in as {client.user.name}')
     log.info('Bot is ready!')
 
 
@@ -61,12 +66,12 @@ def init():
     for cog in cogs:
         try:
             log.info(f'Loading extension {cog}')
-            bot.load_extension(cog)
+            client.load_extension(cog)
         except Exception as e:
             log.exception(e)
 
     # Let it fly
-    bot.run(TOKEN)
+    client.run(TOKEN)
 
 
 if __name__ == "__main__":
