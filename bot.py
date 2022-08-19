@@ -71,7 +71,7 @@ def init():
             log.exception(e)
 
     # Let it fly
-    client.run(TOKEN)
+    client.run(TOKEN, log_handler=None)
 
 
 if __name__ == "__main__":
