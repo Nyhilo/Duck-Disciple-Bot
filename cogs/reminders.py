@@ -81,7 +81,7 @@ class Reminders(commands.Cog, name='Reminders'):
             msg = task['RemindMsg']
             rowId = task['rowid']
             channelId = task['ChannelId']
-            channel = self.bot.get_channel(channelId)
+            channel = self.bot.get_channel(id=channelId)
             if channel is None:
                 log.info(f'Channel with id {channelId} does not exist. Setting reminder with id {rowId} to inactive...')
                 if rowId:
@@ -91,7 +91,7 @@ class Reminders(commands.Cog, name='Reminders'):
 
             _msg = f'\n\n"{msg}"' if msg else ''
             try:
-                replyTo = await channel.fetch_message(task['MessageId'])
+                replyTo = await channel.fetch_message(id=task['MessageId'])
                 await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.{_msg}')
             except discord.NotFound:
                 await channel.send(f'<@!{userId}>, reminding you of a reminder you '
@@ -116,7 +116,7 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
 
         _msg = f'\n\n"{msg}"' if msg and len(msg) < 1000 else ''
         try:
-            replyTo = await ctx.fetch_message(messageId)
+            replyTo = await ctx.fetch_message(id=messageId)
             return await replyTo.reply(f'Hey, reminding you about this thing.{_msg}')
         except discord.NotFound:
             return await ctx.send(f'<@!{userId}>, reminding you of a reminder you '

@@ -73,7 +73,7 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
 
         # Check if a replied to message contains an image
         if message.reference:
-            reply = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+            reply = await ctx.channel.fetch_message(id=ctx.message.reference.message_id)
 
             if (
                 len(reply.attachments) > 0 and
