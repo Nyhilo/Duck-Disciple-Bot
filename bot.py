@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from discord.ext import commands
 
@@ -47,7 +48,8 @@ async def on_ready():
 # Initialize #
 ##############
 
-def init():
+@client.event
+async def setup_hook():
     log.info("Starting bot...")
 
     # Setup caching folder
@@ -66,13 +68,10 @@ def init():
     for cog in cogs:
         try:
             log.info(f'Loading extension {cog}')
-            client.load_extension(cog)
+            await client.load_extension(cog)
         except Exception as e:
             log.exception(e)
 
-    # Let it fly
-    client.run(TOKEN, log_handler=None)
 
-
-if __name__ == "__main__":
-    init()
+# Let it fly
+client.run(TOKEN, log_handler=None)

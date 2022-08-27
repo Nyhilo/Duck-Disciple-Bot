@@ -234,5 +234,5 @@ def parse_arbitrary_options(*args):
     return ([Entry(amount=int_args[i], description=string_args[i]) for i, _ in enumerate(int_args)], tail, None)
 
 
-def setup(bot):
-    bot.add_cog(Loot(bot))
+async def setup(bot):
+    await bot.add_cog(Loot(bot))
