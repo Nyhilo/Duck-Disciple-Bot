@@ -42,9 +42,7 @@ def get_current_utc_string():
             break
 
     return (f'It is **{time}** on **{weekday}**, UTC\n'
-            f'That means it is **{phase}**\n\n'
-            f'*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\n'
-            f'That is {nextDayTimestampStr} your time.')
+            f'Cycle 12 has ended! See you in Cycle 13!')
 
 
 def utc_now():
