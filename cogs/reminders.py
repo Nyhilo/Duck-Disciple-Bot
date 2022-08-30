@@ -158,5 +158,5 @@ async def filter_escaped_mentions(ctx, message):
     return message
 
 
-def setup(bot):
-    bot.add_cog(Reminders(bot))
+async def setup(bot):
+    await bot.add_cog(Reminders(bot))

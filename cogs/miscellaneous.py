@@ -87,5 +87,5 @@ class Misc(commands.Cog, name='Miscellaneous'):
         await ctx.send(f'Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`')
 
 
-def setup(bot):
-    bot.add_cog(Misc(bot))
+async def setup(bot):
+    await bot.add_cog(Misc(bot))

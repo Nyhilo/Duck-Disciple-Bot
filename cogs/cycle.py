@@ -51,5 +51,5 @@ class Cycle(commands.Cog, name='Current Cycle'):
                        f'`ceil({length}/√{leaves}) = {days}` days.')
 
 
-def setup(bot):
-    bot.add_cog(Cycle(bot))
+async def setup(bot):
+    await bot.add_cog(Cycle(bot))

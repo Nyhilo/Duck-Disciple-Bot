@@ -105,5 +105,5 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
         await ctx.send(config.GENERIC_ERROR)
 
 
-def setup(bot):
-    bot.add_cog(Image_Manipulation(bot))
+async def setup(bot):
+    await bot.add_cog(Image_Manipulation(bot))
