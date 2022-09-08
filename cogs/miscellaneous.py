@@ -45,8 +45,9 @@ class Misc(commands.Cog, name='Miscellaneous'):
     @commands.Cog.listener('on_message')
     async def stopdoingnomic_inline(self, message):
         # Don't ever reply to bots
-        if message.author.bot: return
-        
+        if message.author.bot:
+            return
+
         if 'stop doing nomic' in message.content.lower():
             await stopdoing.choose(self.bot, message.channel)
 

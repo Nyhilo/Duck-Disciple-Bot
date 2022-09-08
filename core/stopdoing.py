@@ -1,21 +1,41 @@
 import discord
+
 from random import choices, random
 from time import sleep
 import asyncio
+from typing import Callable
 
 import config.config as config
 from core.log import log
 
 
 class Option():
-    def __init__(self, func, weight, arg=None):
+    def __init__(self, func: Callable, weight: int, extra_arg: str = None):
+        """
+        An option holds a delegate function so it can be executed later. It also
+        allows you to pass an optional additional argument to the delegate.
+
+        :param func:      Delegate function to be executed if this option is
+                           chosen
+        :param weight:    How many instances of the option are included in the
+                           option pool
+        :param extra_arg: An optional additional argument that gets passed to
+                           'func' delegate, defaults to None
+        """
         self.func = func
         self.weight = weight
-        self.arg = arg
+        self.extra_arg = extra_arg
 
-    async def execute(self, ctx):
-        if self.arg:
-            return await self.func(ctx, self.arg)
+    async def execute(self, ctx) -> None:
+        """
+        Executes the delegate of this option.
+
+        :param ctx: The discord context (usually a "messageable" object) in
+                     which to execute this delegate. Used to respond to the
+                     triggering message
+        """
+        if self.extra_arg:
+            return await self.func(ctx, self.extra_arg)
 
         return await self.func(ctx)
 
