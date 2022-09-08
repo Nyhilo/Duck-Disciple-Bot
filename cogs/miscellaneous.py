@@ -49,8 +49,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
         if message.author.bot:
             return
 
-        if 'stop doing nomic' in message.content.lower():
-            await self.stopdoing.choose(message.channel, message.content)
+        await self.stopdoing.choose(message.channel, message.content)
 
     @commands.command(
         brief='Draw a number of cards',
