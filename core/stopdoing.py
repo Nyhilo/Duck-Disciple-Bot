@@ -6,7 +6,7 @@ import asyncio
 from typing import Callable
 
 import config.config as config
-from core.log import log
+# from core.log import log
 
 
 class Option():
@@ -40,60 +40,68 @@ class Option():
         return await self.func(ctx)
 
 
-async def choose(ctx, bot, msg: str, generic_selection: bool = False) -> None:
-    """
-    Select a "stop doing" meme and reply to the context with it. Will randomly
-    select a result that regex matches the input message if one exists, or
-    randomly selects from all options if generic_selection is True.
+class StopDoing():
+    def __init__(self, bot) -> None:
+        """
+        Caches the bot object and options list for use.
 
-    :param ctx:               The context in which to respond to a trigger
-    :param bot:               The discord bot object, used for non-trivial
-                               interactions
-    :param msg:               A message sent by a user that will be matched to
-    :param generic_selection: Indicates that we should select from all possible
-                               options and not bother regex-matching, defaults
-                               to False
-    """
-    # This is sincerity protection. Longer messages are more likely to be
-    # sincere non-jokes, so we don't want to be a pest in that context
-    if not generic_selection and len(msg) <= config.STOP_DOING_MSG_LEN_LIMIT:
-        return
+        :param bot: _description_
+        """
+        self.bot = bot
+        self.options = [
+            Option(send_image, 15, 'absolute fools.png'),
+            Option(send_image, 5, 'become unponderable.png'),
+            Option(send_image, 10, 'big brain granny.png'),
+            Option(send_image, 5, 'birb vs ml.png'),
+            Option(send_image, 5, 'mexican hankerchief.gif'),
+            Option(send_image, 15, 'square stop doing nomic.png'),
+            Option(send_image, 15, 'stop doing cfjs.png'),
+            Option(send_image, 10, 'stop doing math.png'),
+            Option(send_image, 5, 'stop doing medicine.jpg'),
+            Option(send_image, 10, 'stop doing plantnomic.png'),
+            Option(send_image, 10, 'stop doing.png'),
+            Option(send_image, 15, 'trungified stop doing.png'),
+            Option(send_image, 10, 'you could make a nomic.png'),
+            Option(send_image, 5, 'stop digging here.png'),
+            Option(send_image, 10, 'stop driving cars.png'),
+            Option(send_image, 5, 'stop doing keyboards.jpg'),
+            Option(send_image, 15, 'all the players gone.png'),
+            Option(send_image, 10, 'stop doing stop doing.png'),
+            Option(send_image, 5, 'how can he do this without drowning.jpg'),
+            Option(hi, 5),
+            Option(thistbh, 15),
+            Option(amogus, 10),
+            Option(bossy, 1),
+            Option(downloadupdate, 2, bot)
+        ]
 
-    # We have a fixed chance of just posting the usual image
-    if random() < .6:
-        return await send_image(ctx, 'stop doing nomic.png')
+    async def choose(self, ctx, msg: str, generic_selection: bool = False) -> None:
+        """
+        Select a "stop doing" meme and reply to the context with it. Will
+        randomly select a result that regex matches the input message if one
+        exists, or randomly selects from all options if generic_selection is
+        True.
 
-    # If we don't post that one, we select from the following list
-    options = [
-        Option(send_image, 15, 'absolute fools.png'),
-        Option(send_image, 5, 'become unponderable.png'),
-        Option(send_image, 10, 'big brain granny.png'),
-        Option(send_image, 5, 'birb vs ml.png'),
-        Option(send_image, 5, 'mexican hankerchief.gif'),
-        Option(send_image, 15, 'square stop doing nomic.png'),
-        Option(send_image, 15, 'stop doing cfjs.png'),
-        Option(send_image, 10, 'stop doing math.png'),
-        Option(send_image, 5, 'stop doing medicine.jpg'),
-        Option(send_image, 10, 'stop doing plantnomic.png'),
-        Option(send_image, 10, 'stop doing.png'),
-        Option(send_image, 15, 'trungified stop doing.png'),
-        Option(send_image, 10, 'you could make a nomic.png'),
-        Option(send_image, 5, 'stop digging here.png'),
-        Option(send_image, 10, 'stop driving cars.png'),
-        Option(send_image, 5, 'stop doing keyboards.jpg'),
-        Option(send_image, 15, 'all the players gone.png'),
-        Option(send_image, 10, 'stop doing stop doing.png'),
-        Option(send_image, 5, 'how can he do this without drowning.jpg'),
-        Option(hi, 5),
-        Option(thistbh, 15),
-        Option(amogus, 10),
-        Option(bossy, 1),
-        Option(downloadupdate, 2, bot)
-    ]
+        :param ctx:               The context in which to respond to a trigger
+        :param msg:               A message sent by a user that will be matched
+        :param generic_selection: Indicates that we should select from all
+                                   possible options and that we shouldnot bother
+                                   regex-matching, defaults to False
+        """
+        # This is sincerity protection. Longer messages are more likely to be
+        # sincere non-jokes, so we don't want to be a pest in that context
+        if not generic_selection and len(msg) > config.STOP_DOING_MSG_LEN_LIMIT:
+            return
 
-    option = choices(options, weights=[option.weight for option in options])[0]
+        # We have a fixed chance of just posting the usual image
+        if random() < .6:
+            return await send_image(ctx, 'stop doing nomic.png')
 
-    await option.execute(ctx)
+        # If we don't post that one, we select from the option list
+        option = choices(
+            self.options, weights=[option.weight for option in self.options])[0]
+
+        await option.execute(ctx)
 
 
 ####################
@@ -128,13 +136,15 @@ async def bossy(ctx):
 
 
 async def downloadupdate(ctx, bot):
-    await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, would you like to download it?')
+    await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, '
+                   'would you like to download it?')
 
     yes_list = ['yes', 'ye', 'yeah', 'y']
     no_list = ['no', 'nah', 'nope', 'n']
 
     def check(m):
-        return (m.channel == ctx or m.channel == ctx.channel) and (m.content.lower() in yes_list or m.content.lower() in no_list)
+        return ((m.channel == ctx or m.channel == ctx.channel) and
+                (m.content.lower() in yes_list or m.content.lower() in no_list))
 
     try:
         response = await bot.wait_for('message', timeout=60, check=check)
