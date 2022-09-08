@@ -40,7 +40,7 @@ class Option():
         return await self.func(ctx)
 
 
-async def choose(bot, ctx):
+async def choose(ctx, bot):
     # We have a fixed chance of just posting the usual image
     if random() < .6:
         return await send_image(ctx, 'stop doing nomic.png')
