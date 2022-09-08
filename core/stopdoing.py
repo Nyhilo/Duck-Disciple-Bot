@@ -83,8 +83,7 @@ class StopDoing():
             Option(send_image, 10, 'stop doing stop doing.png', rf'{stop} doing (?:.)?stop doing'),
             Option(send_image, 1, 'stop doing stop doing.png', r'stop doing(?:[\.!?])?$'),
             Option(send_image, 5, 'how can he do this without drowning.jpg'),
-            Option(hi, 5),
-            Option(thistbh, 15, None, [nomic, r'this tbh']),
+            Option(thistbh, 15, None, [nomic, r'this tbh', r'^this(?:[\.!?])?$']),
             Option(amogus, 10, None, r'^amogus$'),
             Option(bossy, 1),
             Option(downloadupdate, 2, bot)
@@ -149,10 +148,6 @@ async def send_image(ctx, filename):
             f = discord.File(file, filename=filename)
 
         await ctx.send(file=f)
-
-
-async def hi(ctx):
-    await ctx.send('hi```\n```')
 
 
 async def thistbh(ctx):
