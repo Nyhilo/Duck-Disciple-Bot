@@ -40,7 +40,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['stop', 'stahp'])
     async def stopdoingnomic(self, ctx):
-        await stopdoing.choose(ctx, self.bot)
+        await stopdoing.choose(ctx, self.bot, None, True)
 
     @commands.Cog.listener('on_message')
     async def stopdoingnomic_inline(self, message):
@@ -49,7 +49,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
             return
 
         if 'stop doing nomic' in message.content.lower():
-            await stopdoing.choose(message.channel, self.bot)
+            await stopdoing.choose(message.channel, self.bot, message.content)
 
     @commands.command(
         brief='Draw a number of cards',

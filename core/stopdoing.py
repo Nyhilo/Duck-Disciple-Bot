@@ -40,7 +40,25 @@ class Option():
         return await self.func(ctx)
 
 
-async def choose(ctx, bot):
+async def choose(ctx, bot, msg: str, generic_selection: bool = False) -> None:
+    """
+    Select a "stop doing" meme and reply to the context with it. Will randomly
+    select a result that regex matches the input message if one exists, or
+    randomly selects from all options if generic_selection is True.
+
+    :param ctx:               The context in which to respond to a trigger
+    :param bot:               The discord bot object, used for non-trivial
+                               interactions
+    :param msg:               A message sent by a user that will be matched to
+    :param generic_selection: Indicates that we should select from all possible
+                               options and not bother regex-matching, defaults
+                               to False
+    """
+    # This is sincerity protection. Longer messages are more likely to be
+    # sincere non-jokes, so we don't want to be a pest in that context
+    if not generic_selection and len(msg) <= config.STOP_DOING_MSG_LEN_LIMIT:
+        return
+
     # We have a fixed chance of just posting the usual image
     if random() < .6:
         return await send_image(ctx, 'stop doing nomic.png')
@@ -104,7 +122,8 @@ async def amogus(ctx):
 
 
 async def bossy(ctx):
-    await ctx.send('*"Stop doing nomic", "what time is it?", "trungify this meme", "pool roll some bullshit".*\n\n'
+    await ctx.send('*"Stop doing nomic", "what time is it?", "trungify this '
+                   'meme", "pool roll some bullshit".*\n\n'
                    "Don't you all have anything better to do?")
 
 

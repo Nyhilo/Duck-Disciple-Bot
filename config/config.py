@@ -110,6 +110,8 @@ CARDS = [
     '<:KingDiamonds:908571634787581993>',
 ]
 
+# The maximum character limit in which we attempt to trigger &stopdoingnomic on a message
+STOP_DOING_MSG_LEN_LIMIT = 150
 
 # Cycle specific configurations #
 PHASE_START_DATE = (2022, 4, 4)
