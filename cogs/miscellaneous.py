@@ -17,6 +17,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
     def __init__(self, bot):
         self.bot = bot
+        self.stopdoing = stopdoing.StopDoing(bot)
 
     @commands.command(
         brief='Gets the SHA256 for a given input',
@@ -40,15 +41,15 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['stop', 'stahp'])
     async def stopdoingnomic(self, ctx):
-        await stopdoing.choose(self.bot, ctx)
+        await self.stopdoing.choose(ctx, None, True)
 
     @commands.Cog.listener('on_message')
     async def stopdoingnomic_inline(self, message):
         # Don't ever reply to bots
-        if message.author.bot: return
-        
-        if 'stop doing nomic' in message.content.lower():
-            await stopdoing.choose(self.bot, message.channel)
+        if message.author.bot:
+            return
+
+        await self.stopdoing.choose(message.channel, message.content)
 
     @commands.command(
         brief='Draw a number of cards',

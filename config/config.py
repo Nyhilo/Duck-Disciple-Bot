@@ -110,6 +110,10 @@ CARDS = [
     '<:KingDiamonds:908571634787581993>',
 ]
 
+# The maximum character limit in which we attempt to trigger &stopdoingnomic on a message
+STOP_DOING_MSG_LEN_LIMIT = 150
+STOP_DOING_DEFAULT_CHANCE = 0.6
+DEFAULT_STOP_DOING_RESPONSE = 'stop doing nomic.png'
 
 # Cycle specific configurations #
 PHASE_START_DATE = (2022, 4, 4)
