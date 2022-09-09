@@ -74,7 +74,7 @@ class StopDoing():
             Option(send_image, 10, 'stop doing.png', [r'stop doing(?:[\.!?])?$', nomic]),
             Option(send_image, 15, 'trungified stop doing.png', nomic),
             Option(send_image, 10, 'you could make a nomic.png',
-                   [nomic, r'you could make a nomic out of']),
+                   [nomic, r'(could|can) make a nomic out of']),
             Option(send_image, 5, 'stop digging here.png', rf'{stop} digging here'),
             Option(send_image, 10, 'stop driving cars.png', rf'{stop} driving cars'),
             Option(send_image, 5, 'stop doing keyboards.jpg',
