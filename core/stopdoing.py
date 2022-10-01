@@ -84,7 +84,7 @@ class StopDoing():
             Option(send_image, 10, 'all the players gone.png', [r'dead (game|nomic)', nomic]),
             Option(send_image, 10, 'stop doing stop doing.png', rf'{stop} doing (?:.)?stop doing'),
             Option(send_image, 1, 'stop doing stop doing.png', rf'{stop} doing{punc}$'),
-            Option(send_image, 1, 'stop doing2.jpg', [rf'stop doing{punc}', nomic]),
+            Option(send_image, 1, 'stop doing2.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
             Option(send_image, 15, 'stop doing computer science.png', rf'{stop} doing (compsci|computer science)'),
             Option(send_image, 5, 'how can he do this without drowning.jpg',
