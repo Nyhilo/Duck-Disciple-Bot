@@ -102,7 +102,7 @@ class Reminders(commands.Cog, name='Reminders'):
             log.info(reminders.unset_reminder(rowId, overrideId=True))
 
     @tasks.loop(minutes=10)
-    async def channel_time(self, ctx):
+    async def channel_time(self):
         datestring = nomic_time.get_formatted_date_string()
         log.info(f'Updating channel time to {datestring}')
         channel = await self.bot.fetch_channel(config.UTC_UPDATE_CHANNEL)
