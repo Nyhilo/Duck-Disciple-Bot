@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import asyncio
 import re
+import time
 
 import config.config as config
 
@@ -18,6 +19,7 @@ class Reminders(commands.Cog, name='Reminders'):
     def __init__(self, bot):
         self.bot = bot
         self.check_reminders.start()
+        self.channel_time.start()
 
     @commands.command(
         brief='Have the bot remind you about something',
@@ -98,6 +100,19 @@ class Reminders(commands.Cog, name='Reminders'):
                                    f'set in this channel <t:{createdAt}:R>.{_msg}')
 
             log.info(reminders.unset_reminder(rowId, overrideId=True))
+
+    @tasks.loop(minutes=10)
+    async def channel_time(self, ctx):
+        datestring = nomic_time.get_formatted_date_string()
+        log.info(f'Updating channel time to {datestring}')
+        channel = await self.bot.fetch_channel(config.UTC_UPDATE_CHANNEL)
+        await channel.edit(name=datestring)
+
+    @channel_time.before_loop
+    async def before_channel_time(self):
+        seconds_to_start = nomic_time.seconds_to_next_10_minute_increment()
+        log.info(f'Seconds to start tracking time: {seconds_to_start}')
+        await asyncio.sleep(seconds_to_start)
 
 
 async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg):

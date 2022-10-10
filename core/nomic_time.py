@@ -47,6 +47,32 @@ def get_current_utc_string():
             f'Cycle 12 has ended! See you in Cycle 13!')
 
 
+def get_formatted_date_string(timestamp: int = None) -> str:
+    """
+    Gets a formatted datestring for the given timestamp. Returns the time string
+    for the current time if no timestamp is given.
+
+    :param timestamp: UTC timestamp, defaults to None
+    :return: Formatted datetime string
+    """
+    timestamp = timestamp if timestamp is not None else get_timestamp(utc_now())
+    format = '%a, %b %d %H:%M UTC'
+
+    return datetime.utcfromtimestamp(timestamp).strftime(format)
+
+
+def seconds_to_next_10_minute_increment():
+    """
+    See function name.
+    """
+    now = utc_now()
+    if now.minute % 10 == 0:
+        return 0
+
+    next_minute = ((now.minute // 10) + 1)*10
+    return (next_minute * 60) - ((now.minute * 60) + now.second)
+
+
 def utc_now():
     # for debugging
     # return datetime(month=4, day=18, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
