@@ -116,7 +116,7 @@ STOP_DOING_DEFAULT_CHANCE = 0.3
 DEFAULT_STOP_DOING_RESPONSE = 'stop doing nomic.png'
 
 # Cycle specific configurations #
-UTC_UPDATE_CHANNEL = 0  # TODO: Replace with correct channel ID
+UTC_UPDATE_CHANNEL = 1029079234427244544
 
 PHASE_START_DATE = (2022, 10, 15)
 
