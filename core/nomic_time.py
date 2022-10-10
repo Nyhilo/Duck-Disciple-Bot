@@ -5,7 +5,7 @@ import time
 import calendar
 import dateutil.parser
 
-from config.config import PHASES_BY_DAY, _phase_two, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
+from config.config import PHASES_BY_DAY, _phase_two, _phase_three, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
 import core.utils as utils
 
 
@@ -27,7 +27,8 @@ def get_current_utc_string():
 
     # I don't remember why these -1s and +1s work, but they do so... ¯\_(ツ)_/¯
     weeksSinceStart = ((now - phaseCountStart).days // 7)
-    phasesSinceStart = weeksSinceStart * 2 + (1 if _phase == _phase_two else 0)
+    phasesPerWeek = 3
+    phasesSinceStart = weeksSinceStart * phasesPerWeek + (1 if _phase == _phase_two else 2 if _phase == _phase_three else 0)
     phase = 'Phase ' + utils.roman_numeralize(phasesSinceStart)
     nextPhase = 'Phase ' + utils.roman_numeralize(phasesSinceStart + 1)
     nextDay = PHASE_START[_nextPhase]
@@ -44,7 +45,10 @@ def get_current_utc_string():
             break
 
     return (f'It is **{time}** on **{weekday}**, UTC\n'
-            f'Cycle 12 has ended! See you in Cycle 13!')
+            f'That means it is **{phase}**\n\n'
+            f'*{nextPhase}* starts on *{nextDay}*, which is roughly '
+            f'{nextDayRelativeTimestampStr}.\n'
+            f'That is {nextDayTimestampStr} your time.')
 
 
 def get_formatted_date_string(timestamp: int = None) -> str:
@@ -70,7 +74,7 @@ def seconds_to_next_10_minute_increment():
         return 0
 
     next_minute = ((now.minute // 10) + 1)*10
-    return (next_minute * 60) - ((now.minute * 60) + now.second)
+    return (next_minute * 60) - ((now.minute * 60) + now.second) + 1
 
 
 def utc_now():

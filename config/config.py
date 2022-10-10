@@ -118,27 +118,30 @@ DEFAULT_STOP_DOING_RESPONSE = 'stop doing nomic.png'
 # Cycle specific configurations #
 UTC_UPDATE_CHANNEL = 0  # TODO: Replace with correct channel ID
 
-PHASE_START_DATE = (2022, 4, 4)
+PHASE_START_DATE = (2022, 10, 15)
 
 _phase_one = 'Phase I'
 _phase_two = 'Phase II'
+_phase_three = 'Phase III'
 
 PHASES_BY_DAY = {
+    'Sunday': _phase_one,
     'Monday': _phase_one,
     'Tuesday': _phase_one,
-    'Wednesday': _phase_one,
+    'Wednesday': _phase_two,
     'Thursday': _phase_two,
-    'Friday': _phase_two,
-    'Saturday': _phase_two,
-    'Sunday': _phase_two
+    'Friday': _phase_three,
+    'Saturday': _phase_three
 }
 
 PHASE_CYCLE = {
+    _phase_three: _phase_two,
     _phase_two: _phase_one,
-    _phase_one: _phase_two
+    _phase_one: _phase_three
 }
 
 PHASE_START = {
-    _phase_two: 'Thursday',
-    _phase_one: 'Monday'
+    _phase_one: 'Sunday',
+    _phase_two: 'Wednesday',
+    _phase_three: 'Thursday'
 }
