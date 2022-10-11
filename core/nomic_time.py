@@ -86,12 +86,14 @@ def _get_date_from_phase(phase: int) -> str:
     :param phase: _description_
     :return: _description_
     """
+    phases_per_group = len(PHASE_GROUPS)
+
     days_since = 0
     count = 0
 
     # Iterate through the phase lengths until we get to the start day of the phase
     while count < (phase-1):
-        days_since += PHASE_GROUPS[count % 3]
+        days_since += PHASE_GROUPS[count % phases_per_group]
         count += 1
 
     return START_DATE + relativedelta(days=days_since)
