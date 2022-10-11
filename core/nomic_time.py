@@ -112,23 +112,45 @@ def _get_phase_name(phase: int) -> str:
 ################################
 
 def get_formatted_date_string(timestamp: int = None) -> str:
-    """
+    '''
     Gets a formatted datestring for the given timestamp. Returns the time string
-    for the current time if no timestamp is given.
+     for the current time if no timestamp is given. Rounds down to the nearest
+     10 minutes.
 
     :param timestamp: UTC timestamp, defaults to None
     :return: Formatted datetime string
-    """
+    '''
     timestamp = timestamp if timestamp is not None else get_timestamp(utc_now())
     format = '%a, %b %d %H:%M UTC'
 
-    return datetime.utcfromtimestamp(timestamp).strftime(format)
+    msg = datetime.utcfromtimestamp(timestamp).strftime(format)
+
+    # "round down" to the nearest 10 minutes if we happen to grab this at an odd time
+    # NOTE: The index on this part may change if time format changes
+    msg_ = list(msg)
+    msg_[-5] = '0'
+    msg = ''.join(msg_)
+
+    return msg
+
+
+def get_current_phase_string():
+    '''
+    Get the string for te current phase right now.
+    '''
+    if utc_now().day < 15:
+        return 'Cycle 13 Starts Oct 16!'
+
+    if utc_now().day < 16:
+        return 'Cycle 13 Starts Soon!'
+
+    return 'It is now ' + _get_phase_name(_get_phase(utc_now()))
 
 
 def seconds_to_next_10_minute_increment():
-    """
+    '''
     See function name.
-    """
+    '''
     now = utc_now()
     if now.minute % 10 == 0:
         return 0
@@ -137,13 +159,21 @@ def seconds_to_next_10_minute_increment():
     return (next_minute * 60) - ((now.minute * 60) + now.second) + 1
 
 
+def seconds_to_next_day():
+    now = utc_now()
+
+    # Adds 1 day, then replaces the clock time to bring us to 00:00 UTC
+    tomorrow = now + relativedelta(days=1) + relativedelta(hour=0, minute=0, second=0)
+    return (tomorrow - now).seconds
+
+
 #####################
 # General Utilities #
 #####################
 
 def utc_now():
     # for debugging
-    # return datetime(month=10, day=13, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
+    # return datetime(month=10, day=21, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 
     return discord.utils.utcnow()
 
