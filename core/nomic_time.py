@@ -143,7 +143,7 @@ def seconds_to_next_10_minute_increment():
 
 def utc_now():
     # for debugging
-    return datetime(month=10, day=13, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
+    # return datetime(month=10, day=13, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 
     return discord.utils.utcnow()
 
