@@ -28,7 +28,10 @@ def is_admin(userId, serverId=None):
 
 
 def roman_numeralize(num):
-    '''Stolen from w3resource.com'''
+    '''Stolen and modified from w3resource.com'''
+    if num == 0:
+        return '0'
+
     val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
     syb = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
     roman_num = ''

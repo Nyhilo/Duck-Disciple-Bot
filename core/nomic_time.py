@@ -3,46 +3,41 @@ import discord
 from datetime import datetime, timedelta, timezone
 import time
 import calendar
-import dateutil.parser
+from dateutil import parser
+from dateutil.relativedelta import relativedelta
 
-from config.config import PHASES_BY_DAY, _phase_two, _phase_three, PHASE_CYCLE, PHASE_START, PHASE_START_DATE
+from config.config import PHASE_START_DATE, PHASE_GROUPS
 import core.utils as utils
+
+_d = PHASE_START_DATE
+START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
 
 
 def get_current_utc_string():
     # Okay there's a lot going on here
     # Get some base reference values
     now = utc_now()
-    today = _midnightify(now)
-    _startYear, _startMonth, _startDay = PHASE_START_DATE
-    phaseCountStart = datetime(_startYear, _startMonth, _startDay, tzinfo=timezone.utc)
 
     # Get string representations of the current time and day
     time = now.strftime('%H:%M')
     weekday = now.strftime('%A')
 
     # Figure out what phase it is
-    _phase = PHASES_BY_DAY[weekday]
-    _nextPhase = PHASE_CYCLE[_phase]
+    _phase = _get_phase(now)
+    _nextPhase = _phase + 1
 
-    # I don't remember why these -1s and +1s work, but they do so... ¯\_(ツ)_/¯
-    weeksSinceStart = ((now - phaseCountStart).days // 7)
-    phasesPerWeek = 3
-    phasesSinceStart = weeksSinceStart * phasesPerWeek + (1 if _phase == _phase_two else 2 if _phase == _phase_three else 0)
-    phase = 'Phase ' + utils.roman_numeralize(phasesSinceStart)
-    nextPhase = 'Phase ' + utils.roman_numeralize(phasesSinceStart + 1)
-    nextDay = PHASE_START[_nextPhase]
+    # Get the names of the needed phases
+    phase = _get_phase_name(_phase)
+    nextPhase = _get_phase_name(_nextPhase)
 
-    nextDayTimestampStr = ''
-    nextDayRelativeTimestampStr = ''
+    # Day of the week for the next phase's beginning
+    nextDayDt = _get_date_from_phase(_nextPhase)
+    nextDay = nextDayDt.strftime('%A')
+    nextDayTimestamp = get_timestamp(nextDayDt)
 
-    for _daysTil in range(8):
-        nextDayDatetime = (today + timedelta(days=_daysTil))
-        nextDayTimestamp = get_timestamp(nextDayDatetime)
-        if nextDayDatetime.strftime('%A') == nextDay:
-            nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
-            nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
-            break
+    # Discord-formatted timestamp strings
+    nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
+    nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
 
     return (f'It is **{time}** on **{weekday}**, UTC\n'
             f'That means it is **{phase}**\n\n'
@@ -50,6 +45,71 @@ def get_current_utc_string():
             f'{nextDayRelativeTimestampStr}.\n'
             f'That is {nextDayTimestampStr} your time.')
 
+
+#################################
+# Phase Determination Functions #
+#################################
+
+def _get_phase(date: datetime) -> int:
+    """
+    Retrieve the current phase, given the value of utc_now()
+    """
+    # This is the total length in days after iterating through all the phases in
+    # a "loop" or "group". i.e. [3, 2, 2] is a full week (7 days)
+    phase_group_len = sum(PHASE_GROUPS)
+
+    # This will how phase groups are divided
+    num_phases_per_group = len(PHASE_GROUPS)
+
+    # We want to know how long it's been since we started the cycle
+    days_since_beginning = (date - START_DATE).days
+
+    # This "rounds down" the days to the most recent full phase group
+    # for instance, (20 // 7) * 7 = 18
+    phases_since = (days_since_beginning // phase_group_len) * num_phases_per_group
+    days_since = ((days_since_beginning // phase_group_len) * phase_group_len)
+
+    # Add phases to the running total until we get to today
+    for group in PHASE_GROUPS:
+        phases_since += 1
+        days_since += group
+        if days_since >= days_since_beginning:
+            break
+
+    return phases_since
+
+
+def _get_date_from_phase(phase: int) -> str:
+    """
+    Get a datetime for the day that a given phase falls on
+
+    :param phase: _description_
+    :return: _description_
+    """
+    days_since = 0
+    count = 0
+
+    # Iterate through the phase lengths until we get to the start day of the phase
+    while count < (phase-1):
+        days_since += PHASE_GROUPS[count % 3]
+        count += 1
+
+    return START_DATE + relativedelta(days=days_since)
+
+
+def _get_phase_name(phase: int) -> str:
+    if phase < 1:
+        minus = '-' if phase < 0 else ''
+        phase_ = f'{minus}{utils.roman_numeralize(abs(phase))}'
+        phase__ = f'-{utils.roman_numeralize(abs(phase - 1))}'
+        return f'Phase {phase_}, (or is it Phase {phase__}?)'
+
+    return 'Phase ' + utils.roman_numeralize(phase)
+
+
+################################
+# Scheduling Related Utilities #
+################################
 
 def get_formatted_date_string(timestamp: int = None) -> str:
     """
@@ -77,9 +137,13 @@ def seconds_to_next_10_minute_increment():
     return (next_minute * 60) - ((now.minute * 60) + now.second) + 1
 
 
+#####################
+# General Utilities #
+#####################
+
 def utc_now():
     # for debugging
-    # return datetime(month=4, day=18, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
+    return datetime(month=10, day=13, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 
     return discord.utils.utcnow()
 
@@ -91,10 +155,6 @@ def unix_now():
 
 def get_timestamp(date: datetime):
     return int(calendar.timegm(date.utctimetuple()))
-
-
-def _now():
-    return datetime.now()
 
 
 def parse_timespan_by_units(number, unit):
@@ -116,6 +176,10 @@ def parse_timespan_by_units(number, unit):
     return None
 
 
+######################
+# Timstamp Utilities #
+######################
+
 def get_timespan_from_timestamp(timestamp, now=None):
     if not now:
         now = utc_now()
@@ -123,12 +187,8 @@ def get_timespan_from_timestamp(timestamp, now=None):
     return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc) - now.replace(tzinfo=timezone.utc)
 
 
-def _midnightify(date):
-    return date.replace(hour=0, minute=0, second=0, microsecond=0)
-
-
 def get_datestring_timestamp(datestring):
     if datestring is None or datestring == "" or datestring.lower() == 'now':
         return unix_now()
 
-    return get_timestamp(dateutil.parser.parse(datestring))
+    return get_timestamp(parser.parse(datestring))
