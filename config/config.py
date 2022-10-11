@@ -10,7 +10,7 @@ LOG_FILE = 'log.txt'
 GENERIC_ERROR = ('Ah shit that didn\'t work.\nJust let ny know they\'ll fix it.')
 
 # This is set to false to prevent cheating when secretly generating a Sha265
-LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "FALSE"
+LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "TRUE"
 
 
 # General Utility Configurations #
@@ -117,31 +117,10 @@ DEFAULT_STOP_DOING_RESPONSE = 'stop doing nomic.png'
 
 # Cycle specific configurations #
 UTC_UPDATE_CHANNEL = 1029079234427244544
+PHASE_UPDATE_CHANNEL = 1029235284195418192
 
-PHASE_START_DATE = (2022, 10, 15)
+PHASE_START_DATE = (2022, 10, 16)
 
-_phase_one = 'Phase I'
-_phase_two = 'Phase II'
-_phase_three = 'Phase III'
-
-PHASES_BY_DAY = {
-    'Sunday': _phase_one,
-    'Monday': _phase_one,
-    'Tuesday': _phase_one,
-    'Wednesday': _phase_two,
-    'Thursday': _phase_two,
-    'Friday': _phase_three,
-    'Saturday': _phase_three
-}
-
-PHASE_CYCLE = {
-    _phase_three: _phase_two,
-    _phase_two: _phase_one,
-    _phase_one: _phase_three
-}
-
-PHASE_START = {
-    _phase_one: 'Sunday',
-    _phase_two: 'Wednesday',
-    _phase_three: 'Thursday'
-}
+# Defines the cycle in which phases are looped starting with the start date
+# For instance, a cycle of [3, 2, 2] would have a 3-day Phase I, 2-day Phase II, 2-day Phase III, etc.
+PHASE_GROUPS = [3, 2, 2]
