@@ -40,9 +40,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
               '  pool delete <poolName>\n'
               '    Delete a pool. Can only be deleted by the original author or an admin.\n\n'
 
-              '  pool add <poolName> <"Result"> <amount>\n'
+              '  pool add <poolName> <amount> <"Result">\n'
               '    Add a number of result entries to a given pool.\n\n'
-              '  pool remove <poolName> <"Result"> <amount>\n'
+              '  pool remove <poolName> <amount> <"Result">\n'
               '    Remove entries from a result. Deletes the result if it drops below 0.\n\n'
               '  pool [add/remove] <poolName> <"Result 1"> <amount 1> <"Result 2"> <amount 2> [...]\n'
               '    Multiple entries can be added or removed from a pool at a time.')
