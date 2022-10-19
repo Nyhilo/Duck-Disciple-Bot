@@ -112,7 +112,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if len(pool) > 100:
                 return await ctx.send('Please limit pool names to 100 characters.')
 
-            isGlobal = len(args) < 0 and args[0].lower() == 'global'
+            isGlobal = len(args) > 0 and args[0].lower() == 'global'
             await ctx.send(loot.create(guildId, authorId, pool, isGlobal))
 
         if comm == 'delete':
