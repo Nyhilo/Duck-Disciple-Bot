@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+DEBUG = os.getenv('DEBUG') == 'TRUE'
 
 # Discord API related stuff #
 PREFIX = '&'
@@ -10,7 +11,7 @@ LOG_FILE = 'log.txt'
 GENERIC_ERROR = ('Ah shit that didn\'t work.\nJust let ny know they\'ll fix it.')
 
 # This is set to false to prevent cheating when secretly generating a Sha265
-LOG_DEBUG_TO_FILE = os.getenv('DEBUG') == "TRUE"
+LOG_DEBUG_TO_FILE = True if DEBUG else False
 
 
 # General Utility Configurations #
@@ -115,9 +116,10 @@ STOP_DOING_MSG_LEN_LIMIT = 150
 STOP_DOING_DEFAULT_CHANCE = 0.3
 DEFAULT_STOP_DOING_RESPONSE = 'stop doing nomic.png'
 
-# Cycle specific configurations #
-UTC_UPDATE_CHANNEL = 1029079234427244544
-PHASE_UPDATE_CHANNEL = 1029235284195418192
+
+# Voice channels for time-tracking updates
+UTC_UPDATE_CHANNEL = 1029079234427244544 if not DEBUG else 1028894151451885638
+PHASE_UPDATE_CHANNEL = 1029235284195418192 if not DEBUG else 1029220076097896448
 
 PHASE_START_DATE = (2022, 10, 16)
 
