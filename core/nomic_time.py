@@ -61,8 +61,9 @@ def _get_phase(date: datetime) -> int:
     # This will how phase groups are divided
     num_phases_per_group = len(PHASE_GROUPS)
 
-    # We want to know how long it's been since we started the cycle
-    days_since_beginning = (date - START_DATE).days
+    # We want to know how long it's been since we started the cycle.
+    # The start of the cycle is day 1, so we add +1 to this value.
+    days_since_beginning = (date - START_DATE).days + 1
 
     # This "rounds down" the days to the most recent full phase group
     # for instance, (20 // 7) * 7 = 18
@@ -86,12 +87,14 @@ def _get_date_from_phase(phase: int) -> str:
     :param phase: _description_
     :return: _description_
     """
+    phases_per_group = len(PHASE_GROUPS)
+
     days_since = 0
     count = 0
 
     # Iterate through the phase lengths until we get to the start day of the phase
     while count < (phase-1):
-        days_since += PHASE_GROUPS[count % 3]
+        days_since += PHASE_GROUPS[count % phases_per_group]
         count += 1
 
     return START_DATE + relativedelta(days=days_since)
