@@ -148,7 +148,8 @@ def get_current_phase_string():
     if utc_now().day < 16:
         return 'Cycle 13 Starts Soon!'
 
-    return 'It is now ' + _get_phase_name(_get_phase(utc_now()))
+    # TODO: Actually calculate the loop here
+    return 'First Loop, ' + _get_phase_name(_get_phase(utc_now()))
 
 
 def seconds_to_next_10_minute_increment():
