@@ -62,13 +62,14 @@ def _get_phase(date: datetime) -> int:
     num_phases_per_group = len(PHASE_GROUPS)
 
     # We want to know how long it's been since we started the cycle.
-    # The start of the cycle is day 1, so we add +1 to this value.
-    days_since_beginning = (date - START_DATE).days + 1
+    days_since_beginning = (date - START_DATE).days
 
     # This "rounds down" the days to the most recent full phase group
     # for instance, (20 // 7) * 7 = 18
     phases_since = (days_since_beginning // phase_group_len) * num_phases_per_group
-    days_since = ((days_since_beginning // phase_group_len) * phase_group_len)
+
+    # I don't know why this -1 works, but it fixes an inconsistent off-by-one error
+    days_since = ((days_since_beginning // phase_group_len) * phase_group_len) - 1
 
     # Add phases to the running total until we get to today
     for group in PHASE_GROUPS:
