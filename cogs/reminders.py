@@ -165,7 +165,7 @@ class Reminders(commands.Cog, name='Reminders'):
         '''Run channel_phase_end immediately on start before starting the actual loop'''
         return await self.channel_phase_end()
 
-    @tasks.loop(hours=24)
+    @tasks.loop(minutes=10)
     async def channel_phase_end(self):
         '''
         Sets the time to the end of the current phase
@@ -182,7 +182,7 @@ class Reminders(commands.Cog, name='Reminders'):
         '''
         Delays the start of the time tracking loop until the beginning of the next day
         '''
-        seconds_to_start = nomic_time.seconds_to_next_day()
+        seconds_to_start = nomic_time.seconds_to_next_10_minute_increment()
         log.info(f'Seconds to start tracking phase end: {seconds_to_start}')
         await asyncio.sleep(seconds_to_start)
 
