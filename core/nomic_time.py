@@ -125,7 +125,7 @@ def get_formatted_date_string(timestamp: int = None) -> str:
     :return: Formatted datetime string
     '''
     timestamp = timestamp if timestamp is not None else get_timestamp(utc_now())
-    format = '%a, %b %d %H:%M UTC'
+    format = '%a %b %d, %H:%M UTC'
 
     msg = datetime.utcfromtimestamp(timestamp).strftime(format)
 
