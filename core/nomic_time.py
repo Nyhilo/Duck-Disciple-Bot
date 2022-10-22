@@ -170,7 +170,7 @@ def get_next_time_to_phase_end_string():
     if minutes <= 60:
         return f'Phase ends in {minutes} min'
 
-    return f'Phase ends in {ceil(minutes//60)} hrs'
+    return f'Phase ends in {ceil(minutes/60)} hrs'
 
 
 def seconds_to_next_10_minute_increment():
