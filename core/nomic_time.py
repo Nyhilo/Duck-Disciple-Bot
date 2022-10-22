@@ -5,6 +5,7 @@ import time
 import calendar
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
+from math import ceil
 
 from config.config import PHASE_START_DATE, PHASE_GROUPS
 import core.utils as utils
@@ -140,7 +141,7 @@ def get_formatted_date_string(timestamp: int = None) -> str:
 
 def get_current_phase_string():
     '''
-    Get the string for te current phase right now.
+    Get the string for the current phase right now.
     '''
     if utc_now().day < 15:
         return 'Cycle 13 Starts Oct 16!'
@@ -150,6 +151,26 @@ def get_current_phase_string():
 
     # TODO: Actually calculate the loop here
     return 'First Loop, ' + _get_phase_name(_get_phase(utc_now()))
+
+
+def get_minutes_to_next_phase() -> int:
+    '''
+    Get the number of integer minutes to the next phase. This is expected to be
+     converted to an HH:MM format so something similar.
+    '''
+    current_phase = _get_phase(utc_now())
+    next_phase_date = _get_date_from_phase(current_phase + 1)
+    minutes = (next_phase_date - utc_now()).total_seconds() // 60
+
+    return minutes
+
+
+def get_next_time_to_phase_end_string():
+    minutes = get_minutes_to_next_phase()
+    if minutes <= 60:
+        return f'Phase ends in {minutes} min'
+
+    return f'Phase ends in {ceil(minutes//60)} hrs'
 
 
 def seconds_to_next_10_minute_increment():
