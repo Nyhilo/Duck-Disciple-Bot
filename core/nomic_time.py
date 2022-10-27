@@ -168,7 +168,7 @@ def get_minutes_to_next_phase() -> int:
 def get_next_time_to_phase_end_string():
     minutes = get_minutes_to_next_phase()
     if minutes <= 60:
-        return f'Phase ends in {minutes} min'
+        return f'Phase ends in {((minutes // 10) + 1) * 10} min'
 
     return f'Phase ends in {ceil(minutes/60)} hrs'
 
