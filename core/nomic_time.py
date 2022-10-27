@@ -162,7 +162,7 @@ def get_minutes_to_next_phase() -> int:
     next_phase_date = _get_date_from_phase(current_phase + 1)
     minutes = (next_phase_date - utc_now()).total_seconds() // 60
 
-    return minutes
+    return int(minutes)
 
 
 def get_next_time_to_phase_end_string():
