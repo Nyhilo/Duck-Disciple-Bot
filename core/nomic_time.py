@@ -143,11 +143,6 @@ def get_current_phase_string():
     '''
     Get the string for the current phase right now.
     '''
-    if utc_now().day < 15:
-        return 'Cycle 13 Starts Oct 16!'
-
-    if utc_now().day < 16:
-        return 'Cycle 13 Starts Soon!'
 
     # TODO: Actually calculate the loop here
     return 'First Loop, ' + _get_phase_name(_get_phase(utc_now()))
