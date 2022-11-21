@@ -58,41 +58,60 @@ class StopDoing():
         :param bot: _description_
         """
         self.bot = bot
-        stop = r'(not|stop(?:ped)?)'
-        nomic = rf'{stop} doing nomic'
         punc = r'(?:[\.!?])?'
+        stop = r'(not|stop(?:ped)?)'
+        stopdoing = rf'{stop} doing{punc}$'
+        nomic = rf'{stop} doing nomic'
         pronoun = r'(he|she|they|e)'
         self.options = [
             Option(send_image, 15, 'absolute fools.png', r'absolute fool'),
             Option(send_image, 5, 'become unponderable.png', r'become unponderable'),
             Option(send_image, 10, 'big brain granny.png', r'big brain'),
             Option(send_image, 5, 'birb vs ml.png', rf'{stop} doing (ml|machine learning)'),
-            Option(send_image, 5, 'mexican hankerchief.gif', r'kekw'),
+            Option(send_image, 5, 'mexican hankerchief.gif', r'^kek(?:.)?$'),
             Option(send_image, 15, 'square stop doing nomic.png', nomic),
             Option(send_image, 15, 'stop doing cfjs.png', [nomic, rf'{stop} doing cfj']),
             Option(send_image, 10, 'stop doing math.png', rf'{stop} doing math'),
+            Option(send_image, 10, 'stop doing derivatives.jpg', rf'{stop} doing (math|derivatives|calculus)'),
             Option(send_image, 5, 'stop doing medicine.jpg', rf'{stop} doing medicine'),
+            Option(send_image, 5, 'stop doing chemistry.png', rf'{stop} doing chemistry'),
+            Option(send_image, 5, 'stop doing physics.png', rf'{stop} doing (?:quantum )?physics'),
+            Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
+            Option(send_image, 5, 'stop doing chess.png', rf'{stop} (doing|playing) chess'),
+            Option(send_image, 4, 'stop doing music.png', rf'{stop} (doing|playing) music'),
+            Option(send_image, 2, 'stop doing music theory.png',
+                   [rf'{stop} (doing|playing) music', rf'{stop} doing music theory']),
             Option(send_image, 10, 'stop doing plantnomic.png', rf'{stop} doing (nomic|plant)'),
             Option(send_image, 10, 'stop doing.png', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 15, 'trungified stop doing.png', nomic),
             Option(send_image, 10, 'you could make a nomic.png',
                    [nomic, r'(could|can) make a nomic out of']),
             Option(send_image, 5, 'stop digging here.png', rf'{stop} digging here'),
-            Option(send_image, 10, 'stop driving cars.png', rf'{stop} driving cars'),
+            Option(send_image, 10, 'stop driving cars.png', rf'{stop} (doing|building|driving) (cars|road)'),
+            Option(send_image, 1, 'tramsgender.png', rf'{stop} (doing|building|driving) (cars|road)'),
+            Option(send_image, 1, 'stop doing roads_mtg.png', rf'{stop} (doing|building|driving) (cars|road)'),
             Option(send_image, 5, 'stop doing keyboards.jpg',
-                   rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)board'),
+                   rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)?board'),
             Option(send_image, 10, 'all the players gone.png', [r'dead (game|nomic)', nomic]),
             Option(send_image, 10, 'stop doing stop doing.png', rf'{stop} doing (?:.)?stop doing'),
             Option(send_image, 1, 'stop doing stop doing.png', rf'{stop} doing{punc}$'),
             Option(send_image, 1, 'stop doing2.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 1, 'stop doing3.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
-            Option(send_image, 15, 'stop doing computer science.png', rf'{stop} doing (compsci|computer science)'),
+            Option(send_image, 15, 'stop doing computer science.png',
+                   rf'{stop} doing (compsci|computer science|programming|coding)'),
             Option(send_image, 5, 'how can he do this without drowning.jpg',
-                   rf'how can {pronoun} do this without drowning'),
-            Option(thistbh, 15, None, [nomic, r'this tbh', rf'^this{punc}$']),
-            Option(amogus, 10, None, r'^amogus$'),
-            Option(bossy, 1),
+                   rf'how can \w+ do this without drowning'),
+            Option(send_image, 5, 'stop it get some help.gif',
+                   [nomic, rf'stop doing{punc}$', r'get some help']),
+            Option(send_image, 3, 'nej men hej.gif', [r'^nej men hej$', r'^nmh$']),
+            Option(send_image, 5, 'should.png', r'^(?:.)?should(?:.)?$'),
+            Option(send_image, 5, 'reasonably.png', r'^(?:.)?reasonably(?:.)?$'),
+            Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
+            Option(what, 8, None, rf'^what(?:\.)?$'),
+            Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
+            Option(amogus, 8, None, r'^amogus$'),
+            Option(bossy, 1, None, nomic),
             Option(downloadupdate, 2, bot)
         ]
 
@@ -159,6 +178,14 @@ async def send_image(ctx, filename):
 
 async def thistbh(ctx):
     await ctx.send('<:thistbh:921574440813346897>')
+
+
+async def what(ctx):
+    await ctx.send('<:raven_what:1044367463976030288>')
+
+
+async def nylo(ctx):
+    await ctx.send('<:nylo:1044367439254798336>')
 
 
 async def amogus(ctx):
