@@ -145,7 +145,7 @@ def get_current_phase_string():
     '''
 
     # TODO: Actually calculate the loop here
-    return 'Second Loop, ' + _get_phase_name(_get_phase(utc_now()))
+    return 'Third Loop, ' + _get_phase_name(_get_phase(utc_now()))
 
 
 def get_minutes_to_next_phase() -> int:
