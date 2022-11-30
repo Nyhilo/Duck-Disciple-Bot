@@ -27,8 +27,8 @@ intents.message_content = True
 activity = discord.ActivityType.listening
 client = commands.Bot(command_prefix=PREFIX,
                       description=(
-                        'Cartogrpher shows you the way. A general-use bot for '
-                        'the Infinite Nomic discord server.'),
+                        'Lil\' Timmy Temporal closes the loops. A general-use '
+                        'bot for the Infinite Nomic discord server.'),
                       help_command=help_command,
                       activity=discord.Activity(type=activity, name=PREFIX),
                       intents=intents
