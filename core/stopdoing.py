@@ -102,7 +102,7 @@ class StopDoing():
             Option(send_image, 15, 'stop doing computer science.png',
                    rf'{stop} doing (compsci|computer science|programming|coding)'),
             Option(send_image, 5, 'how can he do this without drowning.jpg',
-                   rf'how can \w+ do this without drowning'),
+                   rf'^how can .+ do this{punc}$'),
             Option(send_image, 5, 'stop it get some help.gif',
                    [nomic, rf'stop doing{punc}$', r'get some help']),
             Option(send_image, 3, 'nej men hej.gif', [r'^nej men hej$', r'^nmh$']),
