@@ -70,7 +70,7 @@ def detrungify(source, updown=False):
             # - dividing the width of the image by 2*i units (so that we have 2*i evenly sized regions to pull from)
             # - multiplying that by j so that we get the j-th region
             # - subtracting one from the whole thing because of off-by-one errors
-            region_num = j * (2 * i * unit) // w
+            region_num = int((j * (2 * i * unit) // w) +1)
 
             # finally fill in the pixel.
             dest.putpixel(
