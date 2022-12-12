@@ -106,6 +106,7 @@ class StopDoing():
             Option(send_image, 5, 'stop it get some help.gif',
                    [nomic, rf'stop doing{punc}$', r'get some help']),
             Option(send_image, 3, 'nej men hej.gif', [r'^nej men hej$', r'^nmh$']),
+            Option(send_image, 3, 'cool hat.jpg', r'cool.hat'),
             Option(send_image, 5, 'should.png', r'^(?:.)?should(?:.)?$'),
             Option(send_image, 5, 'reasonably.png', r'^(?:.)?reasonably(?:.)?$'),
             Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
