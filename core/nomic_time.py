@@ -7,7 +7,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from math import ceil
 
-from config.config import PHASE_START_DATE, PHASE_GROUPS
+from config.config import PHASE_START_DATE, PHASE_GROUPS, LOOP_NAME
 import core.utils as utils
 
 _d = PHASE_START_DATE
@@ -145,7 +145,7 @@ def get_current_phase_string():
     '''
 
     # TODO: Actually calculate the loop here
-    return 'Third Loop, ' + _get_phase_name(_get_phase(utc_now()))
+    return f'{LOOP_NAME}, {_get_phase_name(_get_phase(utc_now()))}'
 
 
 def get_minutes_to_next_phase() -> int:
