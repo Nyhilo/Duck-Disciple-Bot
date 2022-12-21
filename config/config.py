@@ -127,4 +127,4 @@ LOOP_NAME = 'Fourth Loop'
 
 # Defines the cycle in which phases are looped starting with the start date
 # For instance, a cycle of [3, 2, 2] would have a 3-day Phase I, 2-day Phase II, 2-day Phase III, etc.
-PHASE_GROUPS = [3, 2, 2]
+PHASE_GROUPS = [2, 2, 3]
