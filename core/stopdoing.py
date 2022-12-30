@@ -137,7 +137,7 @@ class StopDoing():
 
             # Rare triggers
             Option(bossy, 1, None, nomic),
-            Option(downloadupdate, 2, bot)
+            Option(downloadupdate, 2, bot, nomic)
         ]
 
     async def choose(self, ctx, msg: str, generic_selection: bool = False) -> None:
