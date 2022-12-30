@@ -112,7 +112,9 @@ class StopDoing():
             Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
             Option(what, 8, None, rf'^what(?:\.)?$'),
             Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
-            Option(amogus, 8, None, r'^amogus$'),
+            Option(amogus, 4, None, r'^amogus$'),
+            Option(amogus2, 2, None, r'^amogus$'),
+            Option(amogus3, 1, None, r'^amogus$'),
             Option(bossy, 1, None, nomic),
             Option(downloadupdate, 2, bot)
         ]
@@ -192,6 +194,14 @@ async def nylo(ctx):
 
 async def amogus(ctx):
     await ctx.send('ඞ')
+
+
+async def amogus2(ctx):
+    await ctx.send('𐐘')
+
+
+async def amogus3(ctx):
+    await ctx.send('𐑀')
 
 
 async def bossy(ctx):
