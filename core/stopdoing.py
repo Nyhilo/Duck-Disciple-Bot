@@ -159,15 +159,7 @@ class StopDoing():
             return
 
         # Compile a list of options to choose from later
-        options_ = []
-        if generic_selection:
-            options_ = self.options
-        else:
-            # Search all options that allow regex matching
-            for option in [o for o in self.options if o.regexes is not None]:
-                # if an option has multiple matches, any of them can make the option valid
-                if any([r.search(msg) for r in option.regexes]):
-                    options_.append(option)
+        options_ = self.getOptionsForInput(None if generic_selection else msg)
 
         if len(options_) == 0:
             return
@@ -186,6 +178,48 @@ class StopDoing():
         log.info(f'Sending stopdoing response: {option.func.__name__}, "{option.extra_arg}"')
 
         await option.execute(ctx)
+
+
+    def getOptionsForInput(self, msg:str=None) -> List[Option]:
+        '''
+        Returns a list of all options that match the regex for the provided msg
+
+        :param msg: Input message
+        :return:    List of matching Option objects
+        '''
+
+        if msg is None:
+            return self.options
+
+        options = []
+        # Search all options that allow regex matching
+        for option in [o for o in self.options if o.regexes is not None]:
+            # if an option has multiple matches, any of them can make the option valid
+            if any([r.search(msg) for r in option.regexes]):
+                options.append(option)
+        
+        return options
+
+
+def odds(msg:str=None) -> str:
+    '''
+    Returns a description of all option weights for a given request msg.
+    Or the sum of all weights if no request msg is provided.
+
+    :para msg: String that would trigger detection in normal usage
+    '''
+
+    stop = StopDoing(None)
+    total_weights = sum([option.weight for option in stop.options])
+    
+    if msg is None:
+        return f'The total weights of all options is: {total_weights}'
+
+    filtered_options = stop.getOptionsForInput(msg)
+    filtered_weights = sum([option.weight for option in filtered_options])
+    return (f'Weights:    {filtered_weights}\n'
+            f'Total:      {total_weights}\n'
+            f'Proportion: {(filtered_weights/total_weights)*100:.2f}%')
 
 
 ####################
