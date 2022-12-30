@@ -64,57 +64,80 @@ class StopDoing():
         nomic = rf'{stop} doing nomic'
         pronoun = r'(he|she|they|e)'
         self.options = [
-            Option(send_image, 15, 'absolute fools.png', r'absolute fool'),
-            Option(send_image, 5, 'become unponderable.png', r'become unponderable'),
-            Option(send_image, 10, 'big brain granny.png', r'big brain'),
-            Option(send_image, 5, 'birb vs ml.png', rf'{stop} doing (ml|machine learning)'),
-            Option(send_image, 5, 'mexican hankerchief.gif', r'^kek(?:.)?$'),
+            # Classic Stop Doing Nomic
             Option(send_image, 15, 'square stop doing nomic.png', nomic),
+            Option(send_image, 10, 'stop doing plantnomic.png', rf'{stop} doing (nomic|plant)'),
             Option(send_image, 15, 'stop doing cfjs.png', [nomic, rf'{stop} doing cfj']),
+            Option(send_image, 15, 'trungified stop doing.png', nomic),
+            Option(send_image, 15, 'absolute fools.png', r'absolute fool'),
+
+            # Stop doing STEM
             Option(send_image, 10, 'stop doing math.png', rf'{stop} doing math'),
             Option(send_image, 10, 'stop doing derivatives.jpg', rf'{stop} doing (math|derivatives|calculus)'),
             Option(send_image, 5, 'stop doing medicine.jpg', rf'{stop} doing medicine'),
             Option(send_image, 5, 'stop doing chemistry.png', rf'{stop} doing chemistry'),
             Option(send_image, 5, 'stop doing physics.png', rf'{stop} doing (?:quantum )?physics'),
+            Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
+            Option(send_image, 15, 'stop doing computer science.png',
+                        rf'{stop} doing (compsci|computer science|programming|coding)'),
+            
+            # Stop doing other nerd stuff
             Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
+            Option(send_image, 5, 'stop doing nixos.png', rf'{stop} doing nixos'),
             Option(send_image, 5, 'stop doing chess.png', rf'{stop} (doing|playing) chess'),
             Option(send_image, 4, 'stop doing music.png', rf'{stop} (doing|playing) music'),
             Option(send_image, 2, 'stop doing music theory.png',
-                   [rf'{stop} (doing|playing) music', rf'{stop} doing music theory']),
-            Option(send_image, 10, 'stop doing plantnomic.png', rf'{stop} doing (nomic|plant)'),
-            Option(send_image, 10, 'stop doing.png', [rf'stop doing{punc}$', nomic]),
-            Option(send_image, 15, 'trungified stop doing.png', nomic),
-            Option(send_image, 10, 'you could make a nomic.png',
-                   [nomic, r'(could|can) make a nomic out of']),
-            Option(send_image, 5, 'stop digging here.png', rf'{stop} digging here'),
+                        [rf'{stop} (doing|playing) music', rf'{stop} doing music theory']),
+            Option(send_image, 5, 'stop doing keyboards.jpg',
+                        rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)?board'),
+
+            # Stop doing roads
             Option(send_image, 10, 'stop driving cars.png', rf'{stop} (doing|building|driving) (cars|road)'),
             Option(send_image, 1, 'tramsgender.png', rf'{stop} (doing|building|driving) (cars|road)'),
             Option(send_image, 1, 'stop doing roads_mtg.png', rf'{stop} (doing|building|driving) (cars|road)'),
-            Option(send_image, 5, 'stop doing keyboards.jpg',
-                   rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)?board'),
-            Option(send_image, 10, 'all the players gone.png', [r'dead (game|nomic)', nomic]),
-            Option(send_image, 10, 'stop doing stop doing.png', rf'{stop} doing (?:.)?stop doing'),
-            Option(send_image, 1, 'stop doing stop doing.png', rf'{stop} doing{punc}$'),
+
+            # Other Stop doing ___
+            Option(send_image, 5, 'stop digging here.png', rf'{stop} digging here'),
+
+            # Stop Doing.
+            Option(send_image, 10, 'stop doing.png', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 1, 'stop doing2.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 1, 'stop doing3.jpg', [rf'stop doing{punc}$', nomic]),
-            Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
-            Option(send_image, 5, 'stop doing nixos.png', rf'{stop} doing nixos'),
-            Option(send_image, 15, 'stop doing computer science.png',
-                   rf'{stop} doing (compsci|computer science|programming|coding)'),
-            Option(send_image, 5, 'how can he do this without drowning.jpg',
-                   rf'^how can .+ do this{punc}$'),
+            Option(send_image, 10, 'stop doing stop doing.png',
+                        [rf'{stop} doing (?:.)?stop doing', rf'{stop} doing{punc}$']),
+
+            # Gif responses
+            Option(send_image, 5, 'mexican hankerchief.gif', r'^kek(?:.)?$'),
             Option(send_image, 5, 'stop it get some help.gif',
-                   [nomic, rf'stop doing{punc}$', r'get some help']),
+                        [nomic, rf'stop doing{punc}$', r'get some help']),
             Option(send_image, 3, 'nej men hej.gif', [r'^nej men hej$', r'^nmh$']),
+            
+            # Misc Infinite Nomic memes
+            Option(send_image, 10, 'you could make a nomic.png', [nomic, r'(could|can) make a nomic out of']),
+            Option(send_image, 5, 'how can he do this without drowning.jpg', rf'^how can .+ do this{punc}$'),
             Option(send_image, 3, 'cool hat.jpg', r'cool.hat'),
+            Option(send_image, 10, 'all the players gone.png', [r'dead (game|nomic)', nomic]),
             Option(send_image, 5, 'should.png', r'^(?:.)?should(?:.)?$'),
             Option(send_image, 5, 'reasonably.png', r'^(?:.)?reasonably(?:.)?$'),
+            Option(send_image, 5, 'birb vs ml.png', rf'{stop} doing (ml|machine learning)'),
+            
+            # Misc Non-IN memes
+            Option(send_image, 5, 'become unponderable.png', r'become unponderable'),
+            Option(send_image, 10, 'big brain granny.png', r'big brain'),
+
+            # Misc Emotes
             Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
             Option(what, 8, None, rf'^what(?:\.)?$'),
             Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
-            Option(amogus, 8, None, r'^amogus$'),
+            
+            # Amogi
+            Option(amogus, 4, None, r'^amogus$'),
+            Option(amogus2, 2, None, r'^amogus$'),
+            Option(amogus3, 1, None, r'^amogus$'),
+
+            # Rare triggers
             Option(bossy, 1, None, nomic),
-            Option(downloadupdate, 2, bot)
+            Option(downloadupdate, 2, bot, nomic)
         ]
 
     async def choose(self, ctx, msg: str, generic_selection: bool = False) -> None:
@@ -136,15 +159,7 @@ class StopDoing():
             return
 
         # Compile a list of options to choose from later
-        options_ = []
-        if generic_selection:
-            options_ = self.options
-        else:
-            # Search all options that allow regex matching
-            for option in [o for o in self.options if o.regexes is not None]:
-                # if an option has multiple matches, any of them can make the option valid
-                if any([r.search(msg) for r in option.regexes]):
-                    options_.append(option)
+        options_ = self.getOptionsForInput(None if generic_selection else msg)
 
         if len(options_) == 0:
             return
@@ -163,6 +178,48 @@ class StopDoing():
         log.info(f'Sending stopdoing response: {option.func.__name__}, "{option.extra_arg}"')
 
         await option.execute(ctx)
+
+
+    def getOptionsForInput(self, msg:str=None) -> List[Option]:
+        '''
+        Returns a list of all options that match the regex for the provided msg
+
+        :param msg: Input message
+        :return:    List of matching Option objects
+        '''
+
+        if msg is None:
+            return self.options
+
+        options = []
+        # Search all options that allow regex matching
+        for option in [o for o in self.options if o.regexes is not None]:
+            # if an option has multiple matches, any of them can make the option valid
+            if any([r.search(msg) for r in option.regexes]):
+                options.append(option)
+        
+        return options
+
+
+def odds(msg:str=None) -> str:
+    '''
+    Returns a description of all option weights for a given request msg.
+    Or the sum of all weights if no request msg is provided.
+
+    :para msg: String that would trigger detection in normal usage
+    '''
+
+    stop = StopDoing(None)
+    total_weights = sum([option.weight for option in stop.options])
+    
+    if msg is None:
+        return f'The total weights of all options is: {total_weights}'
+
+    filtered_options = stop.getOptionsForInput(msg)
+    filtered_weights = sum([option.weight for option in filtered_options])
+    return (f'Weights:    {filtered_weights}\n'
+            f'Total:      {total_weights}\n'
+            f'Proportion: {(filtered_weights/total_weights)*100:.2f}%')
 
 
 ####################
@@ -192,6 +249,14 @@ async def nylo(ctx):
 
 async def amogus(ctx):
     await ctx.send('ඞ')
+
+
+async def amogus2(ctx):
+    await ctx.send('𐐘')
+
+
+async def amogus3(ctx):
+    await ctx.send('𐑀')
 
 
 async def bossy(ctx):
