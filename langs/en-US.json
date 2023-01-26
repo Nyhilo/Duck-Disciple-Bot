@@ -1,0 +1,9 @@
+{
+    "core": {
+        "reminders": {
+            "timestamped": {
+                "reminder1": "I'll remind you about this at about "
+            }
+        }
+    }
+}

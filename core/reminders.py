@@ -7,6 +7,9 @@ from core.log import log
 from config.config import PREFIX
 import core.utils as utils
 
+import core.language as language
+
+get_string = language.Culture("core.reminders").get_string
 
 def set_new_reminder(userId: str,
                      messageId: int,
@@ -22,7 +25,7 @@ def set_new_reminder(userId: str,
     rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
 
     if rowId:
-        return(f'I\'ll remind you about this at about <t:{_remindAfter}>.\n'
+        return(f'{get_string("timestamped.reminder1")}<t:{_remindAfter}>.\n'
                f'Use `{PREFIX}forget {rowId}` to delete this reminder.\n')
 
     else:
