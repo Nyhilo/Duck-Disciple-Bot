@@ -1,7 +1,19 @@
 {
     "core": {
         "reminders": {
-            "reminderSet": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
+            "reminderSetShort": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
+            "reminderSetLong": "Reminder set to trigger <t:{remindAfter}:R>\n> {remindMsg}",
+            "reminderError": "An error occurred trying to  set this reminder :(. Some kind of reminder database issue.",
+            "idInvalidError": "That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before",
+            "noReminderIdError": "No reminder found with id {rowId}.",
+            "reminderExpired": "Reminder {rowId} is old and wasn't going to trigger anyway",
+            "deleteSuccess": "You will no longer be reminded of reminder number {rowId}.",
+            "deleteError": "An error occurred trying to delete this reminder. Oof.",
+            "deleteUnauthorized": "Only an admin or the person who created a reminder can delete it.",
+            "incorrectSyntax1": "Incorrect syntax for reminder or I couldn't understand your date format. See `{prefix}help remind` for more details.",
+            "incorrectSyntax2": "Couldn't understand your time format or you might have an extra semicolon in there confusing things. See `{PREFIX}help remind` for more details.",
+            "incorrectSyntaxGeneric": "Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.",
+            "attemptedTimeTravelError": "Please give a time that is in the future (remember that times are in UTC)."
         }
     }
 }
