@@ -9,7 +9,7 @@ import core.utils as utils
 
 import core.language as language
 
-get_string = language.Culture("core.reminders").get_string
+locale = language.Locale("core.reminders")
 
 def set_new_reminder(userId: str,
                      messageId: int,
@@ -25,9 +25,9 @@ def set_new_reminder(userId: str,
     rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
 
     if rowId:
-        return(f'{get_string("timestamped.reminder1")}<t:{_remindAfter}>.\n'
-               f'Use `{PREFIX}forget {rowId}` to delete this reminder.\n')
-
+        return(locale.get_string('reminderSet',
+                timestamp=_remindAfter, prefix=PREFIX, rowId=rowId))
+                
     else:
         return 'An error occured trying to set this reminder :(. Some kind of reminder database issue.'
 

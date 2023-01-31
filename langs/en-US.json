@@ -1,9 +1,7 @@
 {
     "core": {
         "reminders": {
-            "timestamped": {
-                "reminder1": "I'll remind you about this at about "
-            }
+            "reminderSet": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
         }
     }
 }
