@@ -5,15 +5,18 @@ import core.db.pools_db as db
 from core.db.models.pool_models import Pool, Entry
 import core.utils as utils
 
+import core.language as language
+
+locale = language.Locale("core.lootTables")
 
 def list(serverId=0):
     pools = db.get_all_pools(serverId)
     if pools is not None and len(pools) > 0:
 
         body = '\n'.join([f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
-        return f'Pools available in this server:\n{body}'
+        return locale.get_string('poolsAvailable', body=body)
     else:
-        return 'There are no pools available in this server.'
+        return locale.get_string('noPoolsAvailable')
 
 
 def info(serverId, pool):
@@ -21,16 +24,16 @@ def info(serverId, pool):
     if pool is not None:
         return pool.__str__()
     else:
-        return 'Could not find a pool with that name in this server.'
+        return locale.get_string('poolNotFound')
 
 
 def roll(serverId, poolName, numRolls=1, extraEntries=None):
     pool = db.get_pool(serverId, poolName)
     if pool is None:
-        return 'Could not find a pool with that name in this server.'
+        return locale.get_string('poolNotFound')
 
     if len(pool.entries) == 0 and extraEntries is None:
-        return 'There are no results in this pool to roll on.'
+        return locale.get_string('poolEmpty')
 
     if extraEntries is not None:
         for entry in extraEntries:
@@ -45,7 +48,7 @@ def roll(serverId, poolName, numRolls=1, extraEntries=None):
     results = [f'* {entry.description}\n' for entry in chosenEntries]
 
     # Initialize the first message in the body
-    body = [f'Result pulling from {pool.name}:\n```\n']
+    body = [locale.get_string('rollHeader')]
 
     index = 0
     for result in results:
@@ -71,7 +74,7 @@ def add(serverId, poolName, entries, deleteMode=False):
     '''
     pool = db.get_pool(serverId, poolName)
     if pool is None or (pool.server_id != serverId and pool.server_id != 0):
-        return 'Could not find a pool with that name in this server.'
+        return locale.get_string('poolNotFound')
 
     # Additions
     if not deleteMode:
@@ -85,17 +88,16 @@ def add(serverId, poolName, entries, deleteMode=False):
                     db.add_entry(pool.id, entry.description, entry.amount)
                 except Exception:
                     log.info(f'Failed to add result `{entry.description}` to pool {pool.name}')
-                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
-                            f'"{entry.description}"')
+                    return locale.get_string('resultAddFail', entryDescription=entry.description)
             else:
                 try:
                     matchingResult.amount += entry.amount
                     db.update_entry(matchingResult.id, matchingResult.amount)
                 except Exception:
-                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
-                            f'"{entry.description}"')
+                    return locale.get_string('resultAddFail', entryDescription=entry.description)
 
-        return f'Successfully updated result{"s" if len(entries) > 1 else ""} in {pool.name}'
+        return locale.get_string('resultAddSuccess', plural="s" if len(entries) > 1 else "", poolName=pool.name)
+
     # Deletions
     else:
         deletionResponse = ""
@@ -111,22 +113,20 @@ def add(serverId, poolName, entries, deleteMode=False):
                     except Exception:
                         log.info(f'Failed to remove result {matchingResult.name} '
                                  f'with id {matchingResult.id} from database')
-                        return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
-                                f'"{entry.description}"')
+                        return locale.get_string('resultRemoveFail')
 
                 try:
                     db.update_entry(matchingResult.id, matchingResult.amount)
                 except Exception:
                     log.info(f'Failed to update result with id {matchingResult.id} in database')
-                    return ('Whoops, something went wrong trying to add the following result. Process aborted.\n'
-                            f'"{entry.description}"')
+                    return locale.get_string('resultRemoveFail')
             else:
                 if len(entries) == 1:
-                    return 'Could not remove result. Entry does not exist in pool.'
+                    return locale.get_string('resultRemoveDoesNotExist')
 
                 deletionResponse += f'"{entry.description}" does not exist in pool. Skipping...\n'
 
-        deletionResponse += 'Successfully removed specified results.'
+        deletionResponse += locale.get_string('resultRemovedSuccess')
         return deletionResponse
 
 
@@ -135,32 +135,33 @@ def create(serverId, creatorId, poolName, isGlobal=False):
         serverId = 0
 
     if isGlobal and not utils.is_admin(creatorId, serverId):
-        return 'You do not have permission to create global pools.'
+        return locale.get_string('createGlobalAccessDenied')
 
     existing = db.get_pool(serverId, poolName)
 
     if existing is not None:
-        return 'Pool with that name already exists.'
+        return locale.get_string('poolAlreadyExists')
 
     try:
         db.add_pool(serverId, creatorId, poolName)
-        return f'Created new pool {poolName}'
+        return locale.get_string('poolCreatedSuccess', poolName=poolName)
+
     except Exception:
         log.info(f'Failed to create pool {poolName}.')
-        return 'Whoops, something went wrong trying to create that pool.'
+        return locale.get_string('poolCreatedFail')
 
 
 def delete(poolName, serverId, userId):
     pool = db.get_pool(serverId, poolName)
     if not pool or (pool.server_id != serverId and pool.server_id != 0):
-        return f'Pool named `{poolName}` not found in this server.'
+        return locale.get_string('poolDeleteNotFound', poolName=poolName)
 
     if pool.creator_id != userId and not utils.is_admin(userId):
-        return 'You do not have permission to delete that pool.'
+        return locale.get_string('deleteAccessDenied')
 
     try:
         db.unset_pool(pool.id)
-        return f'{pool.name} pool removed.'
+        return locale.get_string('poolDeleteSuccess')
     except Exception:
         log.info(f'Failed to remove pool {pool.name} with id {pool.id} from database')
-        return f'Whoops, something went wrong trying to remove the pool named {pool.name}.'
+        return locale.get_string('poolDeleteFail')

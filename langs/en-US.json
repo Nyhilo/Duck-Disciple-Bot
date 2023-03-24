@@ -1,5 +1,25 @@
 {
     "core": {
+        "lootTables": {
+            "poolsAvailable": "Pools available in this server:\n{body}",
+            "noPoolsAvailable": "There are no pools available in this server.",
+            "poolNotFound": "Could not find a pool with that name in this server.",
+            "poolEmpty": "There are no results in this pool to roll on.",
+            "rollHeader": "Result pulling from {poolName}:\n```\n'",
+            "resultAddFail": "Whoops, something went wrong trying to add the following result. Process aborted.\n(entryDescription)",
+            "resultAddSuccess": "Successfully updated result{plural} in {poolName}",
+            "resultRemoveFail": "Whoops, something went wrong trying to remove the following result. Process aborted.\n{entryDescription}",
+            "resultRemoveDoesNotExist": "Could not remove result. Entry does not exist in pool.",
+            "resultRemovedSuccess": "Successfully removed specified results.",
+            "createGlobalAccessDenied": "You do not have permission to create global pools.",
+            "poolAlreadyExists": "Pool with that name already exists.",
+            "poolCreatedSuccess": "Created new pool {poolName}",
+            "poolCreatedFail": "Whoops, something went wrong trying to create that pool.",
+            "poolDeleteNotFound": "Pool named `{poolName}` not found in this server.",
+            "deleteAccessDenied": "You do not have permission to delete that pool.",
+            "poolDeleteSuccess": "{poolName} pool removed.",
+            "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
+        },
         "reminders": {
             "reminderSetShort": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
             "reminderSetLong": "Reminder set to trigger <t:{remindAfter}:R>\n> {remindMsg}",

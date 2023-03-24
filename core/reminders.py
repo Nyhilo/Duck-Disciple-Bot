@@ -9,7 +9,7 @@ import core.utils as utils
 
 import core.language as language
 
-locale = language.Locale("core.reminders")
+locale = language.Locale('core.reminders')
 
 def set_new_reminder(userId: str,
                      messageId: int,
