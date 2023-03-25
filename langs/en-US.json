@@ -29,6 +29,16 @@
             "removeTooManyResults": "Removing entries from a result is limited to 1000 entries at a time.",
             "errorNotIntegers": "The number of rolls and extra entries should be integers.",
             "errorNotPositive": "The number of rolls and extra entries should be positive integers."
+        },
+        "misc": {
+            "shaInputMissing": "Please include the message you would like me to hash.",
+            "shaHashGiven": "The hash for the above message is:\n{hash}",
+            "cardsNotPositive": "Positive integers only please.",
+            "cardTooMany": "Sorry, maximum number of cards per draw is {maxcards}.",
+            "cardSuccess": "Here is your card!'",
+            "cardSuccessPlural": "Here are your cards!'",
+            "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
+            "timestampSuccess": "Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`"
         }
     },
     "core": {
