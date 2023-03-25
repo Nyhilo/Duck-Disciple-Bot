@@ -6,6 +6,10 @@ import config.config as config
 import core.utils as utils
 import core.image as image
 
+import core.language as language
+
+locale = language.Locale('cogs.image_manipulation')
+
 
 class Image_Manipulation(commands.Cog, name='Image Manipulation'):
     '''
@@ -89,7 +93,7 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
 
     source = await get_image_source()
     if source is None:
-        await ctx.send('Either I don\'t support that image type or you didn\'t send or reply to an image.')
+        await ctx.send(locale.get_string('imageNotSupported'))
         return
 
     try:

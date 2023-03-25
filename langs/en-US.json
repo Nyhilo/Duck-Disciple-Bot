@@ -1,6 +1,35 @@
 {
+    "global": {
+        "genericError": "Ah shit that didn't work.\nJust let ny know they'll fix it."
+    },
     "cogs": {
-        "cycle": {}
+        "cycle": {},
+        "image_manipulation": {
+            "imageNotSupported": "Either I don't support that image type or you didn't send or reply to an image.",
+        },
+        "pool": {
+            "poolCommandNotFound": "Please provide an argument. See {prefix}help pool for details.",
+            "seeHelpForInfo": " See `{prefix}help pool` for more info.",
+            "listTooManyArgs": "The `list` command does not take any additional arguments.",
+            "infoTooManyArgs": "The `info` command only takes a pool name as an argument.",
+            "rollNameNotGiven": "Please specify the name of the pool you wish operate on.",
+            "rollTooManyPulls": "Pulling from pools is limited to 20 pulls.",
+            "createTooManyArgs": "The `create` command only takes a pool name and an optional (global) flag as arguments.",
+            "createPoolNotGiven": "Please specify the name of the pool you wish operate on.",
+            "createNameTooLong": "Please limit pool names to 100 characters.",
+            "deleteTooManyArgs": "The `delete` command only takes a pool name as an argument.",
+            "addPoolNotGiven": "Please specify a pool to add to.",
+            "addResultNotGiven": "Please specify a result to add to this pool",
+            "addAdditionsBadFormat": "Please list additions by amount, then result description.",
+            "addResultTooLong": "Pleas limit result descriptions to 1000 characters",
+            "addTooManyResults": "Adding entries to a result is limited to 1000 entries at a time.",
+            "removePoolNotGiven": "Please specify a pool to remove from.",
+            "removeResultNotGiven": "Please specify a result to remove from this pool",
+            "removeAdditionsBadFormat": "Please list removals by amount, then result description.",
+            "removeTooManyResults": "Removing entries from a result is limited to 1000 entries at a time.",
+            "errorNotIntegers": "The number of rolls and extra entries should be integers.",
+            "errorNotPositive": "The number of rolls and extra entries should be positive integers."
+        }
     },
     "core": {
         "loot_tables": {
