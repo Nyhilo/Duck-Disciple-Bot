@@ -1,3 +1,4 @@
+from typing import List
 from core.db.db_base import Database
 from core.db.models.pool_models import Pool, Entry
 from config.config import SQLITE3_DB_NAME, DB_TABLE_POOLS_NAME, DB_TABLE_POOL_ENTRIES_NAME
@@ -46,7 +47,7 @@ def _create_table_pool_entries():
 
 
 # Repository Methods
-def get_all_pools(serverId):
+def get_all_pools(serverId) -> List[Pool]:
     results = db.get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
@@ -64,7 +65,7 @@ def get_all_pools(serverId):
     return pools
 
 
-def get_pool(serverId, poolName):
+def get_pool(serverId, poolName) -> List[Pool]:
     results = db.get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
@@ -82,7 +83,7 @@ def get_pool(serverId, poolName):
     return pool
 
 
-def get_entries(poolId, parentPool=None):
+def get_entries(poolId, parentPool=None) -> List[Entry]:
     results = db.get(
         f'''
         SELECT Id, ParentPoolId, Description, Amount, Active
@@ -98,7 +99,7 @@ def get_entries(poolId, parentPool=None):
     return entries
 
 
-def add_pool(serverId, creatorId, poolName):
+def add_pool(serverId, creatorId, poolName) -> int:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOLS_NAME}
@@ -108,7 +109,7 @@ def add_pool(serverId, creatorId, poolName):
     )
 
 
-def add_entry(poolId, description, amount):
+def add_entry(poolId, description, amount) -> int:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOL_ENTRIES_NAME}
@@ -118,7 +119,7 @@ def add_entry(poolId, description, amount):
     )
 
 
-def update_entry(entryId, amount):
+def update_entry(entryId, amount) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
@@ -128,7 +129,7 @@ def update_entry(entryId, amount):
     )
 
 
-def unset_pool(poolId):
+def unset_pool(poolId) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOLS_NAME}
@@ -138,7 +139,7 @@ def unset_pool(poolId):
     )
 
 
-def unset_entry(entryId):
+def unset_entry(entryId) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}

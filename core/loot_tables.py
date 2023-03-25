@@ -48,7 +48,7 @@ def roll(serverId, poolName, numRolls=1, extraEntries=None):
     results = [f'* {entry.description}\n' for entry in chosenEntries]
 
     # Initialize the first message in the body
-    body = [locale.get_string('rollHeader')]
+    body = [locale.get_string('rollHeader', poolName=poolName)]
 
     index = 0
     for result in results:
@@ -113,13 +113,13 @@ def add(serverId, poolName, entries, deleteMode=False):
                     except Exception:
                         log.info(f'Failed to remove result {matchingResult.name} '
                                  f'with id {matchingResult.id} from database')
-                        return locale.get_string('resultRemoveFail')
+                        return locale.get_string('resultRemoveFail', entryDescription=entry.description)
 
                 try:
                     db.update_entry(matchingResult.id, matchingResult.amount)
                 except Exception:
                     log.info(f'Failed to update result with id {matchingResult.id} in database')
-                    return locale.get_string('resultRemoveFail')
+                    return locale.get_string('resultRemoveFail', entryDescription=entry.description)
             else:
                 if len(entries) == 1:
                     return locale.get_string('resultRemoveDoesNotExist')
@@ -161,7 +161,7 @@ def delete(poolName, serverId, userId):
 
     try:
         db.unset_pool(pool.id)
-        return locale.get_string('poolDeleteSuccess')
+        return locale.get_string('poolDeleteSuccess', poolName=poolName)
     except Exception:
         log.info(f'Failed to remove pool {pool.name} with id {pool.id} from database')
         return locale.get_string('poolDeleteFail')
