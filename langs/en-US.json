@@ -1,4 +1,7 @@
 {
+    "cogs": {
+        "cycle": {}
+    },
     "core": {
         "loot_tables": {
             "poolsAvailable": "Pools available in this server:\n{body}",
