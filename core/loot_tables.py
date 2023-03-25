@@ -7,7 +7,7 @@ import core.utils as utils
 
 import core.language as language
 
-locale = language.Locale("core.lootTables")
+locale = language.Locale("core.loot_tables")
 
 def list(serverId=0):
     pools = db.get_all_pools(serverId)

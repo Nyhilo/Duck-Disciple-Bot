@@ -1,6 +1,6 @@
 {
     "core": {
-        "lootTables": {
+        "loot_tables": {
             "poolsAvailable": "Pools available in this server:\n{body}",
             "noPoolsAvailable": "There are no pools available in this server.",
             "poolNotFound": "Could not find a pool with that name in this server.",
@@ -19,6 +19,14 @@
             "deleteAccessDenied": "You do not have permission to delete that pool.",
             "poolDeleteSuccess": "{poolName} pool removed.",
             "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
+        },
+        "nomic_ime": {
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
+            "phaseName": "Phase {number}",
+            "phaseNameNegative": "Phase {number}, (or is it Phase {numberOneLess}?)",
+            "khronosPhaseString": "{ordinalValue} Loop, {phaseName}",
+            "phaseEndFar": "Phase ends in {hours} hrs",
+            "phaseEndNear": "Phase ends in {minutes} min"
         },
         "reminders": {
             "reminderSetShort": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
