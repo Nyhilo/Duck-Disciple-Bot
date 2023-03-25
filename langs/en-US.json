@@ -42,6 +42,30 @@
             "incorrectSyntax2": "Couldn't understand your time format or you might have an extra semicolon in there confusing things. See `{PREFIX}help remind` for more details.",
             "incorrectSyntaxGeneric": "Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.",
             "attemptedTimeTravelError": "Please give a time that is in the future (remember that times are in UTC)."
+        },
+        "stopdoing": {
+            "bossyResponse": "*\"Stop doing nomic\", \"what time is it?\", \"trungify this meme\", \"pool roll some bullshit\".*\n\nDon't you all have anything better to do?",
+            "dlUpdate": {
+                "start": "There is an update for {prefix}stopdoingnomic, would you like to download it?",
+                "badResponse": "well, fine then. be that way I guess...",
+                "responseWaitedTooLong": "Well fine then. Ignore me why don't you...",
+                "downloading0%": "Downloading: `[          ]`",
+                "downloading20%": "Downloading: `[||        ]` 20%",
+                "downloading42%": "Downloading: `[||||      ]` 42%",
+                "downloading69%": "Downloading: `[|||||||   ]` 69% (nice)",
+                "downloading91%": "Downloading: `[||||||||| ]` 91%",
+                "downloading96%": "Downloading: `[||||||||||]` 96%",
+                "downloading99%1": "Downloading: `[||||||||||]` 99%",
+                "downloading99%2": "Downloading: `[||||||||||]` 99%.",
+                "downloading99%3": "Downloading: `[||||||||||]` 99%..",
+                "downloading99%4": "Downloading: `[||||||||||]` 99%...",
+                "downloadingError": "Downloading: `[||||||||||]` 99%... ERROR",
+                "dlExpletive": "shit.",
+                "tryAgainLater": "uhh... let's just try that again later",
+                "downloadingSuccess": "Downloading: `[||||||||||]` 100%",
+                "shockAndAwe": "??? O_o",
+                "actuallyWorkedDisbelief": "Holy shit it actually worked?? Congrats???"
+            }
         }
     }
 }

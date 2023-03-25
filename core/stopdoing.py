@@ -9,6 +9,10 @@ import re
 import config.config as config
 from core.log import log
 
+import core.language as language
+
+locale = language.Locale('core.stopdoing')
+
 
 class Option():
     def __init__(self, func: Callable, weight: int, extra_arg: str = None,
@@ -265,14 +269,11 @@ async def amogus3(ctx):
 
 
 async def bossy(ctx):
-    await ctx.send('*"Stop doing nomic", "what time is it?", "trungify this '
-                   'meme", "pool roll some bullshit".*\n\n'
-                   "Don't you all have anything better to do?")
+    await ctx.send(locale.get_string('bossyResponse'))
 
 
 async def downloadupdate(ctx, bot):
-    await ctx.send(f'There is an update for {config.PREFIX}stopdoingnomic, '
-                   'would you like to download it?')
+    await ctx.send(locale.get_string('dlUpdate.start', prefix=config.PREFIX))
 
     yes_list = ['yes', 'ye', 'yeah', 'y']
     no_list = ['no', 'nah', 'nope', 'n']
@@ -286,41 +287,41 @@ async def downloadupdate(ctx, bot):
 
         if response.content in no_list:
             sleep(1)
-            return await ctx.send('well, fine then. be that way I guess...')
+            return await ctx.send(locale.get_string('dlUpdate.badResponse'))
 
         if response.content in yes_list:
-            msg = await ctx.send('Downloading: `[          ]` ')
+            msg = await ctx.send(locale.get_string('dlUpdate.downloading0%'))
             sleep(1)
-            await msg.edit(content='Downloading: `[||        ]` 20%')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading20%'))
             sleep(2.5)
-            await msg.edit(content='Downloading: `[||||      ]` 42%')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading42%'))
             sleep(2.5)
-            await msg.edit(content='Downloading: `[|||||||   ]` 69% (nice)')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading69%'))
             sleep(2.5)
-            await msg.edit(content='Downloading: `[||||||||| ]` 91%')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading91%'))
             sleep(3)
-            await msg.edit(content='Downloading: `[||||||||||]` 96%')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading96%'))
             sleep(4)
-            await msg.edit(content='Downloading: `[||||||||||]` 99%')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading99%1'))
             sleep(1.5)
-            await msg.edit(content='Downloading: `[||||||||||]` 99%.')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading99%2'))
             sleep(1.5)
-            await msg.edit(content='Downloading: `[||||||||||]` 99%..')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading99%3'))
             sleep(1.5)
-            await msg.edit(content='Downloading: `[||||||||||]` 99%...')
+            await msg.edit(content=locale.get_string('dlUpdate.downloading99%4'))
             sleep(3)
             if random() < .9:
-                await msg.edit(content='Downloading: `[||||||||||]` 99%... ERROR')
+                await msg.edit(content=locale.get_string('downloadingError'))
                 sleep(2)
-                await ctx.send('shit.')
+                await ctx.send(locale.get_string('dlExpletive'))
                 sleep(2)
-                await ctx.send("uhh... let's just try that again later")
+                await ctx.send(locale.get_string('tryAgainLater'))
             else:
-                await msg.edit(content='Downloading: `[||||||||||]` 100%')
+                await msg.edit(content=locale.get_string('downloadingSuccess'))
                 sleep(2)
-                await ctx.send('??? O_o')
+                await ctx.send(locale.get_string('shockAndAwe'))
                 sleep(2)
-                await ctx.send('Holy shit it actually worked?? Congrats???')
+                await ctx.send(locale.get_string('actuallyWorkedDisbelief'))
 
     except asyncio.TimeoutError:
-        await ctx.send("Well fine then. Ignore me why don't you...")
+        await ctx.send(locale.get_string('dlUpdate.responseWaitedTooLong'))
