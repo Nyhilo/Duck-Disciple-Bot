@@ -82,7 +82,7 @@ class Reminders(commands.Cog, name='Reminders'):
             await ctx.send(responseMsg)
         except Exception as e:
             log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
+            await ctx.send(globalLocale.get_string('genericError'))
 
 
     @tasks.loop(minutes=1)
@@ -225,10 +225,10 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
         log.info(responseMsg.split('\n')[0])
         await ctx.send(responseMsg)
-        
+
     except Exception as e:
         log.exception(e)
-        await ctx.send(config.GENERIC_ERROR)
+        await ctx.send(globalLocale.get_string('genericError'))
 
 
 memberConverter = commands.MemberConverter()
