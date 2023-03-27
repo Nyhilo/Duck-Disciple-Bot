@@ -39,6 +39,15 @@
             "cardSuccessPlural": "Here are your cards!'",
             "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
             "timestampSuccess": "Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`"
+        },
+        "reminders": {
+            "helpMessage": "Please see `{prefix}help remind` for details on how to use this command.",
+            "forgetIdNotGiven": "Please include the id of the reminder to forget.",
+            "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
+            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{_msg}",
+            "remindSetTooShort": "C'mon, less than 10 seconds is just silly.",
+            "remindSetVeryShort": "Okay, I'll remind you.",
+            "remindFoundVeryShort": "Hey, reminding you about this thing.\n\n{message}"
         }
     },
     "core": {
