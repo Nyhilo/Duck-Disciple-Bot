@@ -90,10 +90,11 @@ class Misc(commands.Cog, name='Miscellaneous'):
     async def timestamp(self, ctx, *, message=None):
         try:
             timestamp = nomic_time.get_datestring_timestamp(message)
+            formattedTimestamp = f'<t:{timestamp}>'
         except Exception:
             return await ctx.send(locale.get_string('timestampBadFormat'))
 
-        await ctx.send(locale.get_string('timestampSuccess', timestamp=timestamp))
+        await ctx.send(locale.get_string('timestampSuccess', formattedTimestamp=formattedTimestamp, timestamp=timestamp))
 
 
 async def setup(bot):

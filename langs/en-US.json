@@ -38,13 +38,13 @@
             "cardSuccess": "Here is your card!'",
             "cardSuccessPlural": "Here are your cards!'",
             "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
-            "timestampSuccess": "Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`"
+            "timestampSuccess": "Here is your timestamp for {formattedTimestamp} your time: `{timestamp}`"
         },
         "reminders": {
             "helpMessage": "Please see `{prefix}help remind` for details on how to use this command.",
             "forgetIdNotGiven": "Please include the id of the reminder to forget.",
             "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
-            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{_msg}",
+            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{message}",
             "remindSetTooShort": "C'mon, less than 10 seconds is just silly.",
             "remindSetVeryShort": "Okay, I'll remind you.",
             "remindFoundVeryShort": "Hey, reminding you about this thing.\n\n{message}"
@@ -80,8 +80,8 @@
             "phaseEndNear": "Phase ends in {minutes} min"
         },
         "reminders": {
-            "reminderSetShort": "I'll remind you about this at about <t:{timestamp}>.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
-            "reminderSetLong": "Reminder set to trigger <t:{remindAfter}:R>\n> {remindMsg}",
+            "reminderSetShort": "I'll remind you about this at about {timestamp}.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
+            "reminderSetLong": "Reminder set to trigger {remindAfter}\n> {remindMsg}",
             "reminderError": "An error occurred trying to  set this reminder :(. Some kind of reminder database issue.",
             "idInvalidError": "That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before",
             "noReminderIdError": "No reminder found with id {rowId}.",

@@ -20,7 +20,7 @@ def set_new_reminder(userId: str,
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
     _createdAt = nomic_time.get_timestamp(createdAt)
-    _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
+    _remindAfter = f'<t:{nomic_time.get_timestamp(createdAt + remindAfter)}>'
 
     rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
 
@@ -54,7 +54,7 @@ def get_reminder(rowId):
         return locale.get_string('noReminderIdError', rowId=rowId)
 
     reminder = _reminders[0]
-    remindAfter = reminder['RemindAfter']
+    remindAfter = f'<t:{reminder["RemindAfter"]}:R>'
     remindMsg = reminder['RemindMsg']
 
     return locale.get_string('reminderSetLong', remindAfter=remindAfter, remindMsg=remindMsg)
