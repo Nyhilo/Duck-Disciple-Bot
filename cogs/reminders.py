@@ -9,6 +9,11 @@ from core.log import log
 import core.reminders as reminders
 import core.nomic_time as nomic_time
 
+import core.language as language
+
+locale = language.Locale('cogs.reminders')
+globalLocale = language.Locale('global')
+
 
 class Reminders(commands.Cog, name='Reminders'):
     '''
@@ -48,7 +53,7 @@ class Reminders(commands.Cog, name='Reminders'):
     )
     async def remind(self, ctx, *, message=None):
         if not message:
-            return await ctx.send(f'Please see `{config.PREFIX}help remind` for details on how to use this command.')
+            return await ctx.send(locale.get_string('helpMessage', prefix=config.PREFIX))
 
         # Get Info to set
         userId = ctx.message.author.id
@@ -68,7 +73,7 @@ class Reminders(commands.Cog, name='Reminders'):
     )
     async def forget(self, ctx, rowId=None):
         if not rowId:
-            return await ctx.send('Please include the id of the reminder to forget.')
+            return await ctx.send(locale.get_string('forgetIdNotGiven'))
 
         guildId = ctx.guild.id if ctx.guild else None
 
@@ -77,7 +82,8 @@ class Reminders(commands.Cog, name='Reminders'):
             await ctx.send(responseMsg)
         except Exception as e:
             log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
+            await ctx.send(globalLocale.get_string('genericError'))
+
 
     @tasks.loop(minutes=1)
     async def check_reminders(self):
@@ -85,8 +91,8 @@ class Reminders(commands.Cog, name='Reminders'):
         tasks = reminders.check_for_triggered_reminders()
 
         for task in tasks:
-            userId = task['UserId']
-            createdAt = task['CreatedAt']
+            userAt = f"<@!{task['UserId']}>"
+            createdAt = f"<t:{task['CreatedAt']}:R>"
             msg = task['RemindMsg']
             rowId = task['rowid']
             channelId = task['ChannelId']
@@ -98,13 +104,14 @@ class Reminders(commands.Cog, name='Reminders'):
                     log.info(unsetMsg)
                 continue
 
-            _msg = f'\n\n"{msg}"' if msg else ''
+            _msg = f'"{msg}"' if msg else ''
             try:
                 replyTo = await channel.fetch_message(task['MessageId'])
-                await replyTo.reply(f'<@!{userId}>, reminding you of the message you sent here.{_msg}')
+                await replyTo.reply(locale.get_string('remindFound', userAt=userAt, message=_msg))
+
             except discord.NotFound:
-                await channel.send(f'<@!{userId}>, reminding you of a reminder you '
-                                   f'set in this channel <t:{createdAt}:R>.{_msg}')
+                await replyTo.reply(locale.get_string('remindChannelNotFound',
+                                                      userAt=userAt, createdAt=createdAt, message=_msg))
 
             log.info(reminders.unset_reminder(rowId, overrideId=True))
 
@@ -192,30 +199,36 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
         return await ctx.send(msg)
 
     if remindAfter.total_seconds() < 10:
-        return await ctx.send("C'mon, less than 10 seconds is just silly.")
+        return await ctx.send(locale.get_string('remindSetTooShort'))
 
     if reminders.can_quick_remind(remindAfter):
         seconds = remindAfter.total_seconds()
         secondsAgo = nomic_time.get_timestamp(createdAt)
+        
         log.info(f'Performing quick remind in {seconds} seconds')
-        await ctx.send("Okay, I'll remind you.")
+
+        await ctx.send(locale.get_string('remindSetShort'))
         await asyncio.sleep(remindAfter.total_seconds())
 
-        _msg = f'\n\n"{msg}"' if msg and len(msg) < 1000 else ''
+        _msg = f'"{msg}"' if msg and len(msg) < 1000 else ''
         try:
             replyTo = await ctx.fetch_message(messageId)
-            return await replyTo.reply(f'Hey, reminding you about this thing.{_msg}')
+            return await replyTo.reply(locale.get_string('remindFoundShort', message=_msg))
+        
         except discord.NotFound:
-            return await ctx.send(f'<@!{userId}>, reminding you of a reminder you '
-                                  f'set in this channel <t:{secondsAgo}:R>.{_msg}')
+            userAt = f'<@!{userId}>'
+            createdAt = f'<t:{secondsAgo}:R>'
+            return await ctx.send(locale.get_string('remindChannelNotFound',
+                                                      userAt=userAt, createdAt=createdAt, message=_msg))
 
     try:
         responseMsg = reminders.set_new_reminder(userId, messageId, channelId, createdAt, remindAfter, msg)
         log.info(responseMsg.split('\n')[0])
         await ctx.send(responseMsg)
+
     except Exception as e:
         log.exception(e)
-        await ctx.send(config.GENERIC_ERROR)
+        await ctx.send(globalLocale.get_string('genericError'))
 
 
 memberConverter = commands.MemberConverter()

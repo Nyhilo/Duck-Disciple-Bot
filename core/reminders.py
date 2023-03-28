@@ -7,6 +7,9 @@ from core.log import log
 from config.config import PREFIX
 import core.utils as utils
 
+import core.language as language
+
+locale = language.Locale('core.reminders')
 
 def set_new_reminder(userId: str,
                      messageId: int,
@@ -17,16 +20,16 @@ def set_new_reminder(userId: str,
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
     _createdAt = nomic_time.get_timestamp(createdAt)
-    _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
+    _remindAfter = f'<t:{nomic_time.get_timestamp(createdAt + remindAfter)}>'
 
     rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
 
     if rowId:
-        return(f'I\'ll remind you about this at about <t:{_remindAfter}>.\n'
-               f'Use `{PREFIX}forget {rowId}` to delete this reminder.\n')
-
+        return(locale.get_string('reminderSetShort',
+                timestamp=_remindAfter, prefix=PREFIX, rowId=rowId))
+                
     else:
-        return 'An error occured trying to set this reminder :(. Some kind of reminder database issue.'
+        return locale.get_string('reminderError')
 
 
 def check_for_triggered_reminders():
@@ -44,18 +47,17 @@ def get_reminder(rowId):
         rowId = int(rowId)
     except ValueError:
         log.exception(f'User gave a bad rowId to delete: "{rowId}"')
-        return 'That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before'
+        return locale.get_string('idInvalidError')
 
     _reminders = db.get_reminders(f'WHERE RowId = {rowId}')
     if len(_reminders) == 0:
-        return f'No reminder found with id {rowId}.'
+        return locale.get_string('noReminderIdError', rowId=rowId)
 
     reminder = _reminders[0]
-    remindAfter = reminder['RemindAfter']
+    remindAfter = f'<t:{reminder["RemindAfter"]}:R>'
     remindMsg = reminder['RemindMsg']
 
-    return (f"Reminder set to trigger <t:{remindAfter}:R>\n"
-            f"> {remindMsg}")
+    return locale.get_string('reminderSetLong', remindAfter=remindAfter, remindMsg=remindMsg)
 
 
 def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
@@ -65,22 +67,22 @@ def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
         rowId = int(rowId)
     except ValueError:
         log.exception(f'User gave a bad rowId to delete: "{rowId}"')
-        return 'That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before'
+        return locale.get_string('idInvalidError')
 
     reminders = db.get_reminders(f'WHERE rowid = {rowId}')
     if len(reminders) == 0:
-        return 'No reminder found with id {rowId}.'
+        return locale.get_string('noReminderIdError', rowId=rowId)
 
     if reminders[0]['Active'] == 0:
-        return f'Reminder {rowId} is old and wasn\'t going to trigger anyway'
+        return locale.get_string('reminderExpired', rowId=rowId)
 
     if overrideId or str(requesterId) == reminders[0]['UserId'] or utils.is_admin(requesterId, serverId):
         if db.unset_reminder(rowId):
-            return f'You will no longer be reminded of reminder number {rowId}.'
+            return locale.get_string('deleteSuccess', rowId=rowId)
         else:
-            return 'An error occured trying to delete this reminder. Oof.'
+            return locale.get_string('deleteError')
     else:
-        return 'Only an admin or the person who created a reminder can delete it.'
+        return locale.get_string('deleteUnauthorized')
 
 
 def parse_remind_message(_msg, createdAt=None):
@@ -127,14 +129,12 @@ def parse_remind_message(_msg, createdAt=None):
             parts.insert(2, firstWord)
 
         if len(parts) < 2:
-            return (None, ('Incorrect syntax for reminder or I couldn\'t understand your date format. '
-                           'See `{PREFIX}help remind` for more details.'))
+            return (None, locale.get_string('incorrectSyntax1', prefix=PREFIX))
 
         try:
             number = float(parts[0])
         except ValueError:
-            return (None, ('Couldn\'t understand your time format or you might have an extra semicolon in there '
-                           f'confusing things. See `{PREFIX}help remind` for more details.'))
+            return (None, locale.get_string('incorrectSyntax2', prefix=PREFIX))
 
         timeUnit = parts[1]
         span = nomic_time.parse_timespan_by_units(number, timeUnit)
@@ -142,10 +142,10 @@ def parse_remind_message(_msg, createdAt=None):
         msg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     if not span:
-        return (None, f'Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.')
+        return (None, locale.get_string('incorrectSyntaxGeneric'))
 
     if span.total_seconds() < 1:
-        return (None, 'Please give a time that is in the future (remember that times are in UTC).')
+        return (None, locale.get_string('attemptedTimeTravelError'))
 
     return (span, msg)
 

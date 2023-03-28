@@ -9,6 +9,11 @@ import core.sha as shalib
 import core.utils as utils
 import core.stopdoing as stopdoing
 
+import core.language as language
+
+locale = language.Locale('cogs.misc')
+globalLocale = language.Locale('global')
+
 
 class Misc(commands.Cog, name='Miscellaneous'):
     '''
@@ -28,16 +33,16 @@ class Misc(commands.Cog, name='Miscellaneous'):
     )
     async def sha(self, ctx, *, message=None):
         if message is None:
-            await ctx.send("Please include the message you would like me to hash.")
+            await ctx.send(locale.get_string('shaInputMissing'))
             return
 
         try:
             filteredMessage = utils.trim_quotes(message)
             hash = shalib.get_sha_256(filteredMessage)
-            await ctx.send(f'The hash for the above message is:\n{hash}')
+            await ctx.send(locale.get_string('shaHashGiven', hash=hash))
         except Exception as e:
             log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
+            await ctx.send(globalLocale.get_string('genericError'))
 
     @commands.command(brief='Stop doing nomic', help='Stop doing it.', aliases=['stop', 'stahp'])
     async def stopdoingnomic(self, ctx):
@@ -60,19 +65,22 @@ class Misc(commands.Cog, name='Miscellaneous'):
     )
     async def draw(self, ctx, number=1, size=1):
         if number * size < 1:
-            return await ctx.send('Positive integers only please.')
+            return await ctx.send(locale.get_string('cardsNotPositive'))
 
         maxcards = 50
         if number * size > maxcards:
-            return await ctx.send('Sorry, maximum number of cards per draw '
-                                  f'is {maxcards}.')
+            return await ctx.send(locale.get_string('cardTooMany', maxcards=maxcards))
 
         try:
-            await ctx.send(('Here are your cards!' if number * size > 1 else 'Here is your card!'))
+            if number * size > 1:
+                await ctx.send(locale.get_string('cardSuccessPlural'))
+            else:
+                await ctx.send(locale.get_string('cardSuccess'))
+
             await ctx.send(utils.draw_random_card_sets(number, size))
         except Exception as e:
             log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
+            await ctx.send(globalLocale.get_string('genericError'))
 
     @commands.command(
         brief='Get unix timestamp for date string',
@@ -82,10 +90,11 @@ class Misc(commands.Cog, name='Miscellaneous'):
     async def timestamp(self, ctx, *, message=None):
         try:
             timestamp = nomic_time.get_datestring_timestamp(message)
+            formattedTimestamp = f'<t:{timestamp}>'
         except Exception:
-            return await ctx.send('Whoops, I did\'t recognize the date format you sent. Try something else.')
+            return await ctx.send(locale.get_string('timestampBadFormat'))
 
-        await ctx.send(f'Here is your timestamp for <t:{timestamp}> your time: `{timestamp}`')
+        await ctx.send(locale.get_string('timestampSuccess', formattedTimestamp=formattedTimestamp, timestamp=timestamp))
 
 
 async def setup(bot):

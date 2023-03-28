@@ -7,8 +7,12 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from math import ceil
 
-from config.config import PHASE_START_DATE, PHASE_GROUPS, LOOP_NAME
+from config.config import PHASE_START_DATE, PHASE_GROUPS, LOOP_VALUE
 import core.utils as utils
+
+import core.language as language
+
+locale = language.Locale("core.nomic_time")
 
 _d = PHASE_START_DATE
 START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
@@ -40,11 +44,10 @@ def get_current_utc_string():
     nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
     nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
 
-    return (f'It is **{time}** on **{weekday}**, UTC\n'
-            f'That means it is **{phase}**\n\n'
-            f'*{nextPhase}* starts on *{nextDay}*, which is roughly '
-            f'{nextDayRelativeTimestampStr}.\n'
-            f'That is {nextDayTimestampStr} your time.')
+    return locale.get_string('timeUtcReportString', time=time, weekday=weekday,
+                             phase=phase, nextPhase=nextPhase, nextDay=nextDay,
+                             nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
+                             nextDayTimestampStr=nextDayTimestampStr)
 
 
 #################################
@@ -107,9 +110,9 @@ def _get_phase_name(phase: int) -> str:
         minus = '-' if phase < 0 else ''
         phase_ = f'{minus}{utils.roman_numeralize(abs(phase))}'
         phase__ = f'-{utils.roman_numeralize(abs(phase - 1))}'
-        return f'Phase {phase_}, (or is it Phase {phase__}?)'
+        return locale.get_string('phaseNameNegative', number=phase_, numberOneLess=phase__)
 
-    return 'Phase ' + utils.roman_numeralize(phase)
+    return locale.get_string('phaseName', number=utils.roman_numeralize(phase))
 
 
 ################################
@@ -130,7 +133,7 @@ def get_formatted_date_string(timestamp: int = None) -> str:
 
     msg = datetime.utcfromtimestamp(timestamp).strftime(format)
 
-    # "round down" to the nearest 10 minutes if we happen to grab this at an odd time
+    # "round down" to the nearest 10 minutes by replacing ones digit with 0 if we happen to grab this at an odd time
     # NOTE: The index on this part may change if time format changes
     msg_ = list(msg)
     msg_[-5] = '0'
@@ -145,7 +148,8 @@ def get_current_phase_string():
     '''
 
     # TODO: Actually calculate the loop here
-    return f'{LOOP_NAME}, {_get_phase_name(_get_phase(utc_now()))}'
+    phaseName = {_get_phase_name(_get_phase(utc_now()))}
+    return locale.get_string('khronosPhaseString', ordinalValue=LOOP_VALUE, phaseName=phaseName)
 
 
 def get_minutes_to_next_phase() -> int:
@@ -163,9 +167,9 @@ def get_minutes_to_next_phase() -> int:
 def get_next_time_to_phase_end_string():
     minutes = get_minutes_to_next_phase()
     if minutes <= 60:
-        return f'Phase ends in {((minutes // 10) + 1) * 10} min'
+        return locale.get_string('phaseEndNear', minutes=((minutes // 10) + 1) * 10)
 
-    return f'Phase ends in {ceil(minutes/60)} hrs'
+    return locale.get_string('phaseEndFar', hours=ceil(minutes/60))
 
 
 def seconds_to_next_10_minute_increment():
