@@ -73,9 +73,9 @@ class Misc(commands.Cog, name='Miscellaneous'):
 
         try:
             if number * size > 1:
-                await ctx.send(locale.get_string('cardSuccess'))
-            else:
                 await ctx.send(locale.get_string('cardSuccessPlural'))
+            else:
+                await ctx.send(locale.get_string('cardSuccess'))
 
             await ctx.send(utils.draw_random_card_sets(number, size))
         except Exception as e:

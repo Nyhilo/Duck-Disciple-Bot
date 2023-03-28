@@ -213,7 +213,7 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
         _msg = f'"{msg}"' if msg and len(msg) < 1000 else ''
         try:
             replyTo = await ctx.fetch_message(messageId)
-            return await replyTo.reply(locale.set('remindFoundVeryShort', message=_msg))
+            return await replyTo.reply(locale.get_string('remindFoundShort', message=_msg))
         
         except discord.NotFound:
             userAt = f'<@!{userId}>'

@@ -5,7 +5,7 @@
     "cogs": {
         "cycle": {},
         "image_manipulation": {
-            "imageNotSupported": "Either I don't support that image type or you didn't send or reply to an image.",
+            "imageNotSupported": "Either I don't support that image type or you didn't send or reply to an image."
         },
         "pool": {
             "poolCommandNotFound": "Please provide an argument. See {prefix}help pool for details.",
@@ -24,7 +24,7 @@
             "addResultTooLong": "Pleas limit result descriptions to 1000 characters",
             "addTooManyResults": "Adding entries to a result is limited to 1000 entries at a time.",
             "removePoolNotGiven": "Please specify a pool to remove from.",
-            "removeResultNotGiven": "Please specify a result to remove from this pool",
+            "removeResultNotGiven": "Please specify a result to remove from this pool.",
             "removeAdditionsBadFormat": "Please list removals by amount, then result description.",
             "removeTooManyResults": "Removing entries from a result is limited to 1000 entries at a time.",
             "errorNotIntegers": "The number of rolls and extra entries should be integers.",
@@ -35,8 +35,8 @@
             "shaHashGiven": "The hash for the above message is:\n{hash}",
             "cardsNotPositive": "Positive integers only please.",
             "cardTooMany": "Sorry, maximum number of cards per draw is {maxcards}.",
-            "cardSuccess": "Here is your card!'",
-            "cardSuccessPlural": "Here are your cards!'",
+            "cardSuccess": "Here is your card!",
+            "cardSuccessPlural": "Here are your cards!",
             "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
             "timestampSuccess": "Here is your timestamp for {formattedTimestamp} your time: `{timestamp}`"
         },
@@ -46,8 +46,8 @@
             "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
             "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{message}",
             "remindSetTooShort": "C'mon, less than 10 seconds is just silly.",
-            "remindSetVeryShort": "Okay, I'll remind you.",
-            "remindFoundVeryShort": "Hey, reminding you about this thing.\n\n{message}"
+            "remindSetShort": "Okay, I'll remind you.",
+            "remindFoundShort": "Hey, reminding you about this thing.\n\n{message}"
         }
     },
     "core": {
@@ -71,7 +71,7 @@
             "poolDeleteSuccess": "{poolName} pool removed.",
             "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
         },
-        "nomic_ime": {
+        "nomic_time": {
             "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
             "phaseName": "Phase {number}",
             "phaseNameNegative": "Phase {number}, (or is it Phase {numberOneLess}?)",

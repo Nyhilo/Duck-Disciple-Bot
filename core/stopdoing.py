@@ -311,17 +311,17 @@ async def downloadupdate(ctx, bot):
             await msg.edit(content=locale.get_string('dlUpdate.downloading99%4'))
             sleep(3)
             if random() < .9:
-                await msg.edit(content=locale.get_string('downloadingError'))
+                await msg.edit(content=locale.get_string('dlUpdate.downloadingError'))
                 sleep(2)
-                await ctx.send(locale.get_string('dlExpletive'))
+                await ctx.send(locale.get_string('dlUpdate.dlExpletive'))
                 sleep(2)
-                await ctx.send(locale.get_string('tryAgainLater'))
+                await ctx.send(locale.get_string('dlUpdate.tryAgainLater'))
             else:
-                await msg.edit(content=locale.get_string('downloadingSuccess'))
+                await msg.edit(content=locale.get_string('dlUpdate.downloadingSuccess'))
                 sleep(2)
-                await ctx.send(locale.get_string('shockAndAwe'))
+                await ctx.send(locale.get_string('dlUpdate.shockAndAwe'))
                 sleep(2)
-                await ctx.send(locale.get_string('actuallyWorkedDisbelief'))
+                await ctx.send(locale.get_string('dlUpdate.actuallyWorkedDisbelief'))
 
     except asyncio.TimeoutError:
         await ctx.send(locale.get_string('dlUpdate.responseWaitedTooLong'))
