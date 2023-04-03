@@ -73,6 +73,7 @@ class StopDoing():
 
             # Stop doing STEM
             Option(send_image, 10, 'stop doing math.png', rf'{stop} doing math'),
+            Option(send_image, 2, 'start doing math.jpg', rf'start doing math'),
             Option(send_image, 10, 'stop doing derivatives.jpg', rf'{stop} doing (math|derivatives|calculus)'),
             Option(send_image, 5, 'stop doing medicine.jpg', rf'{stop} doing medicine'),
             Option(send_image, 5, 'stop doing chemistry.png', rf'{stop} doing chemistry'),
@@ -83,6 +84,8 @@ class StopDoing():
             
             # Stop doing other nerd stuff
             Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
+            Option(send_image, 2, 'stop using c.png',
+                        rf'{stop} (doing|using) (linguistics|language|the letter c)'),
             Option(send_image, 5, 'stop doing nixos.png', rf'{stop} doing nixos'),
             Option(send_image, 5, 'stop doing chess.png', rf'{stop} (doing|playing) chess'),
             Option(send_image, 4, 'stop doing music.png', rf'{stop} (doing|playing) music'),
@@ -131,9 +134,11 @@ class StopDoing():
             Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
             
             # Amogi
-            Option(amogus, 4, None, r'^amogus$'),
-            Option(amogus2, 2, None, r'^amogus$'),
-            Option(amogus3, 1, None, r'^amogus$'),
+            Option(amogus, 7, None, r'^amogus$'),
+            Option(amogus2, 3, None, r'^amogus$'),
+            Option(amogus3, 2, None, r'^amogus$'),
+            Option(send_image, 1, 'stop posting amongus.png',
+                        [r'^amogus$', rf'{stop} (doing|posting|saying) (among us|amongus|amogus|ඞ)']),
 
             # Rare triggers
             Option(bossy, 1, None, nomic),
