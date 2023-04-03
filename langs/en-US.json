@@ -1,0 +1,122 @@
+{
+    "global": {
+        "genericError": "Ah shit that didn't work.\nJust let ny know they'll fix it."
+    },
+    "cogs": {
+        "cycle": {},
+        "image_manipulation": {
+            "imageNotSupported": "Either I don't support that image type or you didn't send or reply to an image."
+        },
+        "pool": {
+            "poolCommandNotFound": "Please provide an argument. See {prefix}help pool for details.",
+            "seeHelpForInfo": " See `{prefix}help pool` for more info.",
+            "listTooManyArgs": "The `list` command does not take any additional arguments.",
+            "infoTooManyArgs": "The `info` command only takes a pool name as an argument.",
+            "rollNameNotGiven": "Please specify the name of the pool you wish operate on.",
+            "rollTooManyPulls": "Pulling from pools is limited to 20 pulls.",
+            "createTooManyArgs": "The `create` command only takes a pool name and an optional (global) flag as arguments.",
+            "createPoolNotGiven": "Please specify the name of the pool you wish operate on.",
+            "createNameTooLong": "Please limit pool names to 100 characters.",
+            "deleteTooManyArgs": "The `delete` command only takes a pool name as an argument.",
+            "addPoolNotGiven": "Please specify a pool to add to.",
+            "addResultNotGiven": "Please specify a result to add to this pool",
+            "addAdditionsBadFormat": "Please list additions by amount, then result description.",
+            "addResultTooLong": "Pleas limit result descriptions to 1000 characters",
+            "addTooManyResults": "Adding entries to a result is limited to 1000 entries at a time.",
+            "removePoolNotGiven": "Please specify a pool to remove from.",
+            "removeResultNotGiven": "Please specify a result to remove from this pool.",
+            "removeAdditionsBadFormat": "Please list removals by amount, then result description.",
+            "removeTooManyResults": "Removing entries from a result is limited to 1000 entries at a time.",
+            "errorNotIntegers": "The number of rolls and extra entries should be integers.",
+            "errorNotPositive": "The number of rolls and extra entries should be positive integers."
+        },
+        "misc": {
+            "shaInputMissing": "Please include the message you would like me to hash.",
+            "shaHashGiven": "The hash for the above message is:\n{hash}",
+            "cardsNotPositive": "Positive integers only please.",
+            "cardTooMany": "Sorry, maximum number of cards per draw is {maxcards}.",
+            "cardSuccess": "Here is your card!",
+            "cardSuccessPlural": "Here are your cards!",
+            "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
+            "timestampSuccess": "Here is your timestamp for {formattedTimestamp} your time: `{timestamp}`"
+        },
+        "reminders": {
+            "helpMessage": "Please see `{prefix}help remind` for details on how to use this command.",
+            "forgetIdNotGiven": "Please include the id of the reminder to forget.",
+            "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
+            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{message}",
+            "remindSetTooShort": "C'mon, less than 10 seconds is just silly.",
+            "remindSetShort": "Okay, I'll remind you.",
+            "remindFoundShort": "Hey, reminding you about this thing.\n\n{message}"
+        }
+    },
+    "core": {
+        "loot_tables": {
+            "poolsAvailable": "Pools available in this server:\n{body}",
+            "noPoolsAvailable": "There are no pools available in this server.",
+            "poolNotFound": "Could not find a pool with that name in this server.",
+            "poolEmpty": "There are no results in this pool to roll on.",
+            "rollHeader": "Result pulling from {poolName}:\n```\n'",
+            "resultAddFail": "Whoops, something went wrong trying to add the following result. Process aborted.\n(entryDescription)",
+            "resultAddSuccess": "Successfully updated result{plural} in {poolName}",
+            "resultRemoveFail": "Whoops, something went wrong trying to remove the following result. Process aborted.\n{entryDescription}",
+            "resultRemoveDoesNotExist": "Could not remove result. Entry does not exist in pool.",
+            "resultRemovedSuccess": "Successfully removed specified results.",
+            "createGlobalAccessDenied": "You do not have permission to create global pools.",
+            "poolAlreadyExists": "Pool with that name already exists.",
+            "poolCreatedSuccess": "Created new pool {poolName}",
+            "poolCreatedFail": "Whoops, something went wrong trying to create that pool.",
+            "poolDeleteNotFound": "Pool named `{poolName}` not found in this server.",
+            "deleteAccessDenied": "You do not have permission to delete that pool.",
+            "poolDeleteSuccess": "{poolName} pool removed.",
+            "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
+        },
+        "nomic_time": {
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
+            "phaseName": "Phase {number}",
+            "phaseNameNegative": "Phase {number}, (or is it Phase {numberOneLess}?)",
+            "khronosPhaseString": "{ordinalValue} Loop, {phaseName}",
+            "phaseEndFar": "Phase ends in {hours} hrs",
+            "phaseEndNear": "Phase ends in {minutes} min"
+        },
+        "reminders": {
+            "reminderSetShort": "I'll remind you about this at about {timestamp}.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
+            "reminderSetLong": "Reminder set to trigger {remindAfter}\n> {remindMsg}",
+            "reminderError": "An error occurred trying to  set this reminder :(. Some kind of reminder database issue.",
+            "idInvalidError": "That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before",
+            "noReminderIdError": "No reminder found with id {rowId}.",
+            "reminderExpired": "Reminder {rowId} is old and wasn't going to trigger anyway",
+            "deleteSuccess": "You will no longer be reminded of reminder number {rowId}.",
+            "deleteError": "An error occurred trying to delete this reminder. Oof.",
+            "deleteUnauthorized": "Only an admin or the person who created a reminder can delete it.",
+            "incorrectSyntax1": "Incorrect syntax for reminder or I couldn't understand your date format. See `{prefix}help remind` for more details.",
+            "incorrectSyntax2": "Couldn't understand your time format or you might have an extra semicolon in there confusing things. See `{PREFIX}help remind` for more details.",
+            "incorrectSyntaxGeneric": "Incorrect syntax for reminder. See `{PREFIX}help remind` for more details.",
+            "attemptedTimeTravelError": "Please give a time that is in the future (remember that times are in UTC)."
+        },
+        "stopdoing": {
+            "bossyResponse": "*\"Stop doing nomic\", \"what time is it?\", \"trungify this meme\", \"pool roll some bullshit\".*\n\nDon't you all have anything better to do?",
+            "dlUpdate": {
+                "start": "There is an update for {prefix}stopdoingnomic, would you like to download it?",
+                "badResponse": "well, fine then. be that way I guess...",
+                "responseWaitedTooLong": "Well fine then. Ignore me why don't you...",
+                "downloading0%": "Downloading: `[          ]`",
+                "downloading20%": "Downloading: `[||        ]` 20%",
+                "downloading42%": "Downloading: `[||||      ]` 42%",
+                "downloading69%": "Downloading: `[|||||||   ]` 69% (nice)",
+                "downloading91%": "Downloading: `[||||||||| ]` 91%",
+                "downloading96%": "Downloading: `[||||||||||]` 96%",
+                "downloading99%1": "Downloading: `[||||||||||]` 99%",
+                "downloading99%2": "Downloading: `[||||||||||]` 99%.",
+                "downloading99%3": "Downloading: `[||||||||||]` 99%..",
+                "downloading99%4": "Downloading: `[||||||||||]` 99%...",
+                "downloadingError": "Downloading: `[||||||||||]` 99%... ERROR",
+                "dlExpletive": "shit.",
+                "tryAgainLater": "uhh... let's just try that again later",
+                "downloadingSuccess": "Downloading: `[||||||||||]` 100%",
+                "shockAndAwe": "??? O_o",
+                "actuallyWorkedDisbelief": "Holy shit it actually worked?? Congrats???"
+            }
+        }
+    }
+}

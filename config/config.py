@@ -124,7 +124,7 @@ PHASE_UPDATE_CHANNEL = 1029235284195418192 if not DEBUG else 1029220076097896448
 PHASE_END_UPDATE_CHANNEL = 1033465614695673858 if not DEBUG else 1031640532939702363
 
 PHASE_START_DATE = (2022, 12, 23)
-LOOP_NAME = 'Fifth Loop'
+LOOP_VALUE = 'Eighth'
 
 # Defines the cycle in which phases are looped starting with the start date
 # For instance, a cycle of [3, 2, 2] would have a 3-day Phase I, 2-day Phase II, 2-day Phase III, etc.
