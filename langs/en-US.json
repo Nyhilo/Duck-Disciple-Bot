@@ -7,6 +7,11 @@
         "image_manipulation": {
             "imageNotSupported": "Either I don't support that image type or you didn't send or reply to an image."
         },
+        "locale": {
+            "setNoLocaleGiven": "Please include the name of the locale you want to set.",
+            "setLocaleNotFound": "A locale with that name was not found.",
+            "setLocaleSuccess": "Locale set to {locale_name}"
+        },
         "pool": {
             "poolCommandNotFound": "Please provide an argument. See {prefix}help pool for details.",
             "seeHelpForInfo": " See `{prefix}help pool` for more info.",

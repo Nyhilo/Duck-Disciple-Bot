@@ -62,7 +62,7 @@ async def setup_hook():
     pools_db.set_tables()
 
     # Load cogs
-    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.locale', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
 
     for cog in cogs:
         try:

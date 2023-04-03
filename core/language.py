@@ -24,8 +24,9 @@ class Locale():
     def set_locale(self, locale_key:str, set_default:bool=False) -> str:
         # Check if locale file exists
         filepath = f'{_langfile_directory}{locale_key}{_langfile_extension}'
+
         if not path.exists(filepath):
-            return "A file with that locale doesn't exist."
+            raise LookupError
 
         # Load the file into memory
         with open(filepath, 'r') as f:
