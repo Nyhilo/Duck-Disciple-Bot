@@ -38,7 +38,7 @@ def get_setting(name:str) -> str:
 
     r = results[0] if len(results) > 0 else None
 
-    return r['Value']
+    return r['Value'] if r is not None else None
 
 
 def save_setting(name:str, value:str) -> bool:
@@ -54,7 +54,6 @@ def save_setting(name:str, value:str) -> bool:
     )
 
     if len(results) > 0:
-        print('updating...')
         return _update_setting(name, value)
 
     return _insert_setting(name, value)
@@ -76,5 +75,5 @@ def _update_setting(name:str, value:str) -> bool:
         UPDATE {DB_TABLE_SETTINGS_NAME}
         SET Value = :value
         WHERE Name = :name
-        ''', [name, value]
+        ''', [value, name]
     )
