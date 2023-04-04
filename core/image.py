@@ -4,20 +4,20 @@ import requests
 from io import BytesIO
 
 
-def get_image(url):
+def get_image(url: str) -> Image:
     '''https://stackoverflow.com/a/49092583'''
     response = requests.get(url)
     return Image.open(BytesIO(response.content))
 
 
-def trungify(source, updown=False):
+def trungify(source: str, updown: bool = False) -> Image:
     dest = Image.new("RGBA", source.size, (0, 0, 0, 0))
 
     w, h = source.size
 
     # this divides the width of the image into a number of sections equal to two times the height in pixels.
     # each row has two more of these units than the last, one on each side.
-    unit = w / (2*h)
+    unit = w / (2 * h)
 
     # iterate over each row of the image.
     for i in range(source.height):
@@ -45,14 +45,14 @@ def trungify(source, updown=False):
     return dest
 
 
-def detrungify(source, updown=False):
+def detrungify(source: str, updown: bool = False) -> Image:
     dest = Image.new("RGBA", source.size, (0, 0, 0, 0))
 
     w, h = source.size
 
     # this divides the width of the image into a number of sections equal to two times the height in pixels.
     # each row has two more of these units than the last, one on each side.
-    unit = w / (2*h)
+    unit = w / (2 * h)
 
     # iterate over each row of the image.
     for i in range(source.height):
@@ -70,7 +70,7 @@ def detrungify(source, updown=False):
             # - dividing the width of the image by 2*i units (so that we have 2*i evenly sized regions to pull from)
             # - multiplying that by j so that we get the j-th region
             # - subtracting one from the whole thing because of off-by-one errors
-            region_num = int((j * (2 * i * unit) // w) +1)
+            region_num = int((j * (2 * i * unit) // w) + 1)
 
             # finally fill in the pixel.
             dest.putpixel(
@@ -81,9 +81,10 @@ def detrungify(source, updown=False):
     return dest
 
 
-def trungify_and_save(url, destination, detrung: bool, updown: bool):
+def trungify_and_save(url: str, destination: str, detrung: bool, updown: bool) -> None:
     source = get_image(url)
-    output = detrungify(source, updown) if detrung else trungify(source, updown)
+    output = detrungify(
+        source, updown) if detrung else trungify(source, updown)
     output.save(destination)
 
 

@@ -5,7 +5,8 @@ from config.config import SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME
 
 # Database definitions
 def _table_exists(conn, table):
-    cursor = conn.execute(f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table}' ''')
+    cursor = conn.execute(
+        f''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='{table}' ''')
 
     return cursor.fetchone()[0] == 1
 

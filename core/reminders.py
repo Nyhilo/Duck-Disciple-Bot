@@ -1,15 +1,13 @@
 from datetime import datetime, timedelta
 import re
 
-import core.db.reminders_db as db
-import core.nomic_time as nomic_time
 from core.log import log
+from core.db import reminders_db as db
+from core import nomic_time, utils, language
 from config.config import PREFIX
-import core.utils as utils
-
-import core.language as language
 
 locale = language.Locale('core.reminders')
+
 
 def set_new_reminder(userId: str,
                      messageId: int,
@@ -22,12 +20,13 @@ def set_new_reminder(userId: str,
     _createdAt = nomic_time.get_timestamp(createdAt)
     _remindAfter = f'<t:{nomic_time.get_timestamp(createdAt + remindAfter)}>'
 
-    rowId = db.add_reminder(userId, messageId, channelId, _createdAt, _remindAfter, remindMsg)
+    rowId = db.add_reminder(userId, messageId, channelId,
+                            _createdAt, _remindAfter, remindMsg)
 
     if rowId:
-        return(locale.get_string('reminderSetShort',
-                timestamp=_remindAfter, prefix=PREFIX, rowId=rowId))
-                
+        return (locale.get_string('reminderSetShort',
+                                  timestamp=_remindAfter, prefix=PREFIX, rowId=rowId))
+
     else:
         return locale.get_string('reminderError')
 
@@ -36,7 +35,8 @@ def check_for_triggered_reminders():
     '''
     Returns a list of dictionaries [{RowId, MessageId, ReplyMessage}]
     '''
-    reminders = db.get_reminders(f'WHERE Active = 1 AND RemindAfter <= {nomic_time.unix_now()}')
+    reminders = db.get_reminders(
+        f'WHERE Active = 1 AND RemindAfter <= {nomic_time.unix_now()}')
 
     return reminders
 

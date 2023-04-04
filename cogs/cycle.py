@@ -1,11 +1,8 @@
-import discord
+import discord  # noqa F401
 from discord.ext import commands
 
-from math import ceil, sqrt
-
 from core.log import log
-import core.nomic_time as nomic_time
-import config.config as config
+from core import nomic_time
 
 import core.language as language
 globalLocale = language.Locale('global')

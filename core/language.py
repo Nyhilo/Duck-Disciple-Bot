@@ -60,7 +60,7 @@ class Locale():
         # And we're golden I guess
         self.current_key = locale_key
 
-    def get_string(self, path, default_lang=False, **formatkwargs):
+    def get_string(self, path: str, default_lang: bool = False, **formatkwargs):
         """Combine base path with args path to find correct string for key
 
         :param path:         Dot-delimited json subpath to target string
@@ -88,7 +88,7 @@ class Locale():
             for step in fullpath:
                 node = node[step]
 
-            assert(type(node) is str)
+            assert (type(node) is str)
 
         # The path is not valid, but may exist in the default lang file
         except KeyError:

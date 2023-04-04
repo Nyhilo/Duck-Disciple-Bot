@@ -25,7 +25,7 @@ def set_tables():
     _create_table_settings()
 
 
-def get_setting(name:str) -> str:
+def get_setting(name: str) -> str:
     """Gets the value of a given setting key"""
 
     results = db.get(
@@ -41,7 +41,7 @@ def get_setting(name:str) -> str:
     return r['Value'] if r is not None else None
 
 
-def save_setting(name:str, value:str) -> bool:
+def save_setting(name: str, value: str) -> bool:
     """Inserts or updates the setting value"""
 
     # Check if a setting with the given name already exists
@@ -59,7 +59,7 @@ def save_setting(name:str, value:str) -> bool:
     return _insert_setting(name, value)
 
 
-def _insert_setting(name:str, value:str) -> bool:
+def _insert_setting(name: str, value: str) -> bool:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_SETTINGS_NAME}
@@ -69,7 +69,7 @@ def _insert_setting(name:str, value:str) -> bool:
     )
 
 
-def _update_setting(name:str, value:str) -> bool:
+def _update_setting(name: str, value: str) -> bool:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_SETTINGS_NAME}

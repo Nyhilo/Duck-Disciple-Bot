@@ -67,7 +67,8 @@ class Database():
         conn = sqlite3.connect(self.database_name)
         conn.row_factory = sqlite3.Row
 
-        cursor = conn.execute(query, params) if params is not None else conn.execute(query)
+        cursor = conn.execute(
+            query, params) if params is not None else conn.execute(query)
 
         rows = cursor.fetchall()
         conn.close()
@@ -88,7 +89,8 @@ class Database():
         """
         conn = sqlite3.connect(self.database_name)
 
-        cursor = conn.execute(query, params) if params is not None else conn.execute(query)
+        cursor = conn.execute(
+            query, params) if params is not None else conn.execute(query)
 
         conn.commit()
         conn.close()

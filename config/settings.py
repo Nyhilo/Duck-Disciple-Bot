@@ -1,4 +1,4 @@
-import core.db.settings_db as db
+from core.db import settings_db as db
 
 
 class Settings():

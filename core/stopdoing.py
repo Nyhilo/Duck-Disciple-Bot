@@ -9,7 +9,7 @@ import re
 import config.config as config
 from core.log import log
 
-import core.language as language
+from core import language
 
 locale = language.Locale('core.stopdoing')
 
@@ -64,9 +64,8 @@ class StopDoing():
         self.bot = bot
         punc = r'(?:[\.!?])?'
         stop = r'(not|stop(?:ped)?)'
-        stopdoing = rf'{stop} doing{punc}$'
         nomic = rf'{stop} doing nomic'
-        pronoun = r'(he|she|they|e)'
+
         self.options = [
             # Classic Stop Doing Nomic
             Option(send_image, 15, 'square stop doing nomic.png', nomic),
@@ -77,26 +76,25 @@ class StopDoing():
 
             # Stop doing STEM
             Option(send_image, 10, 'stop doing math.png', rf'{stop} doing math'),
-            Option(send_image, 2, 'start doing math.jpg', rf'start doing math'),
+            Option(send_image, 2, 'start doing math.jpg', r'start doing math'),
             Option(send_image, 10, 'stop doing derivatives.jpg', rf'{stop} doing (math|derivatives|calculus)'),
             Option(send_image, 5, 'stop doing medicine.jpg', rf'{stop} doing medicine'),
             Option(send_image, 5, 'stop doing chemistry.png', rf'{stop} doing chemistry'),
             Option(send_image, 5, 'stop doing physics.png', rf'{stop} doing (?:quantum )?physics'),
             Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
             Option(send_image, 15, 'stop doing computer science.png',
-                        rf'{stop} doing (compsci|computer science|programming|coding)'),
-            
+                   rf'{stop} doing (compsci|computer science|programming|coding)'),
+
             # Stop doing other nerd stuff
             Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
-            Option(send_image, 2, 'stop using c.png',
-                        rf'{stop} (doing|using) (linguistics|language|the letter c)'),
+            Option(send_image, 2, 'stop using c.png', rf'{stop} (doing|using) (linguistics|language|the letter c)'),
             Option(send_image, 5, 'stop doing nixos.png', rf'{stop} doing nixos'),
             Option(send_image, 5, 'stop doing chess.png', rf'{stop} (doing|playing) chess'),
             Option(send_image, 4, 'stop doing music.png', rf'{stop} (doing|playing) music'),
             Option(send_image, 2, 'stop doing music theory.png',
-                        [rf'{stop} (doing|playing) music', rf'{stop} doing music theory']),
+                   [rf'{stop} (doing|playing) music', rf'{stop} doing music theory']),
             Option(send_image, 5, 'stop doing keyboards.jpg',
-                        rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)?board'),
+                   rf'{stop} (doing|using) (?:mech |mechanical )?(?:key)?board'),
 
             # Stop doing roads
             Option(send_image, 10, 'stop driving cars.png', rf'{stop} (doing|building|driving) (cars|road)'),
@@ -111,14 +109,14 @@ class StopDoing():
             Option(send_image, 1, 'stop doing2.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 1, 'stop doing3.jpg', [rf'stop doing{punc}$', nomic]),
             Option(send_image, 10, 'stop doing stop doing.png',
-                        [rf'{stop} doing (?:.)?stop doing', rf'{stop} doing{punc}$']),
+                   [rf'{stop} doing (?:.)?stop doing', rf'{stop} doing{punc}$']),
 
             # Gif responses
             Option(send_image, 5, 'mexican hankerchief.gif', r'^kek(?:.)?$'),
             Option(send_image, 5, 'stop it get some help.gif',
-                        [nomic, rf'stop doing{punc}$', r'get some help']),
+                   [nomic, rf'stop doing{punc}$', r'get some help']),
             Option(send_image, 3, 'nej men hej.gif', [r'^nej men hej$', r'^nmh$']),
-            
+
             # Misc Infinite Nomic memes
             Option(send_image, 10, 'you could make a nomic.png', [nomic, r'(could|can) make a nomic out of']),
             Option(send_image, 5, 'how can he do this without drowning.jpg', rf'^how can .+ do this{punc}$'),
@@ -127,22 +125,22 @@ class StopDoing():
             Option(send_image, 5, 'should.png', r'^(?:.)?should(?:.)?$'),
             Option(send_image, 5, 'reasonably.png', r'^(?:.)?reasonably(?:.)?$'),
             Option(send_image, 5, 'birb vs ml.png', rf'{stop} doing (ml|machine learning)'),
-            
+
             # Misc Non-IN memes
             Option(send_image, 5, 'become unponderable.png', r'become unponderable'),
             Option(send_image, 10, 'big brain granny.png', r'big brain'),
 
             # Misc Emotes
             Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
-            Option(what, 8, None, rf'^what(?:\.)?$'),
+            Option(what, 8, None, r'^what(?:\.)?$'),
             Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
-            
+
             # Amogi
             Option(amogus, 7, None, r'^amogus$'),
             Option(amogus2, 3, None, r'^amogus$'),
             Option(amogus3, 2, None, r'^amogus$'),
             Option(send_image, 1, 'stop posting amongus.png',
-                        [r'^amogus$', rf'{stop} (doing|posting|saying) (among us|amongus|amogus|ඞ)']),
+                   [r'^amogus$', rf'{stop} (doing|posting|saying) (among us|amongus|amogus|ඞ)']),
 
             # Rare triggers
             Option(bossy, 1, None, nomic),
@@ -189,7 +187,7 @@ class StopDoing():
         await option.execute(ctx)
 
 
-    def getOptionsForInput(self, msg:str=None) -> List[Option]:
+    def getOptionsForInput(self, msg: str = None) -> List[Option]:
         '''
         Returns a list of all options that match the regex for the provided msg
 
@@ -206,11 +204,11 @@ class StopDoing():
             # if an option has multiple matches, any of them can make the option valid
             if any([r.search(msg) for r in option.regexes]):
                 options.append(option)
-        
+
         return options
 
 
-def odds(msg:str=None) -> str:
+def odds(msg: str = None) -> str:
     '''
     Returns a description of all option weights for a given request msg.
     Or the sum of all weights if no request msg is provided.
@@ -220,7 +218,7 @@ def odds(msg:str=None) -> str:
 
     stop = StopDoing(None)
     total_weights = sum([option.weight for option in stop.options])
-    
+
     if msg is None:
         return f'The total weights of all options is: {total_weights}'
 
@@ -279,8 +277,8 @@ async def downloadupdate(ctx, bot):
     no_list = ['no', 'nah', 'nope', 'n']
 
     def check(m):
-        return ((m.channel == ctx or m.channel == ctx.channel) and
-                (m.content.lower() in yes_list or m.content.lower() in no_list))
+        return ((m.channel == ctx or m.channel == ctx.channel)
+                and (m.content.lower() in yes_list or m.content.lower() in no_list))
 
     try:
         response = await bot.wait_for('message', timeout=60, check=check)

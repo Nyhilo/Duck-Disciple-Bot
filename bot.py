@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from config.config import PREFIX, CACHE_FOLDER
 from core.log import log
 
-import core.language as language
+from core import language
 
 ###########
 # Globals #
@@ -29,8 +29,8 @@ intents.message_content = True
 activity = discord.ActivityType.listening
 client = commands.Bot(command_prefix=PREFIX,
                       description=(
-                        'Lil\' Timmy Temporal closes the loops. A general-use '
-                        'bot for the Infinite Nomic discord server.'),
+                          'Lil\' Timmy Temporal closes the loops. A general-use '
+                          'bot for the Infinite Nomic discord server.'),
                       help_command=help_command,
                       activity=discord.Activity(type=activity, name=PREFIX),
                       intents=intents
@@ -67,7 +67,8 @@ async def setup_hook():
     language.Locale(None).initialize()
 
     # Load cogs
-    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.locale', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.locale',
+            'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
 
     for cog in cogs:
         try:
