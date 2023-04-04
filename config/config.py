@@ -8,7 +8,6 @@ DEBUG = os.getenv('DEBUG') == 'TRUE'
 PREFIX = '&'
 
 LOG_FILE = 'log.txt'
-GENERIC_ERROR = ('Ah shit that didn\'t work.\nJust let ny know they\'ll fix it.')
 
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = True if DEBUG else False

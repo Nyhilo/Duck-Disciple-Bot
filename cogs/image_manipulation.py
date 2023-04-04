@@ -9,6 +9,7 @@ import core.image as image
 import core.language as language
 
 locale = language.Locale('cogs.image_manipulation')
+globalLocale = language.Locale('global')
 
 
 class Image_Manipulation(commands.Cog, name='Image Manipulation'):
@@ -106,7 +107,7 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
             await ctx.send(file=f)
     except Exception as e:
         log.exception(e)
-        await ctx.send(config.GENERIC_ERROR)
+        await ctx.send(globalLocale.get_string('genericError'))
 
 
 async def setup(bot):

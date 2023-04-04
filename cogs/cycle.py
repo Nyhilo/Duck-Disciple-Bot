@@ -7,6 +7,9 @@ from core.log import log
 import core.nomic_time as nomic_time
 import config.config as config
 
+import core.language as language
+globalLocale = language.Locale('global')
+
 
 class Cycle(commands.Cog, name='Current Cycle'):
     '''
@@ -26,7 +29,7 @@ class Cycle(commands.Cog, name='Current Cycle'):
             await ctx.send(nomic_time.get_current_utc_string())
         except Exception as e:
             log.exception(e)
-            await ctx.send(config.GENERIC_ERROR)
+            await ctx.send(globalLocale.get_string('genericError'))
 
 
 async def setup(bot):
