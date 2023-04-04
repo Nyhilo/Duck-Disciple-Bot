@@ -10,7 +10,7 @@
         "locale": {
             "setNoLocaleGiven": "Please include the name of the locale you want to set.",
             "setLocaleNotFound": "A locale with that name was not found.",
-            "setLocaleSuccess": "Locale set to {locale_name}"
+            "setLocaleSuccess": "Locale set to `{locale_name}`"
         },
         "pool": {
             "poolCommandNotFound": "Please provide an argument. See {prefix}help pool for details.",

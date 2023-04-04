@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from config.config import PREFIX, CACHE_FOLDER
 from core.log import log
 
+import core.language as language
+
 ###########
 # Globals #
 ###########
@@ -60,6 +62,9 @@ async def setup_hook():
     reminders_db.set_tables()
     import core.db.pools_db as pools_db
     pools_db.set_tables()
+
+    # Setup locale files
+    language.Locale(None).initialize()
 
     # Load cogs
     cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.locale', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
