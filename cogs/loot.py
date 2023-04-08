@@ -1,12 +1,9 @@
 from discord.ext import commands
 
 from core.log import log
-import config.config as config
-import core.loot_tables as loot
+from core import loot_tables as loot, language
 from core.db.models.pool_models import Entry
 from config.config import PREFIX
-
-import core.language as language
 
 locale = language.Locale('cogs.pool')
 globalLocale = language.Locale('global')
@@ -137,7 +134,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 entries, tail, error = parse_arbitrary_options(*args)
 
                 if tail is not None:
-                    return await ctx.send(locale.get_string('addAdditionsBadFormat') + locale.get_string('seeHelpForInfo'))
+                    return await ctx.send(locale.get_string('addAdditionsBadFormat')
+                                          + locale.get_string('seeHelpForInfo'))
 
                 if error is not None:
                     return await ctx.send(error)
@@ -165,7 +163,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
                 entries, tail, error = parse_arbitrary_options(*args)
 
                 if tail is not None:
-                    return await ctx.send(locale.get_string('removeAdditionsBadFormat') + locale.get_string('seeHelpForInfo'))
+                    return await ctx.send(locale.get_string('removeAdditionsBadFormat')
+                                          + locale.get_string('seeHelpForInfo'))
 
                 if error is not None:
                     return await ctx.send(error)

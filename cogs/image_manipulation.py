@@ -3,12 +3,10 @@ from discord.ext import commands
 
 from core.log import log
 import config.config as config
-import core.utils as utils
-import core.image as image
-
-import core.language as language
+from core import utils, image, language
 
 locale = language.Locale('cogs.image_manipulation')
+globalLocale = language.Locale('global')
 
 
 class Image_Manipulation(commands.Cog, name='Image Manipulation'):
@@ -54,7 +52,8 @@ class Image_Manipulation(commands.Cog, name='Image Manipulation'):
         help=('Attach or link to an image to bottom detrungify it.\n'
               'You can also reply another message that has an image with this '
               'command to bottom detrungify that image instead.'),
-        aliases=['bottomdetrungify', 'bottomdetrung', 'botdetrung', 'bdtr', 'bdt', 'updowndetrung']
+        aliases=['bottomdetrungify', 'bottomdetrung',
+                 'botdetrung', 'bdtr', 'bdt', 'updowndetrung']
     )
     async def thicc(self, ctx):
         await _trung_handler(ctx, True, True)
@@ -66,10 +65,9 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
     async def get_image_source():
         # Check if the message contains an image
         message = ctx.message
-        if (
-            len(message.attachments) > 0 and
-            any(message.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
-        ):
+        if (len(message.attachments) > 0
+                and any(message.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)):
+
             return message.attachments[0].url
 
         if any(message.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
@@ -79,10 +77,9 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
         if message.reference:
             reply = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 
-            if (
-                len(reply.attachments) > 0 and
-                any(reply.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)
-            ):
+            if (len(reply.attachments) > 0
+                    and any(reply.attachments[0].filename.endswith(e) for e in config.IMAGE_EXTENSIONS)):
+
                 return reply.attachments[0].url
 
             if any(reply.content.endswith(e) for e in config.IMAGE_EXTENSIONS):
@@ -98,7 +95,8 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
 
     try:
         async with ctx.typing():
-            image.trungify_and_save(source, config.TRUNGIFY_CACHE, detrung, updown)
+            image.trungify_and_save(
+                source, config.TRUNGIFY_CACHE, detrung, updown)
 
             with open(config.TRUNGIFY_CACHE, 'rb') as file:
                 f = discord.File(file, filename=config.TRUNGIFY_CACHE)
@@ -106,7 +104,7 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
             await ctx.send(file=f)
     except Exception as e:
         log.exception(e)
-        await ctx.send(config.GENERIC_ERROR)
+        await ctx.send(globalLocale.get_string('genericError'))
 
 
 async def setup(bot):

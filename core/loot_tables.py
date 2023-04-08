@@ -1,25 +1,26 @@
 from random import choices
+from typing import List
 
 from core.log import log
-import core.db.pools_db as db
-from core.db.models.pool_models import Pool, Entry
-import core.utils as utils
-
-import core.language as language
+from core.db import pools_db as db
+from core.db.models.pool_models import Entry
+from core import utils, language
 
 locale = language.Locale("core.loot_tables")
 
-def list(serverId=0):
+
+def list(serverId: int = 0) -> str:
     pools = db.get_all_pools(serverId)
     if pools is not None and len(pools) > 0:
 
-        body = '\n'.join([f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
+        body = '\n'.join(
+            [f'\t{pool.name}\t{"(global)" if pool.server_id == 0 else ""}' for pool in pools])
         return locale.get_string('poolsAvailable', body=body)
     else:
         return locale.get_string('noPoolsAvailable')
 
 
-def info(serverId, pool):
+def info(serverId: int, pool: str) -> str:
     pool = db.get_pool(serverId, pool)
     if pool is not None:
         return pool.__str__()
@@ -27,7 +28,7 @@ def info(serverId, pool):
         return locale.get_string('poolNotFound')
 
 
-def roll(serverId, poolName, numRolls=1, extraEntries=None):
+def roll(serverId: int, poolName: str, numRolls: int = 1, extraEntries: List[Entry] = None) -> str:
     pool = db.get_pool(serverId, poolName)
     if pool is None:
         return locale.get_string('poolNotFound')
@@ -39,7 +40,8 @@ def roll(serverId, poolName, numRolls=1, extraEntries=None):
         for entry in extraEntries:
             pool.entries.append(entry)
 
-    chosenEntries = choices(pool.entries, weights=[entry.amount for entry in pool.entries], k=numRolls)
+    chosenEntries = choices(pool.entries, weights=[
+                            entry.amount for entry in pool.entries], k=numRolls)
 
     # This might go over the discord character limits, so we need to break the message up
     messageLimit = 2000
@@ -68,7 +70,7 @@ def roll(serverId, poolName, numRolls=1, extraEntries=None):
     return body
 
 
-def add(serverId, poolName, entries, deleteMode=False):
+def add(serverId: int, poolName: str, entries: List[Entry], deleteMode: bool = False) -> str:
     '''
     Adds a number of entries to a given pool
     '''
@@ -79,15 +81,18 @@ def add(serverId, poolName, entries, deleteMode=False):
     # Additions
     if not deleteMode:
         for entry in entries:
-            matchingResults = [e for e in pool.entries if e.description == entry.description]
-            matchingResult = matchingResults[0] if len(matchingResults) else None
+            matchingResults = [
+                e for e in pool.entries if e.description == entry.description]
+            matchingResult = matchingResults[0] if len(
+                matchingResults) else None
 
             # Add a new result to the pool
             if matchingResult is None:
                 try:
                     db.add_entry(pool.id, entry.description, entry.amount)
                 except Exception:
-                    log.info(f'Failed to add result `{entry.description}` to pool {pool.name}')
+                    log.info(
+                        f'Failed to add result `{entry.description}` to pool {pool.name}')
                     return locale.get_string('resultAddFail', entryDescription=entry.description)
             else:
                 try:
@@ -102,8 +107,10 @@ def add(serverId, poolName, entries, deleteMode=False):
     else:
         deletionResponse = ""
         for entry in entries:
-            matchingResults = [e for e in pool.entries if e.description == entry.description]
-            matchingResult = matchingResults[0] if len(matchingResults) else None
+            matchingResults = [
+                e for e in pool.entries if e.description == entry.description]
+            matchingResult = matchingResults[0] if len(
+                matchingResults) else None
 
             if matchingResult is not None:
                 matchingResult.amount -= entry.amount
@@ -118,7 +125,8 @@ def add(serverId, poolName, entries, deleteMode=False):
                 try:
                     db.update_entry(matchingResult.id, matchingResult.amount)
                 except Exception:
-                    log.info(f'Failed to update result with id {matchingResult.id} in database')
+                    log.info(
+                        f'Failed to update result with id {matchingResult.id} in database')
                     return locale.get_string('resultRemoveFail', entryDescription=entry.description)
             else:
                 if len(entries) == 1:
@@ -130,7 +138,7 @@ def add(serverId, poolName, entries, deleteMode=False):
         return deletionResponse
 
 
-def create(serverId, creatorId, poolName, isGlobal=False):
+def create(serverId: int, creatorId: int, poolName: str, isGlobal: bool = False) -> str:
     if isGlobal and utils.is_admin(creatorId, serverId):
         serverId = 0
 
@@ -151,7 +159,7 @@ def create(serverId, creatorId, poolName, isGlobal=False):
         return locale.get_string('poolCreatedFail')
 
 
-def delete(poolName, serverId, userId):
+def delete(poolName: str, serverId: int, userId: int) -> str:
     pool = db.get_pool(serverId, poolName)
     if not pool or (pool.server_id != serverId and pool.server_id != 0):
         return locale.get_string('poolDeleteNotFound', poolName=poolName)
@@ -163,5 +171,6 @@ def delete(poolName, serverId, userId):
         db.unset_pool(pool.id)
         return locale.get_string('poolDeleteSuccess', poolName=poolName)
     except Exception:
-        log.info(f'Failed to remove pool {pool.name} with id {pool.id} from database')
+        log.info(
+            f'Failed to remove pool {pool.name} with id {pool.id} from database')
         return locale.get_string('poolDeleteFail')

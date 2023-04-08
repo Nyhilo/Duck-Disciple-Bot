@@ -6,8 +6,10 @@ import os
 
 from dotenv import load_dotenv
 
-from config.config import PREFIX, CACHE_FOLDER
+from config.config import DEBUG, PREFIX, CACHE_FOLDER
 from core.log import log
+
+from core import language
 
 ###########
 # Globals #
@@ -27,8 +29,8 @@ intents.message_content = True
 activity = discord.ActivityType.listening
 client = commands.Bot(command_prefix=PREFIX,
                       description=(
-                        'Lil\' Timmy Temporal closes the loops. A general-use '
-                        'bot for the Infinite Nomic discord server.'),
+                          'Lil\' Timmy Temporal closes the loops. A general-use '
+                          'bot for the Infinite Nomic discord server.'),
                       help_command=help_command,
                       activity=discord.Activity(type=activity, name=PREFIX),
                       intents=intents
@@ -61,8 +63,16 @@ async def setup_hook():
     import core.db.pools_db as pools_db
     pools_db.set_tables()
 
+    # Setup locale files
+    language.Locale(None).initialize()
+
     # Load cogs
-    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+    cogs = ['cogs.cycle', 'cogs.image_manipulation',
+            'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+
+    # Development cogs
+    if DEBUG:
+        cogs.append('cogs.locale')
 
     for cog in cogs:
         try:

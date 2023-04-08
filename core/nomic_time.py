@@ -8,9 +8,7 @@ from dateutil.relativedelta import relativedelta
 from math import ceil
 
 from config.config import PHASE_START_DATE, PHASE_GROUPS, LOOP_VALUE
-import core.utils as utils
-
-import core.language as language
+from core import utils, language
 
 locale = language.Locale("core.nomic_time")
 
@@ -18,7 +16,7 @@ _d = PHASE_START_DATE
 START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
 
 
-def get_current_utc_string():
+def get_current_utc_string() -> None:
     # Okay there's a lot going on here
     # Get some base reference values
     now = utc_now()
@@ -70,10 +68,12 @@ def _get_phase(date: datetime) -> int:
 
     # This "rounds down" the days to the most recent full phase group
     # for instance, (20 // 7) * 7 = 18
-    phases_since = (days_since_beginning // phase_group_len) * num_phases_per_group
+    phases_since = ((days_since_beginning // phase_group_len)
+                    * num_phases_per_group)
 
     # I don't know why this -1 works, but it fixes an inconsistent off-by-one error
-    days_since = ((days_since_beginning // phase_group_len) * phase_group_len) - 1
+    days_since = ((days_since_beginning // phase_group_len)
+                  * phase_group_len) - 1
 
     # Add phases to the running total until we get to today
     for group in PHASE_GROUPS:
@@ -98,7 +98,7 @@ def _get_date_from_phase(phase: int) -> str:
     count = 0
 
     # Iterate through the phase lengths until we get to the start day of the phase
-    while count < (phase-1):
+    while count < (phase - 1):
         days_since += PHASE_GROUPS[count % phases_per_group]
         count += 1
 
@@ -128,7 +128,9 @@ def get_formatted_date_string(timestamp: int = None) -> str:
     :param timestamp: UTC timestamp, defaults to None
     :return: Formatted datetime string
     '''
-    timestamp = timestamp if timestamp is not None else get_timestamp(utc_now())
+    if timestamp is None:
+        timestamp = get_timestamp(utc_now())
+
     format = '%a %b %d, %H:%M UTC'
 
     msg = datetime.utcfromtimestamp(timestamp).strftime(format)
@@ -169,7 +171,7 @@ def get_next_time_to_phase_end_string():
     if minutes <= 60:
         return locale.get_string('phaseEndNear', minutes=((minutes // 10) + 1) * 10)
 
-    return locale.get_string('phaseEndFar', hours=ceil(minutes/60))
+    return locale.get_string('phaseEndFar', hours=ceil(minutes / 60))
 
 
 def seconds_to_next_10_minute_increment():
@@ -180,7 +182,7 @@ def seconds_to_next_10_minute_increment():
     if now.minute % 10 == 0:
         return 0
 
-    next_minute = ((now.minute // 10) + 1)*10
+    next_minute = ((now.minute // 10) + 1) * 10
     return (next_minute * 60) - ((now.minute * 60) + now.second) + 1
 
 
@@ -188,7 +190,8 @@ def seconds_to_next_day():
     now = utc_now()
 
     # Adds 1 day, then replaces the clock time to bring us to 00:00 UTC
-    tomorrow = now + relativedelta(days=1) + relativedelta(hour=0, minute=0, second=0)
+    tomorrow = (now + relativedelta(days=1)
+                + relativedelta(hour=0, minute=0, second=0))
     return (tomorrow - now).seconds
 
 

@@ -65,7 +65,7 @@ def get_all_pools(serverId) -> List[Pool]:
     return pools
 
 
-def get_pool(serverId, poolName) -> List[Pool]:
+def get_pool(serverId: int, poolName: str) -> List[Pool]:
     results = db.get(
         f'''
         SELECT Id, ServerId, CreatorId, Name, Active
@@ -75,7 +75,8 @@ def get_pool(serverId, poolName) -> List[Pool]:
     )
 
     r = results[0] if len(results) > 0 else None
-    pool = Pool(r['Id'], r['Name'], r['ServerId'], r['CreatorId'], None) if r else None
+    pool = Pool(r['Id'], r['Name'], r['ServerId'],
+                r['CreatorId'], None) if r else None
 
     if pool:
         pool.entries = get_entries(r['Id'], pool)
@@ -83,7 +84,7 @@ def get_pool(serverId, poolName) -> List[Pool]:
     return pool
 
 
-def get_entries(poolId, parentPool=None) -> List[Entry]:
+def get_entries(poolId: int, parentPool: str = None) -> List[Entry]:
     results = db.get(
         f'''
         SELECT Id, ParentPoolId, Description, Amount, Active
@@ -94,12 +95,13 @@ def get_entries(poolId, parentPool=None) -> List[Entry]:
 
     entries = []
     for r in results:
-        entries.append(Entry(r['Id'], parentPool, r['Amount'], r['Description']))
+        entries.append(Entry(r['Id'], parentPool,
+                       r['Amount'], r['Description']))
 
     return entries
 
 
-def add_pool(serverId, creatorId, poolName) -> int:
+def add_pool(serverId: int, creatorId: int, poolName: str) -> int:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOLS_NAME}
@@ -109,7 +111,7 @@ def add_pool(serverId, creatorId, poolName) -> int:
     )
 
 
-def add_entry(poolId, description, amount) -> int:
+def add_entry(poolId: int, description: str, amount: int) -> int:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_POOL_ENTRIES_NAME}
@@ -119,7 +121,7 @@ def add_entry(poolId, description, amount) -> int:
     )
 
 
-def update_entry(entryId, amount) -> int:
+def update_entry(entryId: int, amount: int) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}
@@ -129,7 +131,7 @@ def update_entry(entryId, amount) -> int:
     )
 
 
-def unset_pool(poolId) -> int:
+def unset_pool(poolId: int) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOLS_NAME}
@@ -139,7 +141,7 @@ def unset_pool(poolId) -> int:
     )
 
 
-def unset_entry(entryId) -> int:
+def unset_entry(entryId: int) -> int:
     return db.modify(
         f'''
         UPDATE {DB_TABLE_POOL_ENTRIES_NAME}

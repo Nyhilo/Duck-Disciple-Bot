@@ -1,15 +1,8 @@
-import discord
+import discord  # noqa: F401
 from discord.ext import commands
 
-import config.config as config
-
 from core.log import log
-import core.nomic_time as nomic_time
-import core.sha as shalib
-import core.utils as utils
-import core.stopdoing as stopdoing
-
-import core.language as language
+from core import nomic_time, sha as shalib, utils, stopdoing, language
 
 locale = language.Locale('cogs.misc')
 globalLocale = language.Locale('global')
@@ -94,7 +87,9 @@ class Misc(commands.Cog, name='Miscellaneous'):
         except Exception:
             return await ctx.send(locale.get_string('timestampBadFormat'))
 
-        await ctx.send(locale.get_string('timestampSuccess', formattedTimestamp=formattedTimestamp, timestamp=timestamp))
+        await ctx.send(locale.get_string('timestampSuccess',
+                                         formattedTimestamp=formattedTimestamp,
+                                         timestamp=timestamp))
 
 
 async def setup(bot):

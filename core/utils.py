@@ -33,7 +33,8 @@ def roman_numeralize(num):
         return '0'
 
     val = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
-    syb = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+    syb = ["M", "CM", "D", "CD", "C", "XC",
+           "L", "XL", "X", "IX", "V", "IV", "I"]
     roman_num = ''
     i = 0
     while num > 0:
@@ -47,6 +48,7 @@ def roman_numeralize(num):
 def draw_random_card_sets(width, groups):
     out = ''
     for i in range(groups):
-        out += ''.join([choice(CARDS) for _ in range(width)]) + ('\n' if i < groups else '')
+        cards = [choice(CARDS) for _ in range(width)]
+        out += ''.join(cards) + ('\n' if i < groups else '')
 
     return out
