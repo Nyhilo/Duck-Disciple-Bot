@@ -43,7 +43,10 @@ class Locale():
         filepath = f'{_langfile_directory}{locale_key}{_langfile_extension}'
 
         if not path.exists(filepath):
-            raise LookupError
+            log.error(f'The file path does not exist: {filepath}')
+
+            locale_key = self.default_key
+            filepath = f'{_langfile_directory}{self.default_key}{_langfile_extension}'
 
         # Load the file into memory
         with open(filepath, 'r') as f:

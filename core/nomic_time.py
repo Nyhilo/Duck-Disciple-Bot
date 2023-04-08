@@ -7,7 +7,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from math import ceil
 
-from config.config import PHASE_START_DATE, PHASE_GROUPS, LOOP_VALUE
+from config.config import PHASE_START_DATE, PHASE_GROUPS
 from core import utils, language
 
 locale = language.Locale("core.nomic_time")
@@ -42,10 +42,10 @@ def get_current_utc_string() -> None:
     nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
     nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
 
-    return locale.get_string('timeUtcReportString', time=time, weekday=weekday,
-                             phase=phase, nextPhase=nextPhase, nextDay=nextDay,
-                             nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
-                             nextDayTimestampStr=nextDayTimestampStr)
+    return locale.get_string('timeUtcReportString', time=time, weekday=weekday)  # ,
+                            #  phase=phase, nextPhase=nextPhase, nextDay=nextDay,
+                            #  nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
+                            #  nextDayTimestampStr=nextDayTimestampStr)
 
 
 #################################
@@ -149,9 +149,8 @@ def get_current_phase_string():
     Get the string for the current phase right now.
     '''
 
-    # TODO: Actually calculate the loop here
-    phaseName = {_get_phase_name(_get_phase(utc_now()))}
-    return locale.get_string('khronosPhaseString', ordinalValue=LOOP_VALUE, phaseName=phaseName)
+    weekCount = _get_phase(utc_now())
+    return locale.get_string('khronosPhaseString', number=weekCount)
 
 
 def get_minutes_to_next_phase() -> int:
@@ -169,9 +168,9 @@ def get_minutes_to_next_phase() -> int:
 def get_next_time_to_phase_end_string():
     minutes = get_minutes_to_next_phase()
     if minutes <= 60:
-        return locale.get_string('phaseEndNear', minutes=((minutes // 10) + 1) * 10)
+        return locale.get_string('phaseEndNear')    # , minutes=((minutes // 10) + 1) * 10)
 
-    return locale.get_string('phaseEndFar', hours=ceil(minutes / 60))
+    return locale.get_string('phaseEndFar')         # , hours=ceil(minutes / 60))
 
 
 def seconds_to_next_10_minute_increment():
