@@ -58,10 +58,10 @@ async def setup_hook():
         os.makedirs(CACHE_FOLDER)
 
     # Setup database
-    import core.db.reminders_db as reminders_db
-    reminders_db.set_tables()
-    import core.db.pools_db as pools_db
-    pools_db.set_tables()
+    from core.db import reminders_db, pools_db, settings_db
+    for db in [reminders_db, pools_db, settings_db]:
+        db.set_tables()
+
 
     # Setup locale files
     language.Locale(None).initialize()
