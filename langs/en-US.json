@@ -77,12 +77,12 @@
             "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
         },
         "nomic_time": {
-            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
-            "phaseName": "Phase {number}",
+            "timeUtcReportString": "It is **{time}** on **{weekday}**.",
+            "phaseName": "Week {number}",
             "phaseNameNegative": "Phase {number}, (or is it Phase {numberOneLess}?)",
-            "khronosPhaseString": "{ordinalValue} Loop, {phaseName}",
-            "phaseEndFar": "Phase ends in {hours} hrs",
-            "phaseEndNear": "Phase ends in {minutes} min"
+            "khronosPhaseString": "{number} weeks since last Cycle",
+            "phaseEndFar": "Between Cycles",
+            "phaseEndNear": "Between Cycles"
         },
         "reminders": {
             "reminderSetShort": "I'll remind you about this at about {timestamp}.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
