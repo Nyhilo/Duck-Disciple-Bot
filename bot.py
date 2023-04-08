@@ -6,7 +6,7 @@ import os
 
 from dotenv import load_dotenv
 
-from config.config import PREFIX, CACHE_FOLDER
+from config.config import DEBUG, PREFIX, CACHE_FOLDER
 from core.log import log
 
 from core import language
@@ -67,8 +67,12 @@ async def setup_hook():
     language.Locale(None).initialize()
 
     # Load cogs
-    cogs = ['cogs.cycle', 'cogs.image_manipulation', 'cogs.locale',
+    cogs = ['cogs.cycle', 'cogs.image_manipulation',
             'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+
+    # Development cogs
+    if DEBUG:
+        cogs.append('cogs.locale')
 
     for cog in cogs:
         try:
