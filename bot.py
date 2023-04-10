@@ -26,6 +26,7 @@ TOKEN = os.getenv('TOKEN')
 help_command = commands.DefaultHelpCommand(no_category='Other')
 intents = discord.Intents.default()
 intents.message_content = True
+intents.reactions = True
 activity = discord.ActivityType.listening
 client = commands.Bot(command_prefix=PREFIX,
                       description=(
@@ -72,7 +73,7 @@ async def setup_hook():
 
     # Development cogs
     if DEBUG:
-        cogs.append('cogs.locale')
+        cogs = cogs + ['cogs.locale', 'cogs.vote_tracking']
 
     for cog in cogs:
         try:

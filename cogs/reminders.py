@@ -3,10 +3,9 @@ from discord.ext import commands, tasks
 import asyncio
 import re
 
-import config.config as config
+from config import config
 
-from core.log import log
-from core import reminders, nomic_time, language
+from core import reminders, nomic_time, language, log
 
 locale = language.Locale('cogs.reminders')
 globalLocale = language.Locale('global')
