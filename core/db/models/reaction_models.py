@@ -23,7 +23,7 @@ class ReactionTracker():
         self.channelId = channelId
         self.trackingChannelId = trackingChannelId
         self.type = ReactionType(type)
-        self.validReactions = validReactions.split(',')
+        self.validReactions = None if validReactions is None else validReactions.split(',')
         self.created = datetime.fromtimestamp(created)
         self.active = active == 1
 

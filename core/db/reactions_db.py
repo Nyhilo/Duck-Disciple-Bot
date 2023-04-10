@@ -25,7 +25,7 @@ def _create_table_reaction_tracking():
 
     db.idempotent_add_table(
         '''
-        Id                  INT     PRIMARY KEY     AUTOINCREMENT,
+        Id                  INTEGER PRIMARY KEY     AUTOINCREMENT,
         ChannelId           INT     NOT NULL,
         TrackingChannelId   INT     NOT NULL,
         Type                INT     NOT NULL,
@@ -47,7 +47,7 @@ def _create_table_reaction_messages():
 
     db.idempotent_add_table(
         '''
-        Id                  INT     PRIMARY KEY     AUTOINCREMENT,
+        Id                  INTEGER PRIMARY KEY     AUTOINCREMENT,
         TrackingChannelId   INT     NOT NULL,
         MessageId           INT     NOT NULL,
         Created             INT     NOT NULL,
@@ -69,7 +69,7 @@ def _create_table_reactions():
 
     db.idempotent_add_table(
         '''
-        Id          INT     PRIMARY KEY     AUTOINCREMENT,
+        Id          INTEGER PRIMARY KEY     AUTOINCREMENT,
         MessageId   INT     NOT NULL,
         Reaction    TEXT    NOT NULL,
         Action      INT     NOT NULL,
@@ -88,6 +88,8 @@ def set_tables():
 
 # Reaction Tracking #
 def get_trackers() -> List[ReactionTracker]:
+    '''Get a current active trackers'''
+
     results = db.get(
         f'''
         SELECT Id, ChannelId, TrackingChannelId, Type, ValidReactions, Created, Active
@@ -169,6 +171,160 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
 
 
 # Reaction Messages #
+def get_messages(trackingChannelId: int, ) -> List[ReactionMessage]:
+    '''Get a current active trackers'''
+
+    results = db.get(
+        f'''
+        SELECT Id, TrackingChannelId, MessageId, Created, Active
+        FROM {DB_TABLE_REACTION_MESSAGES_NAME}
+        WHERE Active = 1
+        '''
+    )
+
+    trackers = [
+        ReactionMessage(r['TrackingChannelId'],
+                        r['MessageId'],
+                        r['Created'],
+                        r['Id'],
+                        r['Active'])
+        for r in results
+    ]
+
+    return trackers
+
+
+def save_message(tracker: ReactionMessage) -> bool:
+    '''Inserts or updates the provided tracker'''
+
+    # Check if a tracker with the given id already exists
+    results = db.get(
+        f'''
+        SELECT Id
+        FROM {DB_TABLE_REACTION_MESSAGES_NAME}
+        WHERE Id = :id
+        ''', [tracker.id]
+    )
+
+    if len(results) > 0:
+        return _update_message(tracker)
+
+    return _add_message(tracker)
+
+
+def _add_message(tracker: ReactionMessage) -> bool:
+    return db.modify(
+        f'''
+        INSERT INTO {DB_TABLE_REACTION_MESSAGES_NAME}
+        (TrackingChannelId, MessageId, Created, Active)
+        VALUES (:trackingChannelId, :messageId, :created, :active)
+        ''', [
+            tracker.trackingChannelId,
+            tracker.messageId,
+            get_timestamp(tracker.created),
+            1 if tracker.active else 0
+        ]
+    )
+
+
+def _update_message(tracker: ReactionMessage) -> bool:
+    return db.modify(
+        f'''
+        UPDATE {DB_TABLE_REACTION_MESSAGES_NAME}
+        SET TrackingChannelId = :trackingChannelId,
+            MessageId = :messageId,
+            Created = :created,
+            Active = :active
+        WHERE Id = :id
+        ''', [
+            tracker.trackingChannelId,
+            tracker.messageId,
+            get_timestamp(tracker.created),
+            1 if tracker.active else 0,
+            tracker.id
+        ]
+    )
 
 
 # Reactions #
+def get_reactions(messageId: int, timestampSince: int) -> List[Reaction]:
+    '''Get a current active trackers'''
+
+    results = db.get(
+        f'''
+        SELECT Id, MessageId, Reaction, Action, UserId, UserName, Created
+        FROM {DB_TABLE_REACTIONS_NAME}
+        WHERE MessageId = :messageId AND created > :timestampSince
+        ''', [messageId, timestampSince]
+    )
+
+    trackers = [
+        Reaction(r['MessageId'],
+                 r['Reaction'],
+                 r['Action'],
+                 r['UserId'],
+                 r['UserName'],
+                 r['Created'],
+                 r['Id'])
+        for r in results
+    ]
+
+    return trackers
+
+
+def save_reaction(tracker: Reaction) -> bool:
+    '''Inserts or updates the provided tracker'''
+
+    # Check if a tracker with the given id already exists
+    results = db.get(
+        f'''
+        SELECT Id
+        FROM {DB_TABLE_REACTIONS_NAME}
+        WHERE Id = :id
+        ''', [tracker.id]
+    )
+
+    if len(results) > 0:
+        return _update_reaction(tracker)
+
+    return _add_reaction(tracker)
+
+
+def _add_reaction(tracker: Reaction) -> bool:
+    return db.modify(
+        f'''
+        INSERT INTO {DB_TABLE_REACTIONS_NAME}
+        (MessageId, Reaction, Action, UserId, UserName, Created)
+        VALUES (:messageId, :reaction, :action, :userId, :userName, :created)
+        ''', [
+            tracker.messageId,
+            tracker.reaction,
+            tracker.action.value,
+            tracker.userId,
+            tracker.userName,
+            get_timestamp(tracker.created)
+        ]
+    )
+
+
+def _update_reaction(tracker: Reaction) -> bool:
+    return db.modify(
+        f'''
+        UPDATE {DB_TABLE_REACTIONS_NAME}
+        SET MessageId = :messageId,
+            Reaction = :reaction,
+            Action = :action,
+            UserId = :userId,
+            UserName = :userName,
+            Created = :created
+        WHERE Id = :id
+        ''', [
+            tracker.messageId,
+            tracker.reaction,
+            tracker.action.value,
+            tracker.userId,
+            tracker.userName,
+            get_timestamp(tracker.created),
+            tracker.id
+        ]
+    )
