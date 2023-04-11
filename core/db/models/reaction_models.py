@@ -1,5 +1,6 @@
 from enum import IntEnum
 from datetime import datetime
+from typing import Union
 
 
 class ReactionType(IntEnum):
@@ -12,20 +13,26 @@ class ReactionTracker():
             self,
             channelId: int,
             trackingChannelId: int,
-            type: int,
-            validReactions: str,
-            created: int,
+            reactionType: Union[int, ReactionType],
+            validReactions: Union[str, list, None],
+            created: Union[int, datetime],
             id: int = -1,
-            active: int = True) -> None:
+            active: Union[int, bool] = True) -> None:
         '''Raw values taken from db table types'''
 
         self.id = id
         self.channelId = channelId
         self.trackingChannelId = trackingChannelId
-        self.type = ReactionType(type)
-        self.validReactions = None if validReactions is None else validReactions.split(',')
-        self.created = datetime.fromtimestamp(created)
-        self.active = active == 1
+
+        self.reactionType = reactionType if isinstance(reactionType, ReactionType) else ReactionType(reactionType)
+
+        self.validReactions = None
+        if validReactions is not None:
+            self.validReactions = validReactions if isinstance(validReactions, list) else validReactions.split(',')
+
+        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)
+
+        self.active = bool(active)
 
 
 class ReactionMessage():
@@ -33,21 +40,23 @@ class ReactionMessage():
             self,
             trackingChannelId: int,
             messageId: int,
-            created: int,
+            created: Union[int, datetime],
             id: int = -1,
-            active: int = True) -> None:
+            active: Union[int, bool] = True) -> None:
         '''Raw values taken from db table types'''
 
         self.id = id
         self.trackingChannelId = trackingChannelId
         self.messageId = messageId
-        self.created = datetime.fromtimestamp(created)
+
+        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)
+
         self.active = bool(active)
 
 
 class Action(IntEnum):
     Add = 1
-    Remove = 1
+    Remove = 2
 
 
 class Reaction():
@@ -55,17 +64,20 @@ class Reaction():
             self,
             messageId: int,
             reaction: str,
-            action: int,
+            action: Union[int, Action],
             userId: int,
             userName: str,
-            created: int,
+            created: Union[int, datetime],
             id: int = -1) -> None:
         '''Raw values taken from db table types'''
 
         self.id = id
         self.messageId = messageId
         self.reaction = reaction
-        self.action = Action(action)
+
+        self.action = action if isinstance(action, Action) else Action(action)
+
         self.userId = userId
         self.userName = userName
-        self.created = datetime.fromtimestamp(created)
+
+        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)

@@ -17,7 +17,7 @@ def _create_table_reaction_tracking():
     ChannelID           - Id of the channel we'll be looking at to find
                            messages to track
     TrackingChannelId   - Id of the channel that contains the tracking log
-    Type                - Enum 1 or 2. Maps to "All" for all reactions or
+    ReactionType        - Enum 1 or 2. Maps to "All" for all reactions or
                            "Limited" for only the reactions in ValidReactions
     ValidReactions      - Comma-separated list of pre-formatted reactions
                             i.e.: '<:thumb:customId>,<:thumb2:customId2>'
@@ -28,7 +28,7 @@ def _create_table_reaction_tracking():
         Id                  INTEGER PRIMARY KEY     AUTOINCREMENT,
         ChannelId           INT     NOT NULL,
         TrackingChannelId   INT     NOT NULL,
-        Type                INT     NOT NULL,
+        ReactionType        INT     NOT NULL,
         ValidReactions      TEXT,
         Created             INT     NOT NULL,
         Active              INT     NOT NULL    DEFAULT 1
@@ -92,7 +92,7 @@ def get_trackers() -> List[ReactionTracker]:
 
     results = db.get(
         f'''
-        SELECT Id, ChannelId, TrackingChannelId, Type, ValidReactions, Created, Active
+        SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
         FROM {DB_TABLE_REACTION_TRACKING_NAME}
         WHERE Active = 1
         '''
@@ -101,7 +101,7 @@ def get_trackers() -> List[ReactionTracker]:
     trackers = [
         ReactionTracker(r['ChannelId'],
                         r['TrackingChannelId'],
-                        r['Type'],
+                        r['ReactionType'],
                         r['ValidReactions'],
                         r['Created'],
                         r['Id'],
@@ -134,12 +134,12 @@ def _add_tracker(tracker: ReactionTracker) -> bool:
     return db.modify(
         f'''
         INSERT INTO {DB_TABLE_REACTION_TRACKING_NAME}
-        (ChannelId, TrackingChannelId, Type, ValidReactions, Created, Active)
-        VALUES (:channelId, :trackingChannelId, :type, :validReactions, :created, :active)
+        (ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active)
+        VALUES (:channelId, :trackingChannelId, :reactionType, :validReactions, :created, :active)
         ''', [
             tracker.channelId,
             tracker.trackingChannelId,
-            tracker.type.value,
+            tracker.reactionType.value,
             ','.join(tracker.validReactions),
             get_timestamp(tracker.created),
             1 if tracker.active else 0
@@ -153,7 +153,7 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
         UPDATE {DB_TABLE_REACTION_TRACKING_NAME}
         SET ChannelId = :channelId,
             TrackingChannelId = :trackingChannelId,
-            Type = :type,
+            ReactionType = :reactionType,
             ValidReactions = :validReactions,
             Created = :created,
             Active = :active
@@ -161,7 +161,7 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
         ''', [
             tracker.channelId,
             tracker.trackingChannelId,
-            tracker.type.value,
+            tracker.reactionType.value,
             ','.join(tracker.validReactions),
             get_timestamp(tracker.created),
             1 if tracker.active else 0,
