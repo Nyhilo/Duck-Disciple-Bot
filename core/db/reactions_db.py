@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from core.db.db_base import Database
 from config.config import SQLITE3_DB_NAME
 from config.config import DB_TABLE_REACTION_TRACKING_NAME, DB_TABLE_REACTION_MESSAGES_NAME, DB_TABLE_REACTIONS_NAME
@@ -87,16 +87,30 @@ def set_tables():
 
 
 # Reaction Tracking #
-def get_trackers() -> List[ReactionTracker]:
-    '''Get a current active trackers'''
+def get_trackers(channelId: int = None) -> List[ReactionTracker]:
+    '''
+    Get a list of existing active trackers.
 
-    results = db.get(
-        f'''
-        SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
-        FROM {DB_TABLE_REACTION_TRACKING_NAME}
-        WHERE Active = 1
-        '''
-    )
+    :param channelId: Optional channelId to limit how many trackers are returned, defaults to None
+    :return: A list of the relevant ReactionTrackers
+    '''
+    results = None
+    if channelId is None:
+        results = db.get(
+            f'''
+            SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
+            FROM {DB_TABLE_REACTION_TRACKING_NAME}
+            WHERE Active = 1
+            '''
+        )
+    else:
+        results = db.get(
+            f'''
+            SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
+            FROM {DB_TABLE_REACTION_TRACKING_NAME}
+            WHERE Active = 1 AND ChannelId = :channelId
+            ''', [channelId]
+        )
 
     trackers = [
         ReactionTracker(r['ChannelId'],
@@ -140,7 +154,7 @@ def _add_tracker(tracker: ReactionTracker) -> bool:
             tracker.channelId,
             tracker.trackingChannelId,
             tracker.reactionType.value,
-            ','.join(tracker.validReactions),
+            None if tracker.validReactions is None else ','.join(tracker.validReactions),
             get_timestamp(tracker.created),
             1 if tracker.active else 0
         ]
@@ -171,18 +185,18 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
 
 
 # Reaction Messages #
-def get_messages(trackingChannelId: int, ) -> List[ReactionMessage]:
+def get_messages(messageId: int) -> Union[ReactionMessage, None]:
     '''Get a current active trackers'''
 
     results = db.get(
         f'''
         SELECT Id, TrackingChannelId, MessageId, Created, Active
         FROM {DB_TABLE_REACTION_MESSAGES_NAME}
-        WHERE Active = 1
-        '''
+        WHERE Active = 1 AND MessageId = :messageId
+        ''', [messageId]
     )
 
-    trackers = [
+    messages = [
         ReactionMessage(r['TrackingChannelId'],
                         r['MessageId'],
                         r['Created'],
@@ -191,7 +205,7 @@ def get_messages(trackingChannelId: int, ) -> List[ReactionMessage]:
         for r in results
     ]
 
-    return trackers
+    return messages
 
 
 def save_message(tracker: ReactionMessage) -> bool:

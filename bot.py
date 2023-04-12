@@ -59,8 +59,8 @@ async def setup_hook():
         os.makedirs(CACHE_FOLDER)
 
     # Setup database
-    from core.db import reminders_db, pools_db, settings_db
-    for db in [reminders_db, pools_db, settings_db]:
+    from core.db import reminders_db, pools_db, settings_db, reactions_db
+    for db in [reminders_db, pools_db, settings_db, reactions_db]:
         db.set_tables()
 
 
