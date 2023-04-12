@@ -210,10 +210,6 @@ def unix_now():
     return int(time.time())
 
 
-def get_timestamp(date: datetime):
-    return int(calendar.timegm(date.utctimetuple()))
-
-
 def parse_timespan_by_units(number, unit):
     if unit.lower().startswith('sec'):
         return timedelta(seconds=number)
@@ -233,6 +229,12 @@ def parse_timespan_by_units(number, unit):
     return None
 
 
+def get_full_days_ago(days: int) -> datetime:
+    '''Returns a datetime set to the 00:00 of the day 7 days prior.'''
+
+    return (utc_now() - relativedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+
 ######################
 # Timstamp Utilities #
 ######################
@@ -244,8 +246,20 @@ def get_timespan_from_timestamp(timestamp, now=None):
     return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc) - now.replace(tzinfo=timezone.utc)
 
 
-def get_datestring_timestamp(datestring):
+def get_datestring_timestamp(datestring: str) -> int:
     if datestring is None or datestring == "" or datestring.lower() == 'now':
         return unix_now()
 
     return get_timestamp(parser.parse(datestring))
+
+
+def get_timestamp(date: datetime) -> int:
+    return int(calendar.timegm(date.utctimetuple()))
+
+
+def get_datetime(timestamp: int) -> datetime:
+    return datetime.fromtimestamp(timestamp)
+
+
+def get_datestring_datetime(datestring: str) -> datetime:
+    return get_datetime(get_datestring_timestamp(datestring))
