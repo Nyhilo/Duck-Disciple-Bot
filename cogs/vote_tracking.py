@@ -26,7 +26,8 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         emoji = reaction_tracking.format_emoji(event.emoji)
 
-        reaction_tracking.add_reaction(event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
+        reaction_tracking.add_reaction(
+            event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
     @commands.Cog.listener('on_raw_reaction_remove')
     async def on_reaction_remove(self, event):
@@ -38,7 +39,8 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         emoji = reaction_tracking.format_emoji(event.emoji)
 
-        reaction_tracking.remove_reaction(event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
+        reaction_tracking.remove_reaction(
+            event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
     @commands.command(
         brief='Track message reactions',
@@ -66,7 +68,7 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         log.info(f'Attempting to create new tracking relationship between #{ctx.name} and #{textChannel.name}')
         result = reaction_tracking.create_channel_tracking_relationship(ctx.channel.id, textChannel.id)
-        
+
         await ctx.send(result)
 
 
