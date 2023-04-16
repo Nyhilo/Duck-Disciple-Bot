@@ -37,7 +37,7 @@ def create_channel_tracking_relationship(trackingChannelId: int, channelId: int)
     return 'Tracker created between the two channels.'
 
 
-def addReaction(channelId: int, messageId: int, messageCreated: datetime, userId: int, userName: str, reaction: str) -> None:
+def add_reaction(channelId: int, messageId: int, messageCreated: datetime, userId: int, userName: str, reaction: str) -> None:
     trackers = db.get_trackers(channelId)
 
     # If there are no trackers for that channel, then we're done here
