@@ -1,7 +1,7 @@
-from discord import PartialEmoji
+from discord import TextChannel, Message, User, PartialEmoji
 from datetime import datetime
 
-from config.config import REACTION_TRACKING_EXPIRY_DAYS
+from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH
 
 from core import nomic_time
 from core.db import reactions_db as db
@@ -90,3 +90,53 @@ def format_emoji(emoji: PartialEmoji) -> str:
 
     a = 'a' if emoji.animated else ''
     return f'<{a}:{emoji.name}:{emoji.id}>'
+
+
+class MemoizeCache():
+    def __init__(self, bot) -> None:
+        self.bot = bot
+        self.cachedChannels = {}
+        self.cachedMessages = {}
+        self.cachedUsers = {}
+
+    async def get_channel(self, id: int) -> TextChannel:
+        if id not in self.cachedChannels:
+            print(f'Caching channel {id}')
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedChannels) >= MAX_CACHE_LENGTH:
+                self.cachedChannels = {}
+
+            self.cachedChannels[id] = await self.bot.fetch_channel(id)
+        else:
+            print(f'Getting cached channel {id}')
+
+        return self.cachedChannels[id]
+
+    async def get_message(self, channel: TextChannel, id: int) -> Message:
+        if id not in self.cachedMessages:
+            print(f'Caching message {id}')
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedMessages) >= MAX_CACHE_LENGTH:
+                self.cachedMessages = {}
+
+            self.cachedMessages[id] = await channel.fetch_message(id)
+        else:
+            print(f'Getting cached message {id}')
+
+        return self.cachedMessages[id]
+
+    async def get_user(self, id: int) -> User:
+        if id not in self.cachedUsers:
+            print(f'Caching user {id}')
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedUsers) >= MAX_CACHE_LENGTH:
+                self.cachedUsers = {}
+
+            self.cachedUsers[id] = await self.bot.fetch_user(id)
+        else:
+            print(f'Getting cached user {id}')
+
+        return self.cachedUsers[id]
