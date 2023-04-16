@@ -71,6 +71,14 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         await ctx.send(result)
 
+    @commands.command(brief='', help='')
+    async def embed(self, ctx, channelId, messageId):
+        channel = await self.cache.get_channel(channelId)
+        message = await self.cache.get_message(channel, messageId)
+        embed = reaction_tracking.get_reaction_log(message)
+
+        await ctx.send(embed=embed)
+
 
 async def setup(bot):
     await bot.add_cog(VoteTracking(bot))

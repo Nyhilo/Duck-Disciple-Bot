@@ -185,7 +185,7 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
 
 
 # Reaction Messages #
-def get_messages(messageId: int) -> Union[ReactionMessage, None]:
+def get_messages(messageId: int) -> List[ReactionMessage]:
     '''Get a current active trackers'''
 
     results = db.get(

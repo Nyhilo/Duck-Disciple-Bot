@@ -1,7 +1,8 @@
-from discord import TextChannel, Message, User, PartialEmoji
+from collections import OrderedDict
+from discord import TextChannel, Message, User, PartialEmoji, Embed
 from datetime import datetime
 
-from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH
+from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH, MAX_EMBED_TITLE_LENGTH
 
 from core import nomic_time
 from core.db import reactions_db as db
@@ -106,6 +107,57 @@ def _add_reaction_event(channelId: int,
 
 def get_message(channelId: int):
     db.get_messages(channelId)
+
+
+# Tracking Log #
+
+def get_reaction_log(message: Message) -> Embed:
+    # Build the title
+    firstLine = message.content.split('\n')[0]
+    msgTrimmedFirstLine = firstLine[:MAX_EMBED_TITLE_LENGTH]
+
+    if len(msgTrimmedFirstLine) < len(firstLine):
+        msgTrimmedFirstLine = msgTrimmedFirstLine + '...'
+
+    title = f'Log for "{msgTrimmedFirstLine}"'
+
+    # Fetch formatted url
+    url = message.jump_url
+
+    # Get all the reactions for a the given message
+    reactions = db.get_reactions(message.id, 0)
+
+    # Group reactions by day created
+    dateGroups = OrderedDict()
+    for reaction in reactions:
+        datestring = reaction.created.strftime('%m-%d-%Y')
+
+        if datestring not in dateGroups:
+            dateGroups[datestring] = []
+
+        dateGroups[datestring].append(reaction)
+
+    msg = [url]
+
+    for date, group in dateGroups.items():
+        msg.append(f'**{date}**')
+
+        for reaction in group:
+            reaction: model.Reaction = reaction
+            time = reaction.created.strftime('%H:%M:%S')
+            event = '+' if reaction.action is model.Action.Add else '\u2212'    # \u2212 is a slightly wider '-'
+            emoji = reaction.reaction
+            user = reaction.userName
+
+            line = f'`{time}` | {event} | {emoji} | {user}'
+            msg.append(line)
+
+        msg.append('')
+
+    # Generate a unique color from the message id
+    uniqueColor = message.id % (0xffffff + 1)
+
+    return Embed(title=title, description='\n'.join(msg), color=uniqueColor)
 
 
 # Utils #
