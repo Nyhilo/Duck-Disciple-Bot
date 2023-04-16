@@ -38,6 +38,22 @@ def create_channel_tracking_relationship(trackingChannelId: int, channelId: int)
 
 
 def add_reaction(channelId: int, messageId: int, messageCreated: datetime, userId: int, userName: str, reaction: str) -> None:
+    '''Save an "add reaction" event to the database'''
+    return _add_reaction_event(channelId, messageId, messageCreated, userId, userName, reaction, False)
+
+
+def remove_reaction(channelId: int, messageId: int, messageCreated: datetime, userId: int, userName: str, reaction: str) -> None:
+    '''Save a "remove reaction" event to the database'''
+    return _add_reaction_event(channelId, messageId, messageCreated, userId, userName, reaction, True)
+
+
+def _add_reaction_event(channelId: int,
+                        messageId: int,
+                        messageCreated: datetime,
+                        userId: int,
+                        userName: str,
+                        reaction: str,
+                        remove: bool) -> None:
     trackers = db.get_trackers(channelId)
 
     # If there are no trackers for that channel, then we're done here
@@ -68,7 +84,7 @@ def add_reaction(channelId: int, messageId: int, messageCreated: datetime, userI
     reaction = model.Reaction(
         messageId,
         reaction,
-        model.Action.Add,
+        model.Action.Add if not remove else model.Action.Remove,
         userId,
         userName,
         nomic_time.utc_now()

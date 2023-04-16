@@ -26,16 +26,19 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         emoji = reaction_tracking.format_emoji(event.emoji)
 
-        await channel.send(emoji)
-
         reaction_tracking.add_reaction(event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
     @commands.Cog.listener('on_raw_reaction_remove')
     async def on_reaction_remove(self, event):
-        message_id, user_id, member, emoji = event.message_id, event.user_id, event.member, event.emoji
+        channel = await self.cache.get_channel(event.channel_id)
+        message = await self.cache.get_message(channel, event.message_id)
+        created_at = message.created_at
+        user = await self.cache.get_user(event.user_id)
+        username = user.name
 
-        for p in [message_id, user_id, member, emoji]:
-            print(f'{p=}')
+        emoji = reaction_tracking.format_emoji(event.emoji)
+
+        reaction_tracking.remove_reaction(event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
     @commands.command(
         brief='Track message reactions',
