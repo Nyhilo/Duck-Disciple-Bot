@@ -258,7 +258,7 @@ def get_timestamp(date: datetime) -> int:
 
 
 def get_datetime(timestamp: int) -> datetime:
-    return datetime.fromtimestamp(timestamp)
+    return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc)
 
 
 def get_datestring_datetime(datestring: str) -> datetime:

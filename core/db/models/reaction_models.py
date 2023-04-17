@@ -2,6 +2,8 @@ from enum import IntEnum
 from datetime import datetime
 from typing import Union
 
+from core.nomic_time import get_datetime
+
 
 class ReactionType(IntEnum):
     All = 1
@@ -30,7 +32,7 @@ class ReactionTracker():
         if validReactions is not None:
             self.validReactions = validReactions if isinstance(validReactions, list) else validReactions.split(',')
 
-        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)
+        self.created = created if isinstance(created, datetime) else get_datetime(created)
 
         self.active = bool(active)
 
@@ -49,7 +51,7 @@ class ReactionMessage():
         self.trackingChannelId = trackingChannelId
         self.messageId = messageId
 
-        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)
+        self.created = created if isinstance(created, datetime) else get_datetime(created)
 
         self.active = bool(active)
 
@@ -80,4 +82,4 @@ class Reaction():
         self.userId = userId
         self.userName = userName
 
-        self.created = created if isinstance(created, datetime) else datetime.fromtimestamp(created)
+        self.created = created if isinstance(created, datetime) else get_datetime(created)
