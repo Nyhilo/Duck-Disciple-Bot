@@ -1,12 +1,16 @@
 from collections import OrderedDict
+from typing import List
 from discord import TextChannel, Message, User, PartialEmoji, Embed
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH, MAX_EMBED_TITLE_LENGTH
+from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH, MAX_EMBED_TITLE_LENGTH, \
+    DOUBLE_CLICK_DETECTION_SECONDS, DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS
 
 from core import nomic_time
 from core.db import reactions_db as db
 from core.db.models import reaction_models as model
+
+DOUBLE_CLICK_EXCEPTION_TD = timedelta(seconds=DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS)
 
 
 def create_channel_tracking_relationship(trackingChannelId: int, channelId: int) -> None:
@@ -125,7 +129,8 @@ def get_reaction_log(message: Message) -> Embed:
     url = message.jump_url
 
     # Get all the reactions for a the given message
-    reactions = db.get_reactions(message.id, 0)
+    _reactions = db.get_reactions(message.id, 0)
+    reactions = filter_reactions_by_frequency(_reactions)
 
     # Group reactions by day created
     dateGroups = OrderedDict()
@@ -158,6 +163,50 @@ def get_reaction_log(message: Message) -> Embed:
     uniqueColor = message.id % (0xffffff + 1)
 
     return Embed(title=title, description='\n'.join(msg), color=uniqueColor)
+
+
+def filter_reactions_by_frequency(reactions: List[model.Reaction]) -> List[model.Reaction]:
+    # Split the list up keyed on by user id
+    reactionsByUser = {}
+    for reaction in reactions:
+        if reaction.userId not in reactionsByUser:
+            reactionsByUser[reaction.userId] = []
+
+        reactionsByUser[reaction.userId].append(reaction)
+
+    filteredReactionList = []
+
+    # Iterate through user ids. Detect and remove doubleclicks
+    for id, reactions in reactionsByUser.items():
+        doubleClickedIndicies = set()
+        for i, current in enumerate(reactions):
+            if i == 0:
+                continue
+
+            # If this reaction happened soon after 00:00 utc, we want to preserve it
+            if (current.created - DOUBLE_CLICK_EXCEPTION_TD).day != current.created.day:
+                continue
+
+            prevIndex = i - 1
+            previous = reactions[prevIndex]
+
+            # Detect if this reaction and the previous reaction constitute a double click
+            # If they do, then they are marked to be removed from the tracking list
+            diffSeconds = (current.created - previous.created).total_seconds()
+            closeTimestamps = diffSeconds < DOUBLE_CLICK_DETECTION_SECONDS
+            if closeTimestamps and current.action != previous.action:
+                doubleClickedIndicies.add(i)
+                doubleClickedIndicies.add(prevIndex)
+
+        # Add values to rebuild unsplit list
+        for i, reaction in enumerate(reactions):
+            if i not in doubleClickedIndicies:
+                filteredReactionList.append(reaction)
+
+    # Splitting by user will have messed up the order of things
+    filteredReactionList.sort(key=lambda r: r.created)
+
+    return filteredReactionList
 
 
 # Utils #
