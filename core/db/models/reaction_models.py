@@ -56,6 +56,16 @@ class ReactionMessage():
         self.active = bool(active)
 
 
+class ReactionTrackingMessage():
+    def __init__(self, messageId: int, trackingMessageId: int, trackingChannelId: int, id: int = -1) -> None:
+        '''Raw values taken from db table types'''
+
+        self.id = id
+        self.messageId = messageId
+        self.trackingMessageId = trackingMessageId
+        self.trackingChannelId = trackingChannelId
+
+
 class Action(IntEnum):
     Add = 1
     Remove = 2

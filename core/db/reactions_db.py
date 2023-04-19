@@ -1,9 +1,10 @@
 from typing import List, Union
 from core.db.db_base import Database
 from config.config import SQLITE3_DB_NAME
-from config.config import DB_TABLE_REACTION_TRACKING_NAME, DB_TABLE_REACTION_MESSAGES_NAME, DB_TABLE_REACTIONS_NAME
+from config.config import DB_TABLE_REACTION_TRACKING_NAME, DB_TABLE_REACTION_MESSAGES_NAME, \
+    DB_TABLE_REACTION_TRACKING_MESSAGES_NAME, DB_TABLE_REACTIONS_NAME
 
-from core.db.models.reaction_models import ReactionTracker, ReactionMessage, Reaction
+from core.db.models.reaction_models import ReactionTracker, ReactionMessage, ReactionTrackingMessage, Reaction
 from core.nomic_time import get_timestamp
 
 db = Database(SQLITE3_DB_NAME)
@@ -56,6 +57,26 @@ def _create_table_reaction_messages():
     )
 
 
+def create_table_reaction_tracking_messages():
+    '''
+    Notes on database architecture:
+
+    MessageId           - Id of the message being tracked
+    TrackingChannelId   - Id of the channel containing the tracking message
+    TrackingMessageId   - Id of the message reporting the reactions on the
+                           tracked message
+    '''
+
+    db.idempotent_add_table(
+        '''
+        Id                  INTEGER PRIMARY KEY     AUTOINCREMENT,
+        MessageId           INT     NOT NULL,
+        TrackingChannelId   INT     NOT NULL,
+        TrackingMessageId   INT     NOT NULL
+        ''', DB_TABLE_REACTION_TRACKING_MESSAGES_NAME
+    )
+
+
 def _create_table_reactions():
     '''
     Notes on database architecture:
@@ -83,6 +104,7 @@ def _create_table_reactions():
 def set_tables():
     _create_table_reaction_tracking()
     _create_table_reaction_messages()
+    create_table_reaction_tracking_messages()
     _create_table_reactions()
 
 
@@ -176,7 +198,7 @@ def _update_tracker(tracker: ReactionTracker) -> bool:
             tracker.channelId,
             tracker.trackingChannelId,
             tracker.reactionType.value,
-            ','.join(tracker.validReactions),
+            None if tracker.validReactions is None else ','.join(tracker.validReactions),
             get_timestamp(tracker.created),
             1 if tracker.active else 0,
             tracker.id
@@ -256,6 +278,78 @@ def _update_message(tracker: ReactionMessage) -> bool:
             get_timestamp(tracker.created),
             1 if tracker.active else 0,
             tracker.id
+        ]
+    )
+
+
+# Tracking Messages #
+def get_tracking_messages(messageId: int) -> List[ReactionTrackingMessage]:
+    '''Get message-trackingMessage relationships'''
+
+    results = db.get(
+        f'''
+        SELECT Id, MessageId, TrackingMessageId, TrackingChannelId
+        FROM {DB_TABLE_REACTION_TRACKING_MESSAGES_NAME}
+        WHERE MessageId = :messageId
+        ''', [messageId]
+    )
+
+    trackingMessages = [
+        ReactionTrackingMessage(r['MessageId'],
+                                r['TrackingMessageId'],
+                                r['TrackingChannelId'],
+                                r['Id'])
+        for r in results
+    ]
+
+    return trackingMessages
+
+
+def save_tracking_message(trackingMessage: ReactionTrackingMessage) -> bool:
+    '''Inserts or updates the provided tracking message'''
+
+    # Check if a tracking message with the given id already exists
+    results = db.get(
+        f'''
+        SELECT Id
+        FROM {DB_TABLE_REACTION_TRACKING_MESSAGES_NAME}
+        WHERE Id = :id
+        ''', [trackingMessage.id]
+    )
+
+    if len(results) > 0:
+        return _update_tracking_message(trackingMessage)
+
+    return _add_tracking_message(trackingMessage)
+
+
+def _add_tracking_message(trackingMessage: ReactionTrackingMessage) -> bool:
+    return db.modify(
+        f'''
+        INSERT INTO  {DB_TABLE_REACTION_TRACKING_MESSAGES_NAME}
+        (MessageId, TrackingMessageId, TrackingchannelId)
+        VALUES (:messageId, :trackingMessageId, :trackingChannelId)
+        ''', [
+            trackingMessage.messageId,
+            trackingMessage.trackingMessageId,
+            trackingMessage.trackingChannelId
+        ]
+    )
+
+
+def _update_tracking_message(trackingMessage: ReactionTrackingMessage) -> bool:
+    return db.modify(
+        f'''
+        UPDATE  {DB_TABLE_REACTION_TRACKING_MESSAGES_NAME}
+        SET MessageId = :messageId
+            TrackingMessageId = :trackingMessageId
+            TrackingchannelId = :trackingChannelId
+        WHERE Id = :id
+        ''', [
+            trackingMessage.messageId,
+            trackingMessage.trackingMessageId,
+            trackingMessage.trackingChannelId,
+            trackingMessage.id
         ]
     )
 
