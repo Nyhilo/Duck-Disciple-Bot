@@ -109,30 +109,63 @@ def set_tables():
 
 
 # Reaction Tracking #
-def get_trackers(channelId: int = None) -> List[ReactionTracker]:
+def get_trackers() -> List[ReactionTracker]:
     '''
     Get a list of existing active trackers.
-
-    :param channelId: Optional channelId to limit how many trackers are returned, defaults to None
-    :return: A list of the relevant ReactionTrackers
     '''
-    results = None
-    if channelId is None:
-        results = db.get(
-            f'''
-            SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
-            FROM {DB_TABLE_REACTION_TRACKING_NAME}
-            WHERE Active = 1
-            '''
-        )
-    else:
-        results = db.get(
-            f'''
-            SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
-            FROM {DB_TABLE_REACTION_TRACKING_NAME}
-            WHERE Active = 1 AND ChannelId = :channelId
-            ''', [channelId]
-        )
+    results = db.get(
+        f'''
+        SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
+        FROM {DB_TABLE_REACTION_TRACKING_NAME}
+        WHERE Active = 1
+        '''
+    )
+
+    trackers = [
+        ReactionTracker(r['ChannelId'],
+                        r['TrackingChannelId'],
+                        r['ReactionType'],
+                        r['ValidReactions'],
+                        r['Created'],
+                        r['Id'],
+                        r['Active'])
+        for r in results
+    ]
+
+    return trackers
+
+
+def get_tracker_by_tracking_channel_id(trackingChannelId: int) -> ReactionTracker:
+    results = db.get(
+        f'''
+        SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
+        FROM {DB_TABLE_REACTION_TRACKING_NAME}
+        WHERE Active = 1 AND TrackingChannelId = :trackingChannelId
+        ''', [trackingChannelId]
+    )
+
+    trackers = [
+        ReactionTracker(r['ChannelId'],
+                        r['TrackingChannelId'],
+                        r['ReactionType'],
+                        r['ValidReactions'],
+                        r['Created'],
+                        r['Id'],
+                        r['Active'])
+        for r in results
+    ]
+
+    return trackers
+
+
+def get_trackers_by_channel_id(channelId: int) -> List[ReactionTracker]:
+    results = db.get(
+        f'''
+        SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active
+        FROM {DB_TABLE_REACTION_TRACKING_NAME}
+        WHERE Active = 1 AND ChannelId = :channelId
+        ''', [channelId]
+    )
 
     trackers = [
         ReactionTracker(r['ChannelId'],

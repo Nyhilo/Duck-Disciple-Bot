@@ -7,6 +7,7 @@ from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_EMBED_TITLE_LENGTH,
     DOUBLE_CLICK_DETECTION_SECONDS, DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS
 
 from core import nomic_time
+from core.utils import MemoizeCache
 from core.db import reactions_db as db
 from core.db.models import reaction_models as model
 
@@ -42,6 +43,10 @@ def create_channel_tracking_relationship(trackingChannelId: int, channelId: int)
     return 'Tracker created between the two channels.'
 
 
+def get_channel_trackers(channelId: int) -> List[model.ReactionTracker]:
+    return db.get_trackers_by_channel_id(channelId)
+
+
 def add_reaction(channelId: int,
                  messageId: int,
                  messageCreated: datetime,
@@ -69,7 +74,7 @@ def _add_reaction_event(channelId: int,
                         userName: str,
                         reaction: str,
                         remove: bool) -> None:
-    trackers = db.get_trackers(channelId)
+    trackers = db.get_trackers_by_channel_id(channelId)
 
     # If there are no trackers for that channel, then we're done here
     if not any(trackers):
@@ -108,12 +113,60 @@ def _add_reaction_event(channelId: int,
     db.save_reaction(reaction)
 
 
-
-def get_message(channelId: int):
-    db.get_messages(channelId)
-
-
 # Tracking Log #
+async def update_tracking_channels(cache: MemoizeCache, message: Message):
+    # Get the tracking channels linked to the updating messageId
+    messageId = message.id
+    reactionMessages = get_messages(messageId)
+    trackingChannelIds = [m.trackingChannelId for m in reactionMessages]
+    trackingMessages = get_tracking_messages(messageId)
+
+    # for each tracking channel, ensure that a tracking message exists in it
+    for channelId in trackingChannelIds:
+        if not any([m for m in trackingMessages if m.trackingChannelId == channelId]):
+            await send_new_tracking_message(cache, channelId, message)
+
+
+    for trackingMessage in trackingMessages:
+        await update_tracking_message(cache, trackingMessage, message)
+
+
+async def send_new_tracking_message(cache: MemoizeCache, trackingChannelId: int, message: Message):
+    # Get the message we are tracking
+    trackingChannel = await cache.get_channel(trackingChannelId)
+
+    # Generate a tracking message for each tracking channel that is tracking the target message
+    embed = get_reaction_log(message)
+
+    trackingMessage = await trackingChannel.send(embed=embed)
+
+    create_tracking_message(message.id, trackingMessage.id, trackingChannel.id)
+
+
+async def update_tracking_message(cache: MemoizeCache,
+                                  trackingMessage: model.ReactionTrackingMessage,
+                                  message: Message):
+    # Get the message object we need to update
+    trackingChannel = await cache.get_channel(trackingMessage.trackingChannelId)
+    trackingMessage = await cache.get_message(trackingChannel, trackingMessage.trackingMessageId)
+
+    embed = get_reaction_log(message)
+
+    await trackingMessage.edit(embed=embed)
+
+
+def get_tracking_messages(messageId: int) -> List[model.ReactionTrackingMessage]:
+    return db.get_tracking_messages(messageId)
+
+
+def get_messages(messageId: int) -> List[model.ReactionMessage]:
+    return db.get_messages(messageId)
+
+
+def create_tracking_message(messageId, trackingMessageId, trackingChannelId) -> None:
+    trackingMessage = model.ReactionTrackingMessage(messageId, trackingMessageId, trackingChannelId)
+    db.save_tracking_message(trackingMessage)
+
 
 def get_reaction_log(message: Message) -> Embed:
     # Build the title

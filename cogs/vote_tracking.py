@@ -31,6 +31,10 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         reaction_tracking.add_reaction(
             event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
+        # Update tracking channel
+        await reaction_tracking.update_tracking_channels(self.cache, message)
+
+
     @commands.Cog.listener('on_raw_reaction_remove')
     async def on_reaction_remove(self, event):
         channel = await self.cache.get_channel(event.channel_id)
@@ -44,6 +48,9 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         reaction_tracking.remove_reaction(
             event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
+        # Update tracking channel
+        await reaction_tracking.update_tracking_channels(self.cache, message)
+
     @commands.command(
         brief='Track message reactions',
         help=('Track the reactions to messages in the given channel.\n'
@@ -52,6 +59,7 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
               'For example, run this command in a channel called #vote-tracking,\n'
               f'The syntax for the command would be `{config.PREFIX}votetrack #proposals`.'))
     async def votetrack(self, ctx, channel=None):
+        # Parse to ensure that the target channel exists
         if channel is None:
             return await ctx.send(locale.get_string('trackChannelNotGiven'))
 
@@ -66,20 +74,12 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         if not textChannel.permissions_for(textChannel.guild.me).view_channel:
             return await ctx.send(locale.get_string('trackChannelNotPermitted'))
 
+        # Create tracking hookup for the channel
         # TODO: Add flow for tracking a limited number of reactions instead of all of them
-
-        log.info(f'Attempting to create new tracking relationship between #{ctx.channel.name} and #{textChannel.name}')
+        log.info(f'Creating new tracking relationship between #{ctx.channel.name} and #{textChannel.name}')
         result = reaction_tracking.create_channel_tracking_relationship(ctx.channel.id, textChannel.id)
 
         await ctx.send(result)
-
-    @commands.command(brief='', help='')
-    async def embed(self, ctx, channelId, messageId):
-        channel = await self.cache.get_channel(channelId)
-        message = await self.cache.get_message(channel, messageId)
-        embed = reaction_tracking.get_reaction_log(message)
-
-        await ctx.send(embed=embed)
 
 
 async def setup(bot):
