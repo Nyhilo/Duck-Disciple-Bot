@@ -3,6 +3,7 @@ from discord.ext import commands
 from config import config
 
 from core import language, reaction_tracking
+from core.utils import MemoizeCache
 from core.log import log
 
 locale = language.Locale('cogs.vote_tracking')
@@ -15,7 +16,7 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
     def __init__(self, bot) -> None:
         self.bot = bot
-        self.cache = reaction_tracking.MemoizeCache(bot)
+        self.cache = MemoizeCache(bot)
 
     @commands.Cog.listener('on_raw_reaction_add')
     async def on_reaction_add(self, event):

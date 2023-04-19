@@ -1,9 +1,9 @@
 from collections import OrderedDict
 from typing import List
-from discord import TextChannel, Message, User, PartialEmoji, Embed
+from discord import Message, PartialEmoji, Embed
 from datetime import datetime, timedelta
 
-from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_CACHE_LENGTH, MAX_EMBED_TITLE_LENGTH, \
+from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_EMBED_TITLE_LENGTH, \
     DOUBLE_CLICK_DETECTION_SECONDS, DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS
 
 from core import nomic_time
@@ -221,44 +221,3 @@ def format_emoji(emoji: PartialEmoji) -> str:
 
     a = 'a' if emoji.animated else ''
     return f'<{a}:{emoji.name}:{emoji.id}>'
-
-
-class MemoizeCache():
-    def __init__(self, bot) -> None:
-        self.bot = bot
-        self.cachedChannels = {}
-        self.cachedMessages = {}
-        self.cachedUsers = {}
-
-    async def get_channel(self, id: int) -> TextChannel:
-        if id not in self.cachedChannels:
-
-            # "Clear the cache" if it gets too big
-            if len(self.cachedChannels) >= MAX_CACHE_LENGTH:
-                self.cachedChannels = {}
-
-            self.cachedChannels[id] = await self.bot.fetch_channel(id)
-
-        return self.cachedChannels[id]
-
-    async def get_message(self, channel: TextChannel, id: int) -> Message:
-        if id not in self.cachedMessages:
-
-            # "Clear the cache" if it gets too big
-            if len(self.cachedMessages) >= MAX_CACHE_LENGTH:
-                self.cachedMessages = {}
-
-            self.cachedMessages[id] = await channel.fetch_message(id)
-
-        return self.cachedMessages[id]
-
-    async def get_user(self, id: int) -> User:
-        if id not in self.cachedUsers:
-
-            # "Clear the cache" if it gets too big
-            if len(self.cachedUsers) >= MAX_CACHE_LENGTH:
-                self.cachedUsers = {}
-
-            self.cachedUsers[id] = await self.bot.fetch_user(id)
-
-        return self.cachedUsers[id]
