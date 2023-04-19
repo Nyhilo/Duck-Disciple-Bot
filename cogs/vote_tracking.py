@@ -2,7 +2,8 @@ from discord.ext import commands
 
 from config import config
 
-from core import language, log, reaction_tracking
+from core import language, reaction_tracking
+from core.log import log
 
 locale = language.Locale('cogs.vote_tracking')
 

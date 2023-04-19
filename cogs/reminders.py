@@ -5,7 +5,8 @@ import re
 
 from config import config
 
-from core import reminders, nomic_time, language, log
+from core import reminders, nomic_time, language
+from core.log import log
 
 locale = language.Locale('cogs.reminders')
 globalLocale = language.Locale('global')
