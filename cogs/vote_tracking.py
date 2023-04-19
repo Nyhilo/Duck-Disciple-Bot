@@ -67,7 +67,7 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
 
         # TODO: Add flow for tracking a limited number of reactions instead of all of them
 
-        log.info(f'Attempting to create new tracking relationship between #{ctx.name} and #{textChannel.name}')
+        log.info(f'Attempting to create new tracking relationship between #{ctx.channel.name} and #{textChannel.name}')
         result = reaction_tracking.create_channel_tracking_relationship(ctx.channel.id, textChannel.id)
 
         await ctx.send(result)

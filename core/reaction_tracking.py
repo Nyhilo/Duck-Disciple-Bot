@@ -190,6 +190,10 @@ def filter_reactions_by_frequency(reactions: List[model.Reaction]) -> List[model
             prevIndex = i - 1
             previous = reactions[prevIndex]
 
+            # Two different reactions interacting will never constitute a double click
+            if previous.reaction != current.reaction:
+                continue
+
             # Detect if this reaction and the previous reaction constitute a double click
             # If they do, then they are marked to be removed from the tracking list
             diffSeconds = (current.created - previous.created).total_seconds()
