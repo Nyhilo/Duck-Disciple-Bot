@@ -88,7 +88,7 @@ class StopDoing():
             # Stop doing other nerd stuff
             Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
             Option(send_image, 2, 'stop using c.png', rf'{stop} (doing|using) (linguistics|language|the letter c)'),
-            Option(send_image, 5, 'stop doing nixos.png', rf'{stop} doing nixos'),
+            Option(send_image, 5, 'stop doing nixos.png', rf'{stop} (doing|using) nixos'),
             Option(send_image, 5, 'stop doing chess.png', rf'{stop} (doing|playing) chess'),
             Option(send_image, 4, 'stop doing music.png', rf'{stop} (doing|playing) music'),
             Option(send_image, 2, 'stop doing music theory.png',

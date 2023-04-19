@@ -24,6 +24,10 @@ DB_TABLE_REMINDERS_NAME = 'Reminders'
 DB_TABLE_POOLS_NAME = 'Pools'
 DB_TABLE_POOL_ENTRIES_NAME = 'Pool_Entries'
 DB_TABLE_SETTINGS_NAME = 'Settings'
+DB_TABLE_REACTION_TRACKING_NAME = 'Reaction_Trackers'
+DB_TABLE_REACTION_TRACKING_MESSAGES_NAME = 'Reaction_Tracking_Messages'
+DB_TABLE_REACTION_MESSAGES_NAME = 'Reaction_Messages'
+DB_TABLE_REACTIONS_NAME = 'Reactions'
 
 GLOBAL_ADMIN_IDS = [116698920515534854]
 SERVER_ADMIN_IDS = {
@@ -127,3 +131,10 @@ PHASE_START_DATE = (2023, 4, 10)
 # Defines the cycle in which phases are looped starting with the start date
 # For instance, a cycle of [3, 2, 2] would have a 3-day Phase I, 2-day Phase II, 2-day Phase III, etc.
 PHASE_GROUPS = [7]
+
+# Reaction Tracking
+REACTION_TRACKING_EXPIRY_DAYS = 7
+MAX_CACHE_LENGTH = 100
+MAX_EMBED_TITLE_LENGTH = 50
+DOUBLE_CLICK_DETECTION_SECONDS = 2
+DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS = 5
