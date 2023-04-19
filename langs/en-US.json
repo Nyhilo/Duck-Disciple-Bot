@@ -55,6 +55,7 @@
             "remindFoundShort": "Hey, reminding you about this thing.\n\n{message}"
         },
         "vote_tracking": {
+            "trackChannelNotAdmin": "Sorry, you don't have permission to create new trackers.",
             "trackChannelNotGiven": "Please provide the channel you would like to track here in the form of `#channel`.",
             "trackChannelNotFormatted": "Please provide an existing channel in the form of `#channel`.",
             "trackChannelNotFound": "Could not find a channel with that name. Did- did you just type in a fake channel name to mess with me?",

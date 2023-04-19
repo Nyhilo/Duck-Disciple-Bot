@@ -3,7 +3,7 @@ from discord.ext import commands
 from config import config
 
 from core import language, reaction_tracking
-from core.utils import MemoizeCache
+from core.utils import MemoizeCache, is_admin
 from core.log import log
 
 locale = language.Locale('cogs.vote_tracking')
@@ -59,6 +59,10 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
               'For example, run this command in a channel called #vote-tracking,\n'
               f'The syntax for the command would be `{config.PREFIX}votetrack #proposals`.'))
     async def votetrack(self, ctx, channel=None):
+        # Excuse me, do you have your key card?
+        if not is_admin(ctx.author.id, ctx.guild.id):
+            return ctx.send(locale.get_string('trackChannelNotAdmin'))
+
         # Parse to ensure that the target channel exists
         if channel is None:
             return await ctx.send(locale.get_string('trackChannelNotGiven'))
