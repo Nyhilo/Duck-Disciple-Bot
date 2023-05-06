@@ -59,7 +59,9 @@
             "trackChannelNotGiven": "Please provide the channel you would like to track here in the form of `#channel`.",
             "trackChannelNotFormatted": "Please provide an existing channel in the form of `#channel`.",
             "trackChannelNotFound": "Could not find a channel with that name. Did- did you just type in a fake channel name to mess with me?",
-            "trackChannelNotPermitted": "I don't have permission to view messages on that channel."
+            "trackChannelNotPermitted": "I don't have permission to view messages on that channel.",
+            "untrackChannelNotAdmin": "Sorry, you don't have permission to remove trackers.",
+            "untrackChannelNotGiven": "Please provide the channel you would like to remove the tracking for in the form of `#channel`."
         }
     },
     "core": {
@@ -129,6 +131,12 @@
                 "shockAndAwe": "??? O_o",
                 "actuallyWorkedDisbelief": "Holy shit it actually worked?? Congrats???"
             }
+        },
+        "reaction_tracking": {
+            "trackerCreated": "Tracker created between `#{trackingChannelName}` and `#{channelName}`.",
+            "trackerAlreadyExists": "Tracker relationship already exists between `#{trackingChannelName}` and `#{channelName}`.",
+            "trackerRemoved": "Tracking relationship between `#{trackingChannelName}` and `#{channelName}` removed.",
+            "trackerNotExist": "There is not a tracking relationship between `#{trackingChannelName}` and `#{channelName}`."
         }
     }
 }
