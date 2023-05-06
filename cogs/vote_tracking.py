@@ -1,4 +1,6 @@
-from discord.ext import commands
+import asyncio
+from discord import Message
+from discord.ext import commands, tasks
 
 from config import config
 
@@ -18,6 +20,14 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         self.bot = bot
         self.cache = MemoizeCache(bot)
 
+        # Holds a list of message ids that should be updated on the next scheduled update
+        self.messageQueue = {}
+
+        self.update_tracker_messages.start()
+
+    #####################################
+    # Automatic Reaction Tracking Tasks #
+    #####################################
     @commands.Cog.listener('on_raw_reaction_add')
     async def on_reaction_add(self, event):
         channel = await self.cache.get_channel(event.channel_id)
@@ -31,9 +41,8 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         reaction_tracking.add_reaction(
             event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
-        # Update tracking channel
-        await reaction_tracking.update_tracking_channels(self.cache, message)
-
+        # Queue the message for update
+        self.append_message_queue(message)
 
     @commands.Cog.listener('on_raw_reaction_remove')
     async def on_reaction_remove(self, event):
@@ -48,9 +57,33 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         reaction_tracking.remove_reaction(
             event.channel_id, event.message_id, created_at, event.user_id, username, emoji)
 
-        # Update tracking channel
+        # Queue the message for update
+        self.append_message_queue(message)
+
+    @tasks.loop(seconds=config.MESSAGE_QUEUE_UPDATE_INTERVAL)
+    async def update_tracker_messages(self):
+        if len(self.messageQueue) == 0:
+            return
+
+        # Run an update on every message in the dictionary and pop them as we go
+        tasks = []
+        for id, message in self.messageQueue.items():
+            tasks.append(self.update_and_pop_message(id, message))
+
+        asyncio.gather(*tasks)
+
+    def append_message_queue(self, message: Message):
+        if message.id not in self.messageQueue:
+            self.messageQueue[message.id] = message
+
+    async def update_and_pop_message(self, key: int, message: Message):
         await reaction_tracking.update_tracking_channels(self.cache, message)
 
+        self.messageQueue.pop(key)
+
+    #################
+    # User Commands #
+    #################
     @commands.command(
         brief='Track message reactions',
         help=('Track the reactions to messages in the given channel.\n'

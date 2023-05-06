@@ -69,11 +69,12 @@ async def setup_hook():
 
     # Load cogs
     cogs = ['cogs.cycle', 'cogs.image_manipulation',
-            'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot']
+            'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot',
+            'cogs.vote_tracking']
 
     # Development cogs
     if DEBUG:
-        cogs = cogs + ['cogs.locale', 'cogs.vote_tracking']
+        cogs = cogs + ['cogs.locale']
 
     for cog in cogs:
         try:
