@@ -6,26 +6,33 @@ from datetime import datetime, timedelta
 from config.config import REACTION_TRACKING_EXPIRY_DAYS, MAX_EMBED_TITLE_LENGTH, \
     DOUBLE_CLICK_DETECTION_SECONDS, DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS
 
-from core import nomic_time
+from core import nomic_time, language
 from core.utils import MemoizeCache
 from core.db import reactions_db as db
 from core.db.models import reaction_models as model
 
+locale = language.Locale('core.reaction_tracking')
+
 DOUBLE_CLICK_EXCEPTION_TD = timedelta(seconds=DOUBLE_CLICK_MIDNIGHT_BUFFER_SECONDS)
 
 
-def create_channel_tracking_relationship(trackingChannelId: int, channelId: int) -> None:
+def create_channel_tracking_relationship(trackingChannelId: int, channelId: int,
+                                         trackingChannelName: str, channelName: str) -> str:
     '''
     Create a new tracker for the provided channel, attached to the current trackingChannel.
 
     :param trackingChannelId: Id of the channel in which the command was run
     :param channelId: Id of the channel we are going to be tracking messages in
-    :return: _description_
+    :return: Response message to client
     '''
     trackers = db.get_trackers()
 
     # Check if there is already a tracker with this channel relationship
     exists = [t for t in trackers if t.channelId == channelId and t.trackingChannelId == trackingChannelId]
+
+    if any(exists):
+        return locale.get_string('trackerAlreadyExists',
+                                 trackingChannelName=trackingChannelName, channelName=channelName)
 
     newTracker = model.ReactionTracker(
         channelId,
@@ -35,12 +42,35 @@ def create_channel_tracking_relationship(trackingChannelId: int, channelId: int)
         nomic_time.utc_now()
     )
 
-    if any(exists):
-        newTracker.id = exists[0].id
-
     db.save_tracker(newTracker)
 
-    return 'Tracker created between the two channels.'
+    return locale.get_string('trackerCreated',
+                             trackingChannelName=trackingChannelName, channelName=channelName)
+
+
+def remove_channel_tracking_relationship(trackingChannelId: int, channelId: int,
+                                         trackingChannelName: str, channelName: str) -> str:
+    '''
+    Deactivate a tracking channel relationship between the two given channels.
+
+    :param trackingChannelId: Id of the channel in which the command was run
+    :param channelId: Id of the channel we are tracking messages in
+    :return: Response message to client
+    '''
+    trackingChannels = db.get_trackers_by_tracking_channel_id(trackingChannelId)
+
+    trackedChannels = [tracker for tracker in trackingChannels if tracker.channelId == channelId]
+
+    if len(trackedChannels) == 0:
+        return locale.get_string('trackerNotExist',
+                                 trackingChannelName=trackingChannelName, channelName=channelName)
+
+    for tracker in trackedChannels:
+        tracker.active = False
+        db.save_tracker(tracker)
+
+    return locale.get_string('trackerRemoved',
+                             trackingChannelName=trackingChannelName, channelName=channelName)
 
 
 def get_channel_trackers(channelId: int) -> List[model.ReactionTracker]:

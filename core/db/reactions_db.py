@@ -135,7 +135,7 @@ def get_trackers() -> List[ReactionTracker]:
     return trackers
 
 
-def get_tracker_by_tracking_channel_id(trackingChannelId: int) -> ReactionTracker:
+def get_trackers_by_tracking_channel_id(trackingChannelId: int) -> ReactionTracker:
     results = db.get(
         f'''
         SELECT Id, ChannelId, TrackingChannelId, ReactionType, ValidReactions, Created, Active

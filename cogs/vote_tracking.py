@@ -114,7 +114,36 @@ class VoteTracking(commands.Cog, name='Vote Tracking'):
         # Create tracking hookup for the channel
         # TODO: Add flow for tracking a limited number of reactions instead of all of them
         log.info(f'Creating new tracking relationship between #{ctx.channel.name} and #{textChannel.name}')
-        result = reaction_tracking.create_channel_tracking_relationship(ctx.channel.id, textChannel.id)
+        result = reaction_tracking.create_channel_tracking_relationship(ctx.channel.id, textChannel.id,
+                                                                        ctx.channel.name, textChannel.name)
+
+        await ctx.send(result)
+
+    @commands.command(
+        brief='Remove a vote tracking relationship',
+        help=('Deactivates the tracking of messages in the given channel\n'
+              'from the channel this command was run in.')
+    )
+    async def vtRemove(self, ctx, channel=None):
+        # Excuse me, do you have your key card?
+        if not is_admin(ctx.author.id, ctx.guild.id):
+            return ctx.send(locale.get_string('untrackChannelNotAdmin'))
+
+        # Parse to ensure that the target channel exists
+        if channel is None:
+            return await ctx.send(locale.get_string('untrackChannelNotGiven'))
+
+        if not channel.startswith('<#'):
+            return await ctx.send(locale.get_string('trackChannelNotFormatted'))
+
+        try:
+            textChannel = await commands.TextChannelConverter().convert(ctx, channel)
+        except commands.errors.ChannelNotFound:
+            return await ctx.send(locale.get_string('trackChannelNotFound'))
+
+        log.info(f'Removing tracking relationship between #{ctx.channel.name} and #{textChannel.name}')
+        result = reaction_tracking.remove_channel_tracking_relationship(ctx.channel.id, textChannel.id,
+                                                                        ctx.channel.name, textChannel.name)
 
         await ctx.send(result)
 
