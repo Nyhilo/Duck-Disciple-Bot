@@ -10,7 +10,7 @@ from math import ceil
 from config.config import PHASE_START_DATE, PHASE_GROUPS
 from core import utils, language
 
-locale = language.Locale("core.nomic_time")
+locale = language.Locale('core.nomic_time')
 
 _d = PHASE_START_DATE
 START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
@@ -42,20 +42,27 @@ def get_current_utc_string() -> None:
     nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
     nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
 
-    return locale.get_string('timeUtcReportString', time=time, weekday=weekday)  # ,
-                            #  phase=phase, nextPhase=nextPhase, nextDay=nextDay,
-                            #  nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
-                            #  nextDayTimestampStr=nextDayTimestampStr)
+    return locale.get_string(
+        'timeUtcReportString',
+        time=time,
+        weekday=weekday,
+        phase=phase,
+        nextPhase=nextPhase,
+        nextDay=nextDay,
+        nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
+        nextDayTimestampStr=nextDayTimestampStr,
+    )
 
 
 #################################
 # Phase Determination Functions #
 #################################
 
+
 def _get_phase(date: datetime) -> int:
-    """
+    '''
     Retrieve the current phase, given the value of utc_now()
-    """
+    '''
     # This is the total length in days after iterating through all the phases in
     # a "loop" or "group". i.e. [3, 2, 2] is a full week (7 days)
     phase_group_len = sum(PHASE_GROUPS)
@@ -68,12 +75,14 @@ def _get_phase(date: datetime) -> int:
 
     # This "rounds down" the days to the most recent full phase group
     # for instance, (20 // 7) * 7 = 18
-    phases_since = ((days_since_beginning // phase_group_len)
-                    * num_phases_per_group)
+    phases_since = (
+        days_since_beginning // phase_group_len
+    ) * num_phases_per_group
 
     # I don't know why this -1 works, but it fixes an inconsistent off-by-one error
-    days_since = ((days_since_beginning // phase_group_len)
-                  * phase_group_len) - 1
+    days_since = (
+        (days_since_beginning // phase_group_len) * phase_group_len
+    ) - 1
 
     # Add phases to the running total until we get to today
     for group in PHASE_GROUPS:
@@ -86,12 +95,12 @@ def _get_phase(date: datetime) -> int:
 
 
 def _get_date_from_phase(phase: int) -> str:
-    """
+    '''
     Get a datetime for the day that a given phase falls on
 
     :param phase: _description_
     :return: _description_
-    """
+    '''
     phases_per_group = len(PHASE_GROUPS)
 
     days_since = 0
@@ -107,17 +116,26 @@ def _get_date_from_phase(phase: int) -> str:
 
 def _get_phase_name(phase: int) -> str:
     if phase < 1:
-        minus = '-' if phase < 0 else ''
-        phase_ = f'{minus}{utils.roman_numeralize(abs(phase))}'
-        phase__ = f'-{utils.roman_numeralize(abs(phase - 1))}'
-        return locale.get_string('phaseNameNegative', number=phase_, numberOneLess=phase__)
+        return locale.get_string('phaseNameNegative')
 
-    return locale.get_string('phaseName', number=utils.roman_numeralize(phase))
+    cyclingPhaseNum = ((phase - 1) % 2) + 1
+    return locale.get_string(
+        'phaseName', number=utils.roman_numeralize(cyclingPhaseNum)
+    )
+
+
+def _get_week_name(phase: int) -> str:
+    if phase < 1:
+        return locale.get_string('newCycle')
+
+    weekNum = (phase + 1) // 2
+    return locale.get_string('weekName', number=weekNum)
 
 
 ################################
 # Scheduling Related Utilities #
 ################################
+
 
 def get_formatted_date_string(timestamp: int = None) -> str:
     '''
@@ -135,7 +153,7 @@ def get_formatted_date_string(timestamp: int = None) -> str:
 
     msg = datetime.utcfromtimestamp(timestamp).strftime(format)
 
-    # "round down" to the nearest 10 minutes by replacing ones digit with 0 if we happen to grab this at an odd time
+    # 'round down' to the nearest 10 minutes by replacing ones digit with 0 if we happen to grab this at an odd time
     # NOTE: The index on this part may change if time format changes
     msg_ = list(msg)
     msg_[-5] = '0'
@@ -149,8 +167,13 @@ def get_current_phase_string():
     Get the string for the current phase right now.
     '''
 
-    weekCount = _get_phase(utc_now())
-    return locale.get_string('khronosPhaseString', number=weekCount)
+    currentPhase = _get_phase(utc_now())
+
+    weekName = _get_week_name(currentPhase)
+    phaseName = _get_phase_name(currentPhase)
+    return locale.get_string(
+        'khronosPhaseString', weekName=weekName, phaseName=phaseName
+    )
 
 
 def get_minutes_to_next_phase() -> int:
@@ -168,9 +191,11 @@ def get_minutes_to_next_phase() -> int:
 def get_next_time_to_phase_end_string():
     minutes = get_minutes_to_next_phase()
     if minutes <= 60:
-        return locale.get_string('phaseEndNear')    # , minutes=((minutes // 10) + 1) * 10)
+        return locale.get_string(
+            'phaseEndNear', minutes=((minutes // 10) + 1) * 10
+        )
 
-    return locale.get_string('phaseEndFar')         # , hours=ceil(minutes / 60))
+    return locale.get_string('phaseEndFar', hours=ceil(minutes / 60))
 
 
 def seconds_to_next_10_minute_increment():
@@ -189,14 +214,16 @@ def seconds_to_next_day():
     now = utc_now()
 
     # Adds 1 day, then replaces the clock time to bring us to 00:00 UTC
-    tomorrow = (now + relativedelta(days=1)
-                + relativedelta(hour=0, minute=0, second=0))
+    tomorrow = (
+        now + relativedelta(days=1) + relativedelta(hour=0, minute=0, second=0)
+    )
     return (tomorrow - now).seconds
 
 
 #####################
 # General Utilities #
 #####################
+
 
 def utc_now():
     # for debugging
@@ -232,22 +259,27 @@ def parse_timespan_by_units(number, unit):
 def get_full_days_ago(days: int) -> datetime:
     '''Returns a datetime set to the 00:00 of the day 7 days prior.'''
 
-    return (utc_now() - relativedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return (utc_now() - relativedelta(days=days)).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
 
 
 ######################
 # Timstamp Utilities #
 ######################
 
+
 def get_timespan_from_timestamp(timestamp, now=None):
     if not now:
         now = utc_now()
 
-    return datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc) - now.replace(tzinfo=timezone.utc)
+    return datetime.utcfromtimestamp(timestamp).replace(
+        tzinfo=timezone.utc
+    ) - now.replace(tzinfo=timezone.utc)
 
 
 def get_datestring_timestamp(datestring: str) -> int:
-    if datestring is None or datestring == "" or datestring.lower() == 'now':
+    if datestring is None or datestring == '' or datestring.lower() == 'now':
         return unix_now()
 
     return get_timestamp(parser.parse(datestring))
