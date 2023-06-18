@@ -70,7 +70,7 @@
             "noPoolsAvailable": "There are no pools available in this server.",
             "poolNotFound": "Could not find a pool with that name in this server.",
             "poolEmpty": "There are no results in this pool to roll on.",
-            "rollHeader": "Result pulling from {poolName}:\n```\n'",
+            "rollHeader": "Result pulling from {poolName}:\n```\n",
             "resultAddFail": "Whoops, something went wrong trying to add the following result. Process aborted.\n(entryDescription)",
             "resultAddSuccess": "Successfully updated result{plural} in {poolName}",
             "resultRemoveFail": "Whoops, something went wrong trying to remove the following result. Process aborted.\n{entryDescription}",
