@@ -18,14 +18,16 @@ def set_new_reminder(userId: str,
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
     _createdAt = nomic_time.get_timestamp(createdAt)
-    _remindAfter = f'<t:{nomic_time.get_timestamp(createdAt + remindAfter)}>'
+    _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
 
     rowId = db.add_reminder(userId, messageId, channelId,
                             _createdAt, _remindAfter, remindMsg)
 
+    _remindAfterFormatted = f'<t:{_remindAfter}>'
+
     if rowId:
         return (locale.get_string('reminderSetShort',
-                                  timestamp=_remindAfter, prefix=PREFIX, rowId=rowId))
+                                  timestamp=_remindAfterFormatted, prefix=PREFIX, rowId=rowId))
 
     else:
         return locale.get_string('reminderError')
@@ -142,7 +144,7 @@ def parse_remind_message(_msg, createdAt=None):
         msg = None if len(parts) < 2 else ' '.join(parts[2:])
 
     if not span:
-        return (None, locale.get_string('incorrectSyntaxGeneric'))
+        return (None, locale.get_string('incorrectSyntaxGeneric', prefix=PREFIX))
 
     if span.total_seconds() < 1:
         return (None, locale.get_string('attemptedTimeTravelError'))
