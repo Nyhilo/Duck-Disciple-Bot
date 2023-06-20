@@ -105,7 +105,7 @@
             "deleteError": "An error occurred trying to delete this reminder. Oof.",
             "deleteUnauthorized": "Only an admin or the person who created a reminder can delete it.",
             "incorrectSyntax1": "Incorrect syntax for reminder or I couldn't understand your date format. See `{prefix}help remind` for more details.",
-            "incorrectSyntax2": "Couldn't understand your time format or you might have an extra semicolon in there confusing things. See `{PREFIX}help remind` for more details.",
+            "incorrectSyntax2": "Couldn't understand your time format or you might have an extra semicolon in there confusing things. See `{prefix}help remind` for more details.",
             "incorrectSyntaxGeneric": "Incorrect syntax for reminder. See `{prefix}help remind` for more details.",
             "attemptedTimeTravelError": "Please give a time that is in the future (remember that times are in UTC)."
         },

@@ -38,11 +38,11 @@ class Reminders(commands.Cog, name='Reminders'):
               'Will save a reminder and reply in the same channel at the specified point in the future.\n'
               'Long-term reminders are checked once per minute. Adding a message is optional, '
               'and will be echoed back to you.\n\n'
-              'Escape users and roles in the creation message with User#ID and @"Role" respectively.\n'
-              'For example, User#0000 and @"everyone" will be echoed back as @User#0000 and @everyone.\n\n'
+              'Escape users and roles in the creation message with a backslash on either side of the "@".\n'
+              'For example, \\@\\Username and \\@\\everyone will be echoed back as @Username and @everyone.\n\n'
               'Examples:\n'
               f"\t{config.PREFIX}remind 5 days\n"
-              f"\t{config.PREFIX}remind 7 days Hey @\"everyone\" it's time!\n"
+              f"\t{config.PREFIX}remind 7 days Hey \\@\\everyone it's time!\n"
               f"\t{config.PREFIX}remind december 25th, 8:00am; don't forget to do the thing.\n"
               f"\t{config.PREFIX}remind 1640419200 The time has come\n"
               ),
@@ -242,17 +242,24 @@ async def filter_escaped_mentions(ctx, message):
         except commands.BadArgument:
             return mention
 
-    # User mentions in the form of Name#0000
-    matches = re.finditer(r'\b\S+#\d+\b', message)
-    for match in matches:
-        replace = await resolve_mention(memberConverter, match.group())
-        message = message.replace(match.group(), replace)
+    # Find all escaped user and role mentions
+    matches = re.finditer(r'\\@\\\w+(?:#\d{4})?', message)
+    for m in matches:
+        match = m.group()
+        mention = match.replace('\\@\\', '')
 
-    # Role mentions in the form of @"Role"
-    matches = re.finditer(r'@".*?"', message)
-    for match in matches:
-        replace = await resolve_mention(roleConverter, match.group()[2:-1])
-        message = message.replace(match.group(), replace)
+        # Try to convert the mention to a user
+        result = await resolve_mention(memberConverter, mention)
+
+        # If it wasn't a username, try to convert it to a role
+        if result == mention:
+            result = await resolve_mention(roleConverter, mention)
+
+        # If it wasn't a role, just put the @ sign back and call it a day
+        if result == mention:
+            result = '@' + mention
+
+        message = message.replace(match, result)
 
     return message
 
