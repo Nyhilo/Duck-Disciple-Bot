@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+from requests import exceptions as reqexcept
+
 from core.log import log
 import config.config as config
 from core import utils, image, language
@@ -95,8 +97,11 @@ async def _trung_handler(ctx, detrung: bool, updown: bool):
 
     try:
         async with ctx.typing():
-            image.trungify_and_save(
-                source, config.TRUNGIFY_CACHE, detrung, updown)
+            try:
+                image.trungify_and_save(
+                    source, config.TRUNGIFY_CACHE, detrung, updown)
+            except reqexcept.InvalidSchema:
+                return ctx.send(locale.get_string('imageNotSupported'))
 
             with open(config.TRUNGIFY_CACHE, 'rb') as file:
                 f = discord.File(file, filename=config.TRUNGIFY_CACHE)
