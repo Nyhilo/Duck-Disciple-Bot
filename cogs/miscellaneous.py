@@ -2,7 +2,7 @@ import discord  # noqa: F401
 from discord.ext import commands
 
 from core.log import log
-from core import nomic_time, sha as shalib, utils, stopdoing, language
+from core import nomic_time, sha as shalib, utils, stopdoing, language, prospecting
 
 locale = language.Locale('cogs.misc')
 globalLocale = language.Locale('global')
@@ -90,6 +90,12 @@ class Misc(commands.Cog, name='Miscellaneous'):
         await ctx.send(locale.get_string('timestampSuccess',
                                          formattedTimestamp=formattedTimestamp,
                                          timestamp=timestamp))
+        
+    @commands.command(
+        brief='Play the Prospecting demo minigame'
+    )
+    async def prospect(self, ctx):
+        await prospecting.run_game(ctx, self.bot)
 
 
 async def setup(bot):
