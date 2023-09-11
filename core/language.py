@@ -1,5 +1,5 @@
 from os import path
-import json
+import json5 as json
 
 from core.log import log
 from config.settings import settings
@@ -105,7 +105,12 @@ class Locale():
             raise KeyError(f'Key does not lead to a string: {fullkey}')
 
         # If the node is validated as a string, then we can return it
-        return node.format(**formatkwargs)
+        try:
+            return node.format(**formatkwargs)
+        except KeyError as e:
+            log.error('A locale contained a key that was not present in the target string.')
+            log.error(fullkey, e)
+            return node
 
     @classmethod
     def _set_default_key(cls, key: str) -> None:

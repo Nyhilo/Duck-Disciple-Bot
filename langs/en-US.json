@@ -85,13 +85,22 @@
             "poolDeleteSuccess": "{poolName} pool removed.",
             "poolDeleteFail": "Whoops, something went wrong trying to remove the pool named {poolName}."
         },
+        // "nomic_time": {
+        //     "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
+        //     "phaseName": "Phase {number}",
+        //     "weekName": "Week {number}",
+        //     "phaseNameNegative": "Phase ♾️",
+        //     "khronosPhaseString": "{phaseName}, {weekName}",
+        //     "phaseEndFar": "Next Phase in {hours} hrs",
+        //     "phaseEndNear": "Next Phase in {minutes} min"
+        // },
         "nomic_time": {
-            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nCycle 15 has not started yet.",
             "phaseName": "Phase {number}",
             "weekName": "Week {number}",
             "phaseNameNegative": "Phase ♾️",
-            "khronosPhaseString": "{phaseName}, {weekName}",
-            "phaseEndFar": "Next Phase in {hours} hrs",
+            "khronosPhaseString": "Phase ♾️, Week ∅",
+            "phaseEndFar": "See you in Cycle 15!",
             "phaseEndNear": "Next Phase in {minutes} min"
         },
         "reminders": {
