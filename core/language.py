@@ -1,5 +1,5 @@
 from os import path
-import json
+import json5 as json
 
 from core.log import log
 from config.settings import settings
