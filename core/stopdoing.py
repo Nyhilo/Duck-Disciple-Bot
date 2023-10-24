@@ -84,6 +84,8 @@ class StopDoing():
             Option(send_image, 10, 'stop doing logic.jpg', rf'{stop} doing logic'),
             Option(send_image, 15, 'stop doing computer science.png',
                    rf'{stop} doing (compsci|computer science|programming|coding)'),
+            Option(send_image, 5, 'come study physics.png',
+                   rf'({stop}|start|just|come) (doing|do|study) (?:quantum )?physics'),
 
             # Stop doing other nerd stuff
             Option(send_image, 5, 'stop doing linguistics.png', rf'{stop} doing (linguistics|language)'),
