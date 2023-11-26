@@ -133,7 +133,7 @@ class StopDoing():
             Option(send_image, 10, 'big brain granny.png', r'big brain'),
 
             # Misc Emotes
-            Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
+            # Option(thistbh, 15, None, [nomic, r'this tbh', rf'^(this|this tbh){punc}$']),
             Option(what, 8, None, r'^what(?:\.)?$'),
             Option(nylo, 8, None, rf'(?:.{{0,10}})(nylo|nyhilo){punc}$'),  # {0,10} allows for "thanks/based nylo" etc.
 
