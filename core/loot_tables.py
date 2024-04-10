@@ -23,7 +23,7 @@ def list(serverId: int = 0) -> str:
 def info(serverId: int, pool: str) -> str:
     pool = db.get_pool(serverId, pool)
     if pool is not None:
-        return pool.__str__()
+        return pool.__str__()[:2000]
     else:
         return locale.get_string('poolNotFound')
 
