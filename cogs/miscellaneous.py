@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from core.log import log
 from core import nomic_time, sha as shalib, utils, stopdoing, language, prospecting
+from config.config import STOP_DOING_ONMESSAGE_GUILD_WHITELIST
 
 locale = language.Locale('cogs.misc')
 globalLocale = language.Locale('global')
@@ -45,6 +46,9 @@ class Misc(commands.Cog, name='Miscellaneous'):
     async def stopdoingnomic_inline(self, message):
         # Don't ever reply to bots
         if message.author.bot:
+            return
+
+        if message.guild.id not in STOP_DOING_ONMESSAGE_GUILD_WHITELIST:
             return
 
         await self.stopdoing.choose(message.channel, message.content)
@@ -90,7 +94,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
         await ctx.send(locale.get_string('timestampSuccess',
                                          formattedTimestamp=formattedTimestamp,
                                          timestamp=timestamp))
-        
+
     @commands.command(
         brief='Play the Prospecting demo minigame'
     )
