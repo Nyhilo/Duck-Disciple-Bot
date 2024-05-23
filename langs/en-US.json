@@ -43,7 +43,9 @@
             "cardSuccess": "Here is your card!",
             "cardSuccessPlural": "Here are your cards!",
             "timestampBadFormat": "Whoops, I did't recognize the date format you sent. Try something else.",
-            "timestampSuccess": "Here is your timestamp for {formattedTimestamp} your time: `{timestamp}`"
+            "timestampSuccess": "Here is your timestamp for {formattedTimestamp} your time: `{timestamp}`",
+            "rollNone": "Please provide a roll, such as 1d6, etc. See [The d20 github page](<https://github.com/avrae/d20?tab=readme-ov-file#dice-syntax>) for detailed documentation",
+            "rollSyntaxError": "I couldn't understand that roll. Please try again or visit [The d20 github page](<https://github.com/avrae/d20?tab=readme-ov-file#dice-syntax>) for detailed documentation"
         },
         "reminders": {
             "helpMessage": "Please see `{prefix}help remind` for details on how to use this command.",

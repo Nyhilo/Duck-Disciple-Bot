@@ -3,7 +3,9 @@ from discord.ext import commands
 
 from core.log import log
 from core import nomic_time, sha as shalib, utils, stopdoing, language, prospecting
-from config.config import STOP_DOING_ONMESSAGE_GUILD_WHITELIST
+from config.config import PREFIX, STOP_DOING_ONMESSAGE_GUILD_WHITELIST
+
+import d20
 
 locale = language.Locale('cogs.misc')
 globalLocale = language.Locale('global')
@@ -100,6 +102,28 @@ class Misc(commands.Cog, name='Miscellaneous'):
     )
     async def prospect(self, ctx):
         await prospecting.run_game(ctx, self.bot)
+
+    @commands.command(
+        brief='Roll some dice',
+        description='A powerful dice roller',
+        help=('Uses the d20 library found at github.com/avrae/d20. '
+              'See there for detailed documentation'),
+        aliases=['r']
+    )
+    async def roll(
+        self, ctx, *,
+        roll=commands.parameter(description='For example: 1d6, 2d6+1d12, 1d20+5, 20d6 >5', default=None)
+    ):
+        if roll is None:
+            return await ctx.send(locale.get_string('rollNone'))
+
+        try:
+            return await ctx.send(d20.roll(roll))
+        except d20.RollSyntaxError:
+            return await ctx.send(locale.get_string('rollSyntaxError', prefix=PREFIX))
+        except Exception as e:
+            log.exception(e)
+            await ctx.send(globalLocale.get_string('genericError'))
 
 
 async def setup(bot):
