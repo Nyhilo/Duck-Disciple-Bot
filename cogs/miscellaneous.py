@@ -118,9 +118,25 @@ class Misc(commands.Cog, name='Miscellaneous'):
             return await ctx.send(locale.get_string('rollNone'))
 
         try:
-            return await ctx.send(d20.roll(roll))
+            r = d20.roll(roll, allow_comments=True)
+            chunks = utils.page_message(str(r))
+            for chunk in chunks:
+                await ctx.send(chunk)
+
+        except d20.RollError as e:
+            log.exception(e)
+            return await ctx.send(locale.get_string('rollSyntaxError', prefix=PREFIX))
+
         except d20.RollSyntaxError:
             return await ctx.send(locale.get_string('rollSyntaxError', prefix=PREFIX))
+
+        except d20.RollValueError as e:
+            log.exception(e)
+            return await ctx.send(locale.get_string('rollSyntaxError', prefix=PREFIX))
+
+        except d20.TooManyRolls:
+            return await ctx.send('Ran into a problem, too many rolls.')
+
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
