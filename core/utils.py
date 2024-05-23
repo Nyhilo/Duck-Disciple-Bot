@@ -1,7 +1,7 @@
 from discord import Message, TextChannel, User
 from random import choice
 
-from config.config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS, MAX_CACHE_LENGTH
+from config.config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS, MAX_CACHE_LENGTH, MESSAGE_LIMIT, LINE_SPLIT_LIMIT
 
 
 def trim_quotes(string):
@@ -97,74 +97,55 @@ class MemoizeCache():
         return self.cachedUsers[id]
 
 
-message_limit = 2000
-
-
-# The following method was generated with ChatGPT-4o
-# As the ownership of this code is unclear and up for debate, I do not suggest
-# making use of it as per the MIT license that applies to the rest of this
-# program. I intend to remove this method in the future and replace it with
-# something more accountable. Forgive me.
-def page_message(message: str, limit: int = message_limit) -> list:
-    def split_codeblock(message, limit):
-        result = []
-        in_codeblock = False
-        temp = ''
-        for line in message.splitlines(keepends=True):
-            if line.startswith('```'):
-                if in_codeblock:
-                    temp += line
-                    in_codeblock = False
-                    if len(temp) > limit:
-                        result.extend(split_line(temp, limit))
-                    else:
-                        result.append(temp)
-                    temp = ''
-                else:
-                    if temp:
-                        if len(temp) > limit:
-                            result.extend(split_line(temp, limit))
-                        else:
-                            result.append(temp)
-                        temp = ''
-                    in_codeblock = True
-                    temp += line
-            else:
-                if in_codeblock:
-                    temp += line
-                else:
-                    if len(temp + line) > limit:
-                        if temp:
-                            result.append(temp)
-                        temp = line
-                    else:
-                        temp += line
-
-        if temp:
-            result.append(temp)
-
-        return result
-
-    def split_line(line, limit):
-        result = []
-        while len(line) > limit:
-            split_pos = line.rfind(' ', 0, limit)
-            if split_pos == -1:
-                split_pos = limit
-            result.append(line[:split_pos])
-            line = line[split_pos:].lstrip()
-        if line:
-            result.append(line)
-        return result
-
+def page_message(message: str, limit: int = MESSAGE_LIMIT, line_split_limit: int = LINE_SPLIT_LIMIT) -> list[str]:
     if len(message) <= limit:
         return [message]
 
-    chunks = split_codeblock(message, limit)
+    limit = limit - 6   # Buffer for codeblocks
+
     result = []
-    for chunk in chunks:
-        if len(chunk) > limit:
-            result.extend(split_line(chunk, limit))
-        else:
-            result.append(chunk)
+    buffer = ''
+
+    while len(message) > 0 and message != '```':
+        if len(message) < limit:
+            if message.count('```') % 2 == 1:    # Search for unclosed codeblocks
+                message += '```'
+
+            result.append(message)
+            break
+
+        buffer = message[:limit]
+
+        newline = buffer.rfind('\n')
+        if newline != -1 and newline > (limit - line_split_limit):
+            buffer = buffer[:newline]
+            message = message[newline:].lstrip('\n')
+
+            if buffer.count('```') % 2 == 1:    # Search for unclosed codeblocks
+                buffer += '```'
+                message = '```' + message
+
+            result.append(buffer)
+            continue
+
+        space = buffer.rfind(' ')
+
+        if space != -1 and space > (limit - line_split_limit):
+            buffer = buffer[:space]
+            message = message[space:].lstrip()
+
+            if buffer.count('```') % 2 == 1:    # Search for unclosed codeblocks
+                buffer += '```'
+                message = '```' + message
+
+            result.append(buffer)
+            continue
+
+        message = message[limit:]
+        if buffer.count('```') % 2 == 1:    # Search for unclosed codeblocks
+            buffer += '```'
+            message = '```' + message
+
+        result.append(buffer)
+
     return result
