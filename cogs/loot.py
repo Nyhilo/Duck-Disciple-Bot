@@ -1,7 +1,7 @@
 from discord.ext import commands
 
 from core.log import log
-from core import loot_tables as loot, language
+from core import loot_tables as loot, language, utils
 from core.db.models.pool_models import Entry
 from config.config import PREFIX
 
@@ -68,16 +68,22 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if pool is not None:
                 return await ctx.send(locale.get_string('listTooManyArgs'))
 
-            await ctx.send(loot.list(guildId))
+            pages = utils.page_message(loot.list(guildId))
+            for page in pages:
+                await ctx.send(page)
 
         if comm == 'info':
             if len(args) > 0:
                 return await ctx.send(locale.get_string('infoTooManyArgs') + locale.get_string('seeHelpForInfo'))
 
             if pool is None:
-                await ctx.send(loot.list(guildId))
+                pages = utils.page_message(loot.list(guildId))
+                for page in pages:
+                    await ctx.send(page)
             else:
-                await ctx.send(loot.info(guildId, pool))
+                pages = utils.page_message(loot.info(guildId, pool))
+                for page in pages:
+                    await ctx.send(page)
 
         if comm == 'roll':
             if pool is None:
@@ -94,10 +100,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
             if numRolls > 20:
                 return await ctx.send(locale.get_string('rollTooManyPulls'))
 
-            pages = loot.roll(guildId, pool, numRolls, extraEntries)
-
-            if type(pages) != list:
-                return await ctx.send(pages)
+            pages = utils.page_message(loot.roll(guildId, pool, numRolls, extraEntries))
 
             for page in pages:
                 await ctx.send(page)

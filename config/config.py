@@ -9,6 +9,9 @@ PREFIX = '&'
 
 LOG_FILE = 'log.txt'
 
+MESSAGE_LIMIT = 2000
+LINE_SPLIT_LIMIT = 200
+
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = True if DEBUG else False
 
