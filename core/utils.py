@@ -95,3 +95,76 @@ class MemoizeCache():
             self.cachedUsers[id] = await self.bot.fetch_user(id)
 
         return self.cachedUsers[id]
+
+
+message_limit = 2000
+
+
+# The following method was generated with ChatGPT-4o
+# As the ownership of this code is unclear and up for debate, I do not suggest
+# making use of it as per the MIT license that applies to the rest of this
+# program. I intend to remove this method in the future and replace it with
+# something more accountable. Forgive me.
+def page_message(message: str, limit: int = message_limit) -> list:
+    def split_codeblock(message, limit):
+        result = []
+        in_codeblock = False
+        temp = ''
+        for line in message.splitlines(keepends=True):
+            if line.startswith('```'):
+                if in_codeblock:
+                    temp += line
+                    in_codeblock = False
+                    if len(temp) > limit:
+                        result.extend(split_line(temp, limit))
+                    else:
+                        result.append(temp)
+                    temp = ''
+                else:
+                    if temp:
+                        if len(temp) > limit:
+                            result.extend(split_line(temp, limit))
+                        else:
+                            result.append(temp)
+                        temp = ''
+                    in_codeblock = True
+                    temp += line
+            else:
+                if in_codeblock:
+                    temp += line
+                else:
+                    if len(temp + line) > limit:
+                        if temp:
+                            result.append(temp)
+                        temp = line
+                    else:
+                        temp += line
+
+        if temp:
+            result.append(temp)
+
+        return result
+
+    def split_line(line, limit):
+        result = []
+        while len(line) > limit:
+            split_pos = line.rfind(' ', 0, limit)
+            if split_pos == -1:
+                split_pos = limit
+            result.append(line[:split_pos])
+            line = line[split_pos:].lstrip()
+        if line:
+            result.append(line)
+        return result
+
+    if len(message) <= limit:
+        return [message]
+
+    chunks = split_codeblock(message, limit)
+    result = []
+    for chunk in chunks:
+        if len(chunk) > limit:
+            result.extend(split_line(chunk, limit))
+        else:
+            result.append(chunk)
+    return result
