@@ -23,7 +23,7 @@ def list(serverId: int = 0) -> str:
 def info(serverId: int, pool: str) -> str:
     pool = db.get_pool(serverId, pool)
     if pool is not None:
-        return pool.__str__()[:2000]
+        return pool.__str__()
     else:
         return locale.get_string('poolNotFound')
 
@@ -43,31 +43,18 @@ def roll(serverId: int, poolName: str, numRolls: int = 1, extraEntries: List[Ent
     chosenEntries = choices(pool.entries, weights=[
                             entry.amount for entry in pool.entries], k=numRolls)
 
-    # This might go over the discord character limits, so we need to break the message up
-    messageLimit = 2000
-
     # A list of all result strings, bullet pointed
-    results = [f'* {entry.description}\n' for entry in chosenEntries]
+    results = '\n'.join(f'* {entry.description}\n' for entry in chosenEntries)
 
     # Initialize the first message in the body
-    body = [locale.get_string('rollHeader', poolName=poolName)]
+    header = locale.get_string('rollHeader', poolName=poolName)
 
-    index = 0
-    for result in results:
-        if len(body[index] + result) > messageLimit:
-            # Close the current message
-            body[index] += '```'
-            # Add a new message to the list
-            body.append('```\n')
-            # Increment counter so we can add to the new message
-            index += 1
+    msg = (f'{header}\n'
+           '```\n'
+           f'{results}\n'
+           '```')
 
-        body[index] += result
-
-    # Close the most recent message in the list
-    body[index] += '```'
-
-    return body
+    return msg
 
 
 def add(serverId: int, poolName: str, entries: List[Entry], deleteMode: bool = False) -> str:
