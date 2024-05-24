@@ -56,6 +56,9 @@
             "remindSetShort": "Okay, I'll remind you.",
             "remindFoundShort": "Hey, reminding you about this thing.\n\n{message}"
         },
+        "secret": {
+            "secretNone": "Please send a message to hash."
+        },
         "vote_tracking": {
             "trackChannelNotAdmin": "Sorry, you don't have permission to create new trackers.",
             "trackChannelNotGiven": "Please provide the channel you would like to track here in the form of `#channel`.",
@@ -149,6 +152,11 @@
             "trackerAlreadyExists": "Tracker relationship already exists between `#{trackingChannelName}` and `#{channelName}`.",
             "trackerRemoved": "Tracking relationship between `#{trackingChannelName}` and `#{channelName}` removed.",
             "trackerNotExist": "There is not a tracking relationship between `#{trackingChannelName}` and `#{channelName}`."
+        },
+        "secret_keeping": {
+            "backticksDetected": "I noticed you have a triple of backticks \\`\\`\\` in your message. This might lead to uncopiable formatting below",
+            "messageRealLong": "*Your message is really long and will split the codeblock. Keep that in mind when verifying.*",
+            "secretReply": "**This is the hash for your message:**\n```{hash}```\n**And this is the message that was hashed. You can check it with `{prefix}sha`:**\n```{msg}```"
         }
     }
 }
