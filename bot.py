@@ -63,14 +63,13 @@ async def setup_hook():
     for db in [reminders_db, pools_db, settings_db, reactions_db]:
         db.set_tables()
 
-
     # Setup locale files
     language.Locale(None).initialize()
 
     # Load cogs
     cogs = ['cogs.cycle', 'cogs.image_manipulation',
             'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot',
-            'cogs.vote_tracking']
+            'cogs.vote_tracking', 'cogs.secret']
 
     # Development cogs
     if DEBUG:

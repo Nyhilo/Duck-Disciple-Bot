@@ -50,7 +50,7 @@ class Misc(commands.Cog, name='Miscellaneous'):
         if message.author.bot:
             return
 
-        if message.guild.id not in STOP_DOING_ONMESSAGE_GUILD_WHITELIST:
+        if message.guild is None or message.guild.id not in STOP_DOING_ONMESSAGE_GUILD_WHITELIST:
             return
 
         await self.stopdoing.choose(message.channel, message.content)
