@@ -30,8 +30,8 @@ intents.reactions = True
 activity = discord.ActivityType.listening
 client = commands.Bot(command_prefix=PREFIX,
                       description=(
-                          'The Obelisk looms. A general-use '
-                          'bot for the Infinite Nomic discord server.'),
+                          'A general-use bot for the Infinite Nomic discord '
+                          'server.'),
                       help_command=help_command,
                       activity=discord.Activity(type=activity, name=PREFIX),
                       intents=intents
