@@ -44,12 +44,12 @@ def roll(serverId: int, poolName: str, numRolls: int = 1, extraEntries: List[Ent
                             entry.amount for entry in pool.entries], k=numRolls)
 
     # A list of all result strings, bullet pointed
-    results = '\n'.join(f'* {entry.description}\n' for entry in chosenEntries)
+    results = '\n'.join(f'→ {entry.description}' for entry in chosenEntries)
 
     # Initialize the first message in the body
     header = locale.get_string('rollHeader', poolName=poolName)
 
-    msg = (f'{header}\n'
+    msg = (f'{header}'
            '```\n'
            f'{results}\n'
            '```')
