@@ -139,6 +139,9 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
             pools, tail = [pool] + list(args[:-1]), args[-1]
 
+            if len(pools) > 10:
+                return await ctx.send(locale.get_string('comboTooManyPools'))
+
             for arg in pools:
                 try:
                     numRolls = int(arg)
