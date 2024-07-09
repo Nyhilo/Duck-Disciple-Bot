@@ -21,6 +21,7 @@
             "rollTooManyPulls": "Pulling from pools is limited to 20 pulls.",
             "comboNameNotGiven": "Please specify the names of the pools you wish combo.",
             "comboTooManyNumbers": "For combo rolls, only include a single integer at the end of the command.",
+            "comboTooManyPools": "Please do not combo more than 10 pools at the same time.",
             "createTooManyArgs": "The `create` command only takes a pool name and an optional (global) flag as arguments.",
             "createPoolNotGiven": "Please specify the name of the pool you wish operate on.",
             "createNameTooLong": "Please limit pool names to 100 characters.",
