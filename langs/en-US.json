@@ -17,8 +17,10 @@
             "seeHelpForInfo": " See `{prefix}help pool` for more info.",
             "listTooManyArgs": "The `list` command does not take any additional arguments.",
             "infoTooManyArgs": "The `info` command only takes a pool name as an argument.",
-            "rollNameNotGiven": "Please specify the name of the pool you wish operate on.",
+            "rollNameNotGiven": "Please specify the name of the pool you wish roll on.",
             "rollTooManyPulls": "Pulling from pools is limited to 20 pulls.",
+            "comboNameNotGiven": "Please specify the names of the pools you wish combo.",
+            "comboTooManyNumbers": "For combo rolls, only include a single integer at the end of the command.",
             "createTooManyArgs": "The `create` command only takes a pool name and an optional (global) flag as arguments.",
             "createPoolNotGiven": "Please specify the name of the pool you wish operate on.",
             "createNameTooLong": "Please limit pool names to 100 characters.",
@@ -33,7 +35,7 @@
             "removeAdditionsBadFormat": "Please list removals by amount, then result description.",
             "removeTooManyResults": "Removing entries from a result is limited to 1000 entries at a time.",
             "errorNotIntegers": "The number of rolls and extra entries should be integers.",
-            "errorNotPositive": "The number of rolls and extra entries should be positive integers."
+            "errorNotPositive": "The number of rolls and extra entries should be positive integers.",
         },
         "misc": {
             "shaInputMissing": "Please include the message you would like me to hash.",
@@ -73,7 +75,7 @@
         "loot_tables": {
             "poolsAvailable": "Pools available in this server:\n{body}",
             "noPoolsAvailable": "There are no pools available in this server.",
-            "poolNotFound": "Could not find a pool with that name in this server.",
+            "poolNotFound": "Could not find a pool with the name {pool} in this server.",
             "poolEmpty": "There are no results in this pool to roll on.",
             "rollHeader": "Result pulling from {poolName}:\n",
             "resultAddFail": "Whoops, something went wrong trying to add the following result. Process aborted.\n(entryDescription)",

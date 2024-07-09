@@ -20,28 +20,19 @@ def list(serverId: int = 0) -> str:
         return locale.get_string('noPoolsAvailable')
 
 
-def info(serverId: int, pool: str) -> str:
-    pool = db.get_pool(serverId, pool)
+def info(serverId: int, poolName: str) -> str:
+    pool = db.get_pool(serverId, poolName)
     if pool is not None:
         return pool.__str__()
     else:
-        return locale.get_string('poolNotFound')
+        return locale.get_string('poolNotFound', pool=poolName)
 
 
 def roll(serverId: int, poolName: str, numRolls: int = 1, extraEntries: List[Entry] = None) -> str:
-    pool = db.get_pool(serverId, poolName)
-    if pool is None:
-        return locale.get_string('poolNotFound')
+    chosenEntries, error = _get_roll_entries(serverId, poolName, numRolls, extraEntries)
 
-    if len(pool.entries) == 0 and extraEntries is None:
-        return locale.get_string('poolEmpty')
-
-    if extraEntries is not None:
-        for entry in extraEntries:
-            pool.entries.append(entry)
-
-    chosenEntries = choices(pool.entries, weights=[
-                            entry.amount for entry in pool.entries], k=numRolls)
+    if error is not None:
+        return error
 
     # A list of all result strings, bullet pointed
     results = '\n'.join(f'→ {entry.description}' for entry in chosenEntries)
@@ -50,11 +41,54 @@ def roll(serverId: int, poolName: str, numRolls: int = 1, extraEntries: List[Ent
     header = locale.get_string('rollHeader', poolName=poolName)
 
     msg = (f'{header}'
-           '```\n'
            f'{results}\n'
-           '```')
+           )
 
     return msg
+
+
+def _get_roll_entries(serverId: int,
+                      poolName: str,
+                      numRolls: int = 1,
+                      extraEntries: List[Entry] = None
+                      ) -> tuple[List[Entry], str]:
+    pool = db.get_pool(serverId, poolName)
+    if pool is None:
+        return (None, locale.get_string('poolNotFound', pool=poolName))
+
+    if len(pool.entries) == 0 and extraEntries is None:
+        return (None, locale.get_string('poolEmpty'))
+
+    if extraEntries is not None:
+        for entry in extraEntries:
+            pool.entries.append(entry)
+
+    chosenEntries = choices(pool.entries, weights=[
+                            entry.amount for entry in pool.entries], k=numRolls)
+
+    return (chosenEntries, None)
+
+
+def combo(serverId: int, numRolls: int = 1, *poolNames) -> str:
+    entriesWithErrors = [_get_roll_entries(serverId, poolName, numRolls) for poolName in poolNames]
+
+    manyChosenEntries = []
+    for (entry, error) in entriesWithErrors:
+        if error is not None:
+            return error
+
+        manyChosenEntries.append(entry)
+
+    results = []
+    for i in range(len(manyChosenEntries[0])):
+        results.append('→ ' + ' | '.join(entries[i].description for entries in manyChosenEntries))
+
+    result = '\n'.join(results)
+
+    header = locale.get_string('rollHeader', poolName='several pools')
+
+    return (f'{header}'
+            f'{result}')
 
 
 def add(serverId: int, poolName: str, entries: List[Entry], deleteMode: bool = False) -> str:
@@ -63,7 +97,7 @@ def add(serverId: int, poolName: str, entries: List[Entry], deleteMode: bool = F
     '''
     pool = db.get_pool(serverId, poolName)
     if pool is None or (pool.server_id != serverId and pool.server_id != 0):
-        return locale.get_string('poolNotFound')
+        return locale.get_string('poolNotFound', pool=poolName)
 
     # Additions
     if not deleteMode:
