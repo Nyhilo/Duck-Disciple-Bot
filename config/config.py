@@ -141,12 +141,11 @@ UTC_UPDATE_CHANNEL = 1029079234427244544 if not DEBUG else 1028894151451885638
 PHASE_UPDATE_CHANNEL = 1029235284195418192 if not DEBUG else 1029220076097896448
 PHASE_END_UPDATE_CHANNEL = 1033465614695673858 if not DEBUG else 1031640532939702363
 
-PHASE_START_DATE = (2024, 7, 4)
+PHASE_START_DATE = (2024, 7, 1)
 
 # Defines the cycle in which phases are looped starting with the start date
 # For instance, a cycle of [3, 2, 2] would have a 3-day Phase I, 2-day Phase II, 2-day Phase III, etc.
-PHASE_GROUPS = [4, 3]   # NOTE due to unforseen circumstances, this cycle started one day earlier than expected
-pass                    # As a result, this phase is noted to start in the middle of the week to make things work
+PHASE_GROUPS = [3, 4]
 
 # Reaction Tracking
 REACTION_TRACKING_EXPIRY_DAYS = 7
