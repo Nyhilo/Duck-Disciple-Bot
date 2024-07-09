@@ -121,7 +121,14 @@ CARDS = [
     '<:JackDiamonds:908571635009867836>',
     '<:QueenDiamonds:908571634938552381>',
     '<:KingDiamonds:908571634787581993>',
+    '<:JokerBlack:1260316649827995719>',
+    '<:JokerRed:1260316680006008842>'
 ]
+
+
+class CARD_DECORATIONS():
+    Holographic = '<a:HoloSparkle:1260320827648512130>'
+
 
 # The maximum character limit in which we attempt to trigger &stopdoingnomic on a message
 STOP_DOING_MSG_LEN_LIMIT = 280
