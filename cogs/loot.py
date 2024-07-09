@@ -74,7 +74,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
         if comm == 'info':
             if len(args) > 0:
-                return await ctx.send(locale.get_string('infoTooManyArgs') + locale.get_string('seeHelpForInfo'))
+                return await ctx.send(locale.get_string('infoTooManyArgs')
+                                      + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
             if pool is None:
                 pages = utils.page_message(loot.list(guildId))
@@ -107,7 +108,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
         if comm == 'create':
             if len(args) > 1:
-                return await ctx.send(locale.get_string('createTooManyArgs') + locale.get_string('seeHelpForInfo'))
+                return await ctx.send(locale.get_string('createTooManyArgs')
+                                      + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
             if pool is None:
                 return await ctx.send(locale.get_string('createPoolNotGiven'))
@@ -120,7 +122,8 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
         if comm == 'delete':
             if len(args) > 0:
-                return await ctx.send(locale.get_string('deleteTooManyArgs') + locale.get_string('seeHelpForInfo'))
+                return await ctx.send(locale.get_string('deleteTooManyArgs')
+                                      + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
             await ctx.send(loot.delete(pool, guildId, authorId))
 
@@ -138,7 +141,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
                 if tail is not None:
                     return await ctx.send(locale.get_string('addAdditionsBadFormat')
-                                          + locale.get_string('seeHelpForInfo'))
+                                          + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
                 if error is not None:
                     return await ctx.send(error)
@@ -167,7 +170,7 @@ class Loot(commands.Cog, name='Pools/Loot Tables'):
 
                 if tail is not None:
                     return await ctx.send(locale.get_string('removeAdditionsBadFormat')
-                                          + locale.get_string('seeHelpForInfo'))
+                                          + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
                 if error is not None:
                     return await ctx.send(error)
@@ -203,10 +206,12 @@ def parse_arbitrary_options(*args):
             if tail < 1:
                 raise RuntimeError
         except ValueError:
-            return (None, None, locale.get_string('errorNotIntegers') + locale.get_string('seeHelpForInfo'))
+            return (None, None, locale.get_string('errorNotIntegers')
+                    + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
         except RuntimeError:
-            return (None, None, locale.get_string('errorNotPositive') + locale.get_string('seeHelpForInfo'))
+            return (None, None, locale.get_string('errorNotPositive')
+                    + locale.get_string('seeHelpForInfo', prefix=PREFIX))
 
     # If the tail is our only arg, then we're good to go
     if len(args) == 1:
