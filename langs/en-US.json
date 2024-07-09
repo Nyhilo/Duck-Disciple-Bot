@@ -101,15 +101,15 @@
             "phaseEndFar": "Next Phase in {hours} hrs",
             "phaseEndNear": "Next Phase in {minutes} min"
         },
-        // "nomic_time": {
-        //     "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nCycle 15 has not started yet.",
-        //     "phaseName": "Phase {number}",
-        //     "weekName": "Week {number}",
-        //     "phaseNameNegative": "Phase ♾️",
-        //     "khronosPhaseString": "Phase ♾️, Week ∅",
-        //     "phaseEndFar": "See you in Cycle 15!",
-        //     "phaseEndNear": "Next Phase in {minutes} min"
-        // },
+        "nomic_time_on_break": {
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nCycle 17 has not started yet.",
+            "phaseName": "Phase {number}",
+            "weekName": "Week {number}",
+            "phaseNameNegative": "Phase ♾️",
+            "khronosPhaseString": "Phase ♾️, Week ∅",
+            "phaseEndFar": "See you in Cycle 17!",
+            "phaseEndNear": "Next Phase in {minutes} min"
+        },
         "reminders": {
             "reminderSetShort": "I'll remind you about this at about {timestamp}.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
             "reminderSetLong": "Reminder set to trigger {remindAfter}\n> {remindMsg}",
