@@ -124,6 +124,7 @@ class StopDoing():
             Option(send_image, 5, 'how can he do this without drowning.jpg', rf'^how can .+ do this{punc}$'),
             Option(send_image, 3, 'cool hat.jpg', r'cool.hat'),
             Option(send_image, 10, 'all the players gone.png', [r'dead (game|nomic)', nomic]),
+            Option(send_image, 5, 'INactive.png', [r'dead (game|nomic)', nomic, 'where is every']),
             Option(send_image, 5, 'should.png', r'^(?:.)?should(?:.)?$'),
             Option(send_image, 5, 'reasonably.png', r'^(?:.)?reasonably(?:.)?$'),
             Option(send_image, 5, 'birb vs ml.png', rf'{stop} doing (ml|machine learning)'),
