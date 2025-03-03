@@ -115,10 +115,11 @@ def _get_date_from_phase(phase: int) -> str:
 
 
 def _get_phase_name(phase: int) -> str:
-    cyclingPhaseNum = phase     # ((phase - 1) % 2) + 1
-    return locale.get_string(
-        'phaseName', number=utils.roman_numeralize(cyclingPhaseNum)
-    )
+    cyclingPhaseNum = ((phase - 1) % 2) + 1
+    if cyclingPhaseNum == 1:
+        return locale.get_string('phaseName')
+    else:
+        return locale.get_string('phase2Name')
 
 
 def _get_week_name(phase: int) -> str:
