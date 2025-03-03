@@ -68,7 +68,7 @@ class MemoizeCache():
         self.cachedUsers = {}
 
     async def get_channel(self, id: int) -> TextChannel:
-        if self._is_data_fresh(self.cachedChannels, id):
+        if self._is_data_stale(self.cachedChannels, id):
             response = await self.bot.fetch_channel(id)
             response.expires = utc_now() + CACHE_EXPIRY_SECONDS
             self.cachedChannels[id] = response
@@ -76,7 +76,7 @@ class MemoizeCache():
         return self.cachedChannels[id]
 
     async def get_message(self, channel: TextChannel, id: int) -> Message:
-        if self._is_data_fresh(self.cachedMessages, id):
+        if self._is_data_stale(self.cachedMessages, id):
             response = await channel.fetch_message(id)
             response.expires = utc_now() + CACHE_EXPIRY_SECONDS
             self.cachedMessages[id] = response
@@ -84,14 +84,14 @@ class MemoizeCache():
         return self.cachedMessages[id]
 
     async def get_user(self, id: int) -> User:
-        if self._is_data_fresh(self.cachedUsers, id):
+        if self._is_data_stale(self.cachedUsers, id):
             response = await self.bot.fetch_user(id)
             response.expires = utc_now() + CACHE_EXPIRY_SECONDS
             self.cachedUsers[id] = response
 
         return self.cachedUsers[id]
 
-    async def _is_data_fresh(self, cache: Dict[any], id: int) -> None:
+    async def _is_data_stale(self, cache: Dict[any], id: int) -> None:
         if len(cache) >= MAX_CACHE_LENGTH:
             cache = {}
             return True
