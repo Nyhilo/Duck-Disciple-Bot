@@ -95,7 +95,8 @@
         },
         "nomic_time": {
             "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
-            "phaseName": "Phase {number}",
+            "phaseName": "Election Phase",
+            "phase2Name": "Governance Phase",
             "weekName": "Week {number}",
             "phaseNameNegative": "Phase ♾️",
             "khronosPhaseString": "{phaseName}, {weekName}",
