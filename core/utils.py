@@ -1,11 +1,7 @@
-from typing import Dict
+from discord import Message, TextChannel, User
 from random import choice
 
-from discord import Message, TextChannel, User
-
-from config.config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS, MESSAGE_LIMIT, LINE_SPLIT_LIMIT, \
-                          MAX_CACHE_LENGTH, CACHE_EXPIRY_SECONDS
-from core.nomic_time import utc_now
+from config.config import GLOBAL_ADMIN_IDS, SERVER_ADMIN_IDS, CARDS, MAX_CACHE_LENGTH, MESSAGE_LIMIT, LINE_SPLIT_LIMIT
 
 
 def trim_quotes(string):
@@ -68,41 +64,37 @@ class MemoizeCache():
         self.cachedUsers = {}
 
     async def get_channel(self, id: int) -> TextChannel:
-        if self._is_data_stale(self.cachedChannels, id):
-            response = await self.bot.fetch_channel(id)
-            response.expires = utc_now() + CACHE_EXPIRY_SECONDS
-            self.cachedChannels[id] = response
+        if id not in self.cachedChannels:
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedChannels) >= MAX_CACHE_LENGTH:
+                self.cachedChannels = {}
+
+            self.cachedChannels[id] = await self.bot.fetch_channel(id)
 
         return self.cachedChannels[id]
 
     async def get_message(self, channel: TextChannel, id: int) -> Message:
-        if self._is_data_stale(self.cachedMessages, id):
-            response = await channel.fetch_message(id)
-            response.expires = utc_now() + CACHE_EXPIRY_SECONDS
-            self.cachedMessages[id] = response
+        if id not in self.cachedMessages:
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedMessages) >= MAX_CACHE_LENGTH:
+                self.cachedMessages = {}
+
+            self.cachedMessages[id] = await channel.fetch_message(id)
 
         return self.cachedMessages[id]
 
     async def get_user(self, id: int) -> User:
-        if self._is_data_stale(self.cachedUsers, id):
-            response = await self.bot.fetch_user(id)
-            response.expires = utc_now() + CACHE_EXPIRY_SECONDS
-            self.cachedUsers[id] = response
+        if id not in self.cachedUsers:
+
+            # "Clear the cache" if it gets too big
+            if len(self.cachedUsers) >= MAX_CACHE_LENGTH:
+                self.cachedUsers = {}
+
+            self.cachedUsers[id] = await self.bot.fetch_user(id)
 
         return self.cachedUsers[id]
-
-    async def _is_data_stale(self, cache: Dict[any], id: int) -> None:
-        if len(cache) >= MAX_CACHE_LENGTH:
-            cache = {}
-            return True
-
-        if id not in cache:
-            return True
-
-        if utc_now() > cache[id].expires:
-            return True
-
-        return False
 
 
 def page_message(message: str, limit: int = MESSAGE_LIMIT, line_split_limit: int = LINE_SPLIT_LIMIT) -> list[str]:
