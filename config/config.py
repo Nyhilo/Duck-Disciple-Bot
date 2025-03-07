@@ -12,6 +12,13 @@ LOG_FILE = 'log.txt'
 MESSAGE_LIMIT = 2000
 LINE_SPLIT_LIMIT = 200
 
+ACTIVE_COGS = ['cogs.cycle', 'cogs.image_manipulation',
+               'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot',
+               'cogs.vote_tracking', 'cogs.secret']
+
+if DEBUG:
+    ACTIVE_COGS += ['cogs.locale']
+
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = True if DEBUG else False
 

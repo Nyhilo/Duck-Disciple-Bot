@@ -6,7 +6,7 @@ import os
 
 from dotenv import load_dotenv
 
-from config.config import DEBUG, PREFIX, CACHE_FOLDER
+from config.config import DEBUG, PREFIX, CACHE_FOLDER, ACTIVE_COGS
 from core.log import log
 
 from core import language
@@ -66,16 +66,7 @@ async def setup_hook():
     # Setup locale files
     language.Locale(None).initialize()
 
-    # Load cogs
-    cogs = ['cogs.cycle', 'cogs.image_manipulation',
-            'cogs.reminders', 'cogs.miscellaneous', 'cogs.loot',
-            'cogs.vote_tracking', 'cogs.secret']
-
-    # Development cogs
-    if DEBUG:
-        cogs = cogs + ['cogs.locale']
-
-    for cog in cogs:
+    for cog in ACTIVE_COGS:
         try:
             log.info(f'Loading extension {cog}')
             await client.load_extension(cog)
