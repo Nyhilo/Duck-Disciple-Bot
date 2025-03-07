@@ -17,7 +17,7 @@ ACTIVE_COGS = ['cogs.cycle', 'cogs.image_manipulation',
                'cogs.vote_tracking', 'cogs.secret']
 
 if DEBUG:
-    ACTIVE_COGS += ['cogs.locale']
+    ACTIVE_COGS += ['cogs.locale', 'cogs.nomic']
 
 # This is set to false to prevent cheating when secretly generating a Sha265
 LOG_DEBUG_TO_FILE = True if DEBUG else False

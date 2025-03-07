@@ -70,6 +70,9 @@
             "trackChannelNotPermitted": "I don't have permission to view messages on that channel.",
             "untrackChannelNotAdmin": "Sorry, you don't have permission to remove trackers.",
             "untrackChannelNotGiven": "Please provide the channel you would like to remove the tracking for in the form of `#channel`."
+        },
+        "nomic": {
+
         }
     },
     "core": {
