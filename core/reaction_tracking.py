@@ -156,7 +156,6 @@ async def update_tracking_channels(cache: MemoizeCache, message: Message):
         if not any([m for m in trackingMessages if m.trackingChannelId == channelId]):
             await send_new_tracking_message(cache, channelId, message)
 
-
     for trackingMessage in trackingMessages:
         await update_tracking_message(cache, trackingMessage, message)
 
@@ -235,7 +234,7 @@ def get_reaction_log(message: Message) -> Embed:
             time = reaction.created.strftime('%H:%M:%S')
             event = '+' if reaction.action is model.Action.Add else '\u2212'    # \u2212 is a slightly wider '-'
             emoji = reaction.reaction
-            user = reaction.userName
+            user = reaction.userName.replace('_', '\\_')
 
             line = f'`{time}` | {event} | {emoji} | {user}'
             msg.append(line)

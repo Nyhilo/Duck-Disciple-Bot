@@ -7,12 +7,12 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from math import ceil
 
-from config.config import PHASE_START_DATE, PHASE_GROUPS
+from config.config import GAME_START_DATE, PHASE_GROUPS
 from core import utils, language
 
 locale = language.Locale('core.nomic_time')
 
-_d = PHASE_START_DATE
+_d = GAME_START_DATE
 START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
 
 
