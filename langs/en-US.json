@@ -104,12 +104,13 @@
             "phaseEndNear": "Next Phase in {minutes} min"
         },
         "nomic_time_on_break": {
-            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nCycle 17 has not started yet.",
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThe next Cycle has not started yet.",
             "phaseName": "Phase {number}",
+            "phase2Name": "Phase {number}",
             "weekName": "Week {number}",
             "phaseNameNegative": "Phase ♾️",
             "khronosPhaseString": "Phase ♾️, Week ∅",
-            "phaseEndFar": "See you in Cycle 17!",
+            "phaseEndFar": "See you in the next Cycle!",
             "phaseEndNear": "Next Phase in {minutes} min"
         },
         "reminders": {

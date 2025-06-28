@@ -9,8 +9,7 @@ _langfile_extension = '.json'
 
 
 class Locale():
-    # TODO: Put default locale in config
-    default_key = 'en-US'
+    default_key = settings.current_locale_key
     current_key = None
 
     default_locale = None

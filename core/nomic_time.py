@@ -7,13 +7,10 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 from math import ceil
 
-from config.config import GAME_START_DATE, PHASE_GROUPS
-from core import utils, language
+from config.settings import settings
+from core import language
 
 locale = language.Locale('core.nomic_time')
-
-_d = GAME_START_DATE
-START_DATE = datetime(year=_d[0], month=_d[1], day=_d[2], tzinfo=timezone.utc)
 
 
 def get_current_utc_string() -> None:
@@ -65,13 +62,13 @@ def _get_phase(date: datetime) -> int:
     '''
     # This is the total length in days after iterating through all the phases in
     # a "loop" or "group". i.e. [3, 2, 2] is a full week (7 days)
-    phase_group_len = sum(PHASE_GROUPS)
+    phase_group_len = sum(settings.current_cycle_phase_loop)
 
     # This will how phase groups are divided
-    num_phases_per_group = len(PHASE_GROUPS)
+    num_phases_per_group = len(settings.current_cycle_phase_loop)
 
     # We want to know how long it's been since we started the cycle.
-    days_since_beginning = (date - START_DATE).days
+    days_since_beginning = (date - settings.current_cycle_start_date).days
 
     # This "rounds down" the days to the most recent full phase group
     # for instance, (20 // 7) * 7 = 18
@@ -85,7 +82,7 @@ def _get_phase(date: datetime) -> int:
     ) - 1
 
     # Add phases to the running total until we get to today
-    for group in PHASE_GROUPS:
+    for group in settings.current_cycle_phase_loop:
         phases_since += 1
         days_since += group
         if days_since >= days_since_beginning:
@@ -101,17 +98,17 @@ def _get_date_from_phase(phase: int) -> str:
     :param phase: _description_
     :return: _description_
     '''
-    phases_per_group = len(PHASE_GROUPS)
+    phases_per_group = len(settings.current_cycle_phase_loop)
 
     days_since = 0
     count = 0
 
     # Iterate through the phase lengths until we get to the start day of the phase
     while count < (phase - 1):
-        days_since += PHASE_GROUPS[count % phases_per_group]
+        days_since += settings.current_cycle_phase_loop[count % phases_per_group]
         count += 1
 
-    return START_DATE + relativedelta(days=days_since)
+    return settings.current_cycle_start_date + relativedelta(days=days_since)
 
 
 def _get_phase_name(phase: int) -> str:
