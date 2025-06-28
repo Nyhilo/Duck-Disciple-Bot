@@ -1,6 +1,7 @@
 {
     "global": {
-        "genericError": "Ah shit that didn't work.\nJust let ny know they'll fix it."
+        "genericError": "Ah shit that didn't work.\nJust let ny know they'll fix it.",
+        "rateLimitMessage": "*We are being rate limited by discord. I'll let you know when your command has resolved within a few minutes.*"
     },
     "cogs": {
         "cycle": {},
@@ -95,8 +96,6 @@
         },
         "nomic_time": {
             "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThat means it is **{phase}**\n\n*{nextPhase}* starts on *{nextDay}*, which is roughly {nextDayRelativeTimestampStr}.\nThat is {nextDayTimestampStr} your time.",
-            "phaseName": "Election Phase",
-            "phase2Name": "Governance Phase",
             "weekName": "Week {number}",
             "phaseNameNegative": "Phase ♾️",
             "khronosPhaseString": "{phaseName}, {weekName}",
@@ -104,12 +103,11 @@
             "phaseEndNear": "Next Phase in {minutes} min"
         },
         "nomic_time_on_break": {
-            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nCycle 17 has not started yet.",
-            "phaseName": "Phase {number}",
+            "timeUtcReportString": "It is **{time}** on **{weekday}**, UTC\nThe next Cycle has not started yet.",
             "weekName": "Week {number}",
             "phaseNameNegative": "Phase ♾️",
             "khronosPhaseString": "Phase ♾️, Week ∅",
-            "phaseEndFar": "See you in Cycle 17!",
+            "phaseEndFar": "See you in the next Cycle!",
             "phaseEndNear": "Next Phase in {minutes} min"
         },
         "reminders": {
