@@ -30,7 +30,11 @@ class Settings():
     # A boolean toggle for whether Khronos should report on a running cycle
     @property
     def cycle_running(self) -> bool:
-        return bool(int(db.get_setting('cycle_running')))
+        val = db.get_setting('cycle_running')
+        if val is None:
+            return None
+
+        return bool(int(val))
 
     @cycle_running.setter
     def cycle_running(self, value):
