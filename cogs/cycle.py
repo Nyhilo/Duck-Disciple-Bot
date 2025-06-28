@@ -1,6 +1,7 @@
 import discord  # noqa F401
 from discord.ext import commands, tasks
 import asyncio
+import contextlib
 from dateutil.parser import ParserError
 
 from core.log import log
@@ -121,14 +122,46 @@ class Cycle(commands.Cog, name='Current Cycle'):
               'date. It will use the phase loop pattern of the previous cycle. '
               'Use setphaseloop to update the loop pattern')
     )
-    async def startcycle(self, ctx):
+    async def cycleinfo(self, ctx):
         try:
-            settings.current_cycle_start_date = nomic_time.utc_now()
-            settings.between_cycles = False
-            await self.update_khronos()
+            await ctx.send(
+                f'Cycle currently running?: **{not settings.between_cycles}**\n'
+                f'Cycle start date: **{settings.current_cycle_start_date.strftime("%Y-%m-%d")}**\n'
+                f'Configured phase loop: **{" -> ".join(str(v) for v in settings.current_cycle_phase_loop)}**\n'
+                f'Configured phase names: **{" -> ".join(settings.current_cycle_phase_names)}**'
+            )
+
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
+
+    @commands.command(
+        brief='Starts a new cycle',
+        help=('Triggers Khronos to begin tracking a new cycle on the current '
+              'date. It will use the phase loop pattern of the previous cycle. '
+              'Use setphaseloop to update the loop pattern')
+    )
+    async def startcycle(self, ctx):
+        try:
+            if not settings.between_cycles:
+                return await ctx.send('A cycle is currently running!')
+
+            settings.current_cycle_start_date = nomic_time.utc_now()
+            settings.between_cycles = False
+
+        except Exception as e:
+            log.exception(e)
+            await ctx.send(globalLocale.get_string('genericError'))
+
+        try:
+            notify_task = asyncio.create_task(self.notify_rate_limit(ctx))
+            await self.update_khronos()
+        finally:
+            notify_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await notify_task
+
+        await ctx.send("A new Cycle has started. Have fun!")
 
     @commands.command(
         brief='Ends the current cycle',
@@ -136,11 +169,24 @@ class Cycle(commands.Cog, name='Current Cycle'):
     )
     async def endcycle(self, ctx):
         try:
+            if settings.between_cycles:
+                return await ctx.send('A cycle is not currently running!')
+
             settings.between_cycles = True
-            await self.update_khronos()
+
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
+
+        try:
+            notify_task = asyncio.create_task(self.notify_rate_limit(ctx))
+            await self.update_khronos()
+        finally:
+            notify_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await notify_task
+
+        await ctx.send("Cycle has ended. See you next time!")
 
     @commands.command(
         brief='Sets the start date for the current cycle',
@@ -151,9 +197,8 @@ class Cycle(commands.Cog, name='Current Cycle'):
     async def setstartdate(self, ctx, datestring):
         try:
             startDate = nomic_time.get_datestring_datetime(datestring)
-            print(startDate)
             settings.current_cycle_start_date = startDate
-            await self.update_khronos()
+
         except ParserError:
             await ctx.send('You did not provide a valid date format. '
                            'Try YYYY-MM-dd')
@@ -161,6 +206,16 @@ class Cycle(commands.Cog, name='Current Cycle'):
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
+
+        try:
+            notify_task = asyncio.create_task(self.notify_rate_limit(ctx))
+            await self.update_khronos()
+        finally:
+            notify_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await notify_task
+
+        await ctx.send(f'Updated start date to {settings.current_cycle_start_date.strftime("%Y-%m-%d")}')
 
     @commands.command(
         brief='Set the pattern for the phase loop this cycle',
@@ -178,14 +233,56 @@ class Cycle(commands.Cog, name='Current Cycle'):
                 return await ctx.send("You must send a list of integrers")
 
             settings.current_cycle_phase_loop = list(args)
-            await self.update_khronos()
 
         except ValueError:
-            await ctx.send("You must send a list of integers")
+            await ctx.send('You must send a list of integers')
 
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
+
+        try:
+            notify_task = asyncio.create_task(self.notify_rate_limit(ctx))
+            await self.update_khronos()
+        finally:
+            notify_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await notify_task
+
+        await ctx.send(f'Updated phase loop to {" -> ".join(str(v) for v in settings.current_cycle_phase_loop)}')
+
+    @commands.command(
+        brief='Set the pattern for the phase loop this cycle',
+        help=('Provide a list of names. These can be space OR comma separated, '
+              'but names with spaces should be in quotes.'
+              'Defines the names of each phase in the phase loop.'
+              'If the number of phases is larger than the number of names, '
+              'Khronos will use the final name for all the end phases.')
+    )
+    async def setphasenames(self, ctx, *args):
+        try:
+            if len(args) < 1:
+                return await ctx.send("You must send a list of names")
+
+            settings.current_cycle_phase_names = list(args)
+
+        except Exception as e:
+            log.exception(e)
+            await ctx.send(globalLocale.get_string('genericError'))
+
+        try:
+            notify_task = asyncio.create_task(self.notify_rate_limit(ctx))
+            await self.update_khronos()
+        finally:
+            notify_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await notify_task
+
+        await ctx.send(f'Updated phase names to {" -> ".join(settings.current_cycle_phase_names)}')
+
+    async def notify_rate_limit(self, ctx):
+        await asyncio.sleep(3)
+        await ctx.send(globalLocale.get_string('rateLimitMessage'))
 
 
 async def setup(bot):

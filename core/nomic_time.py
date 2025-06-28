@@ -112,11 +112,14 @@ def _get_date_from_phase(phase: int) -> str:
 
 
 def _get_phase_name(phase: int) -> str:
-    cyclingPhaseNum = ((phase - 1) % 2) + 1
-    if cyclingPhaseNum == 1:
-        return locale.get_string('phaseName')
-    else:
-        return locale.get_string('phase2Name')
+    phase_names = settings.current_cycle_phase_names
+    if phase_names is None or len(phase_names) == 0:
+        return "Phase"
+    print(phase)
+    if phase > len(phase_names) - 1:
+        return phase_names[-1]
+
+    return phase_names[phase]
 
 
 def _get_week_name(phase: int) -> str:

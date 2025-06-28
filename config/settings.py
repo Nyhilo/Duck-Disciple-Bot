@@ -15,6 +15,9 @@ class Settings():
         if self.current_cycle_phase_loop is None:
             self.current_cycle_phase_loop = [3, 4]
 
+        if self.current_cycle_phase_names is None:
+            self.current_cycle_phase_names = ['Phase I', 'Phase II']
+
     # Stores the value of the currently used locale
     @property
     def current_locale_key(self) -> str:
@@ -56,6 +59,18 @@ class Settings():
     @current_cycle_phase_loop.setter
     def current_cycle_phase_loop(self, value):
         db.save_setting('current_cycle_phase_loop', ','.join(str(v) for v in value))
+
+    # The cycle phase names
+    @property
+    def current_cycle_phase_names(self) -> List[int]:
+        val = db.get_setting('current_cycle_phase_names')
+        if val is None:
+            return None
+        return [v for v in val.split(',')]
+
+    @current_cycle_phase_names.setter
+    def current_cycle_phase_names(self, value):
+        db.save_setting('current_cycle_phase_names', ','.join(str(v) for v in value))
 
 
 # Module-level constant for easy importing
