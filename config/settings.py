@@ -29,12 +29,12 @@ class Settings():
 
     # A boolean toggle for whether Khronos should report on a running cycle
     @property
-    def between_cycles(self) -> bool:
-        return db.get_setting('between_cycles')
+    def cycle_running(self) -> bool:
+        return bool(int(db.get_setting('cycle_running')))
 
-    @between_cycles.setter
-    def between_cycles(self, value):
-        db.save_setting('between_cycles', value)
+    @cycle_running.setter
+    def cycle_running(self, value):
+        db.save_setting('cycle_running', int(value))
 
     # The start date of the current cycle
     @property
