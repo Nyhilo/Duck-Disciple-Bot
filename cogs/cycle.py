@@ -1,6 +1,7 @@
 import discord  # noqa F401
 from discord.ext import commands, tasks
 import asyncio
+from dateutil.parser import ParserError
 
 from core.log import log
 from core import nomic_time
@@ -20,13 +21,10 @@ class Cycle(commands.Cog, name='Current Cycle'):
     def __init__(self, bot):
         self.bot = bot
 
-        self.channel_time_once.start()
+        self.update_khronos.start()
+
         self.channel_time.start()
-
-        self.channel_phase_once.start()
         self.channel_phase.start()
-
-        self.channel_phase_end_once.start()
         self.channel_phase_end.start()
 
     @commands.command(
@@ -44,11 +42,6 @@ class Cycle(commands.Cog, name='Current Cycle'):
     ###########
     # Khronos #
     ###########
-    @tasks.loop(count=1)
-    async def channel_time_once(self):
-        '''Run channel_phase immediately on start before starting the actual loop'''
-        return await self.channel_time()
-
     @tasks.loop(minutes=10)
     async def channel_time(self):
         '''
@@ -69,11 +62,6 @@ class Cycle(commands.Cog, name='Current Cycle'):
         seconds_to_start = nomic_time.seconds_to_next_10_minute_increment()
         log.info(f'Seconds to start tracking time: {seconds_to_start}')
         await asyncio.sleep(seconds_to_start)
-
-    @tasks.loop(count=1)
-    async def channel_phase_once(self):
-        '''Run channel_phase immediately on start before starting the actual loop'''
-        return await self.channel_phase()
 
     @tasks.loop(hours=24)
     async def channel_phase(self):
@@ -96,11 +84,6 @@ class Cycle(commands.Cog, name='Current Cycle'):
         log.info(f'Seconds to start tracking phase: {seconds_to_start}')
         await asyncio.sleep(seconds_to_start)
 
-    @tasks.loop(count=1)
-    async def channel_phase_end_once(self):
-        '''Run channel_phase_end immediately on start before starting the actual loop'''
-        return await self.channel_phase_end()
-
     @tasks.loop(minutes=10)
     async def channel_phase_end(self):
         '''
@@ -122,6 +105,13 @@ class Cycle(commands.Cog, name='Current Cycle'):
         log.info(f'Seconds to start tracking phase end: {seconds_to_start}')
         await asyncio.sleep(seconds_to_start)
 
+    @tasks.loop(count=1)
+    async def update_khronos(self):
+        '''Run time trackers immediately on start before starting the actual loop'''
+        await self.channel_time()
+        await self.channel_phase()
+        await self.channel_phase_end()
+
     ##################
     # Cycle Commands #
     ##################
@@ -131,10 +121,11 @@ class Cycle(commands.Cog, name='Current Cycle'):
               'date. It will use the phase loop pattern of the previous cycle. '
               'Use setphaseloop to update the loop pattern')
     )
-    async def startcycle(self, ctx, name):
+    async def startcycle(self, ctx):
         try:
             settings.current_cycle_start_date = nomic_time.utc_now()
             settings.between_cycles = False
+            await self.update_khronos()
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
@@ -146,6 +137,7 @@ class Cycle(commands.Cog, name='Current Cycle'):
     async def endcycle(self, ctx):
         try:
             settings.between_cycles = True
+            await self.update_khronos()
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
@@ -159,7 +151,13 @@ class Cycle(commands.Cog, name='Current Cycle'):
     async def setstartdate(self, ctx, datestring):
         try:
             startDate = nomic_time.get_datestring_datetime(datestring)
+            print(startDate)
             settings.current_cycle_start_date = startDate
+            await self.update_khronos()
+        except ParserError:
+            await ctx.send('You did not provide a valid date format. '
+                           'Try YYYY-MM-dd')
+
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
@@ -174,9 +172,17 @@ class Cycle(commands.Cog, name='Current Cycle'):
               'Khrono defines a "week" as the sum of all parts of the phase, '
               'so consider ensuring that they add up to 7.')
     )
-    async def setphaseloop(self, ctx):
+    async def setphaseloop(self, ctx, *args):
         try:
-            pass
+            if len(args) < 1:
+                return await ctx.send("You must send a list of integrers")
+
+            settings.current_cycle_phase_loop = list(args)
+            await self.update_khronos()
+
+        except ValueError:
+            await ctx.send("You must send a list of integers")
+
         except Exception as e:
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
