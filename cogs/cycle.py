@@ -1,11 +1,13 @@
 import discord  # noqa F401
-from discord.ext import commands
+from discord.ext import commands, tasks
+import asyncio
 
 from core.log import log
 from core import nomic_time
+from config import config
+from config.settings import settings
 
 import core.language as language
-from config.settings import settings
 
 globalLocale = language.Locale('global')
 
@@ -17,6 +19,15 @@ class Cycle(commands.Cog, name='Current Cycle'):
 
     def __init__(self, bot):
         self.bot = bot
+
+        self.channel_time_once.start()
+        self.channel_time.start()
+
+        self.channel_phase_once.start()
+        self.channel_phase.start()
+
+        self.channel_phase_end_once.start()
+        self.channel_phase_end.start()
 
     @commands.command(
         brief='Get information about the time relevant to the current Cycle',
@@ -30,6 +41,90 @@ class Cycle(commands.Cog, name='Current Cycle'):
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
 
+    ###########
+    # Khronos #
+    ###########
+    @tasks.loop(count=1)
+    async def channel_time_once(self):
+        '''Run channel_phase immediately on start before starting the actual loop'''
+        return await self.channel_time()
+
+    @tasks.loop(minutes=10)
+    async def channel_time(self):
+        '''
+        Sets a datestring as the name of a specific configured voice channel.
+        '''
+        # Get the current datetime string
+        datestring = nomic_time.get_formatted_date_string()
+
+        # Update the channel name
+        channel = await self.bot.fetch_channel(config.UTC_UPDATE_CHANNEL)
+        await channel.edit(name=datestring)
+
+    @channel_time.before_loop
+    async def before_channel_time(self):
+        '''
+        Delays the start of the time tracking loop until we get to the next 10-minute increment
+        '''
+        seconds_to_start = nomic_time.seconds_to_next_10_minute_increment()
+        log.info(f'Seconds to start tracking time: {seconds_to_start}')
+        await asyncio.sleep(seconds_to_start)
+
+    @tasks.loop(count=1)
+    async def channel_phase_once(self):
+        '''Run channel_phase immediately on start before starting the actual loop'''
+        return await self.channel_phase()
+
+    @tasks.loop(hours=24)
+    async def channel_phase(self):
+        '''
+        Sets the current phase as the name of a specific configured voice channel.
+        '''
+        # Get the current phase string
+        phasestring = nomic_time.get_current_phase_string()
+
+        # Update the channel name
+        channel = await self.bot.fetch_channel(config.PHASE_UPDATE_CHANNEL)
+        await channel.edit(name=phasestring)
+
+    @channel_phase.before_loop
+    async def before_channel_phase(self):
+        '''
+        Delays the start of the time tracking loop until the beginning of the next day
+        '''
+        seconds_to_start = nomic_time.seconds_to_next_day()
+        log.info(f'Seconds to start tracking phase: {seconds_to_start}')
+        await asyncio.sleep(seconds_to_start)
+
+    @tasks.loop(count=1)
+    async def channel_phase_end_once(self):
+        '''Run channel_phase_end immediately on start before starting the actual loop'''
+        return await self.channel_phase_end()
+
+    @tasks.loop(minutes=10)
+    async def channel_phase_end(self):
+        '''
+        Sets the time to the end of the current phase
+        '''
+        # Get the current string
+        channel_name = nomic_time.get_next_time_to_phase_end_string()
+
+        # Update the channel name
+        channel = await self.bot.fetch_channel(config.PHASE_END_UPDATE_CHANNEL)
+        await channel.edit(name=channel_name)
+
+    @channel_phase_end.before_loop
+    async def before_channel_phase_end(self):
+        '''
+        Delays the start of the time tracking loop until the beginning of the next day
+        '''
+        seconds_to_start = nomic_time.seconds_to_next_10_minute_increment()
+        log.info(f'Seconds to start tracking phase end: {seconds_to_start}')
+        await asyncio.sleep(seconds_to_start)
+
+    ##################
+    # Cycle Commands #
+    ##################
     @commands.command(
         brief='Starts a new cycle',
         help=('Triggers Khronos to begin tracking a new cycle on the current '
