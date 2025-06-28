@@ -125,7 +125,7 @@ class Cycle(commands.Cog, name='Current Cycle'):
     async def cycleinfo(self, ctx):
         try:
             await ctx.send(
-                f'Cycle currently running?: **{not settings.between_cycles}**\n'
+                f'Cycle currently running?: **{settings.cycle_running}**\n'
                 f'Cycle start date: **{settings.current_cycle_start_date.strftime("%Y-%m-%d")}**\n'
                 f'Configured phase loop: **{" -> ".join(str(v) for v in settings.current_cycle_phase_loop)}**\n'
                 f'Configured phase names: **{" -> ".join(settings.current_cycle_phase_names)}**'
@@ -143,11 +143,12 @@ class Cycle(commands.Cog, name='Current Cycle'):
     )
     async def startcycle(self, ctx):
         try:
-            if not settings.between_cycles:
+            if settings.cycle_running:
                 return await ctx.send('A cycle is currently running!')
 
             settings.current_cycle_start_date = nomic_time.utc_now()
-            settings.between_cycles = False
+            nomic_time.set_locale('core.nomic_time')
+            settings.cycle_running = True
 
         except Exception as e:
             log.exception(e)
@@ -169,10 +170,11 @@ class Cycle(commands.Cog, name='Current Cycle'):
     )
     async def endcycle(self, ctx):
         try:
-            if settings.between_cycles:
+            if not settings.cycle_running:
                 return await ctx.send('A cycle is not currently running!')
 
-            settings.between_cycles = True
+            settings.cycle_running = False
+            nomic_time.set_locale('core.nomic_time_on_break')
 
         except Exception as e:
             log.exception(e)

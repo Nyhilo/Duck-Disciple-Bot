@@ -10,8 +10,9 @@ from math import ceil
 from config.settings import settings
 from core import language
 
-locale = language.Locale('core.nomic_time')
-
+locale = language.Locale('core.nomic_time') if settings.cycle_running else language.Locale('core.nomic_time_on_break')
+print(settings.cycle_running)
+print(locale.base_path)
 
 def get_current_utc_string() -> None:
     # Okay there's a lot going on here
@@ -113,13 +114,14 @@ def _get_date_from_phase(phase: int) -> str:
 
 def _get_phase_name(phase: int) -> str:
     phase_names = settings.current_cycle_phase_names
+
     if phase_names is None or len(phase_names) == 0:
         return "Phase"
-    print(phase)
+
     if phase > len(phase_names) - 1:
         return phase_names[-1]
 
-    return phase_names[phase]
+    return phase_names[phase-1]
 
 
 def _get_week_name(phase: int) -> str:
@@ -214,6 +216,10 @@ def seconds_to_next_day():
     )
     return (tomorrow - now).seconds
 
+
+def set_locale(locale_code: str):
+    global locale
+    locale = language.Locale(locale_code)
 
 #####################
 # General Utilities #
