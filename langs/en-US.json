@@ -53,6 +53,9 @@
         },
         "reminders": {
             "helpMessage": "Please see `{prefix}help remind` for details on how to use this command.",
+            "helpMessageReoccur": "Please see `{prefix}help remind` for syntax on how to use the reoccur command.",
+            "getReoccurrence": "How often would you like this reminder to reoccur?\n{reoccurList}",
+            "reoccurTimeout": "Waited too long for response. Reminder not set, please try again.",
             "forgetIdNotGiven": "Please include the id of the reminder to forget.",
             "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
             "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{message}",
@@ -112,7 +115,7 @@
         },
         "reminders": {
             "reminderSetShort": "I'll remind you about this at about {timestamp}.\nUse `{prefix}forget {rowId}` to delete this reminder.\n",
-            "reminderSetLong": "Reminder set to trigger {remindAfter}\n> {remindMsg}",
+            "reminderSetLong": "Reminder set to trigger {remindAfter}{remindReoccur}\n> {remindMsg}",
             "reminderError": "An error occurred trying to  set this reminder :(. Some kind of reminder database issue.",
             "idInvalidError": "That is not a valid reminder Id. Please send the integer Id of a reminder that has been made before",
             "noReminderIdError": "No reminder found with id {rowId}.",

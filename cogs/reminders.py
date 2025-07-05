@@ -7,6 +7,7 @@ from config import config
 
 from core import reminders, nomic_time, language
 from core.log import log
+from core.enums import Reoccur
 
 locale = language.Locale('cogs.reminders')
 globalLocale = language.Locale('global')
@@ -73,6 +74,113 @@ class Reminders(commands.Cog, name='Reminders'):
             log.exception(e)
             await ctx.send(globalLocale.get_string('genericError'))
 
+    @commands.command(
+            brief='Set a reoccuring reminder',
+            help=(f'Uses the same syntax as {config.PREFIX}remind.\n'
+                  'Follows up for the reoccurrence interval after setting for the reminder.\n'
+                  'Reoccurence intervals are as follows:\n'
+                  '\tDaily: Repeats every 24 hours\n'
+                  '\tBi-Daily: Repeats every 48 hours\n'
+                  '\tWeekly: Repeats every 7 days\n'
+                  '\tFornightly: Repeats every 14 days\n'
+                  '\tMonthly: Repeats each month on the day†\n'
+                  '\tMonth-End: Repeats at the end of each month'
+                  '\tBi-Montly Repeats every 2 months on the day†\n'
+                  '\tSemi-Yearly: Repeats every 6 months on the day†\n'
+                  '\tYearly: Repeats every year on the day†\n'
+                  '\tYear-End: Repeats on the last day of the year\n'
+                  '† If set on the 31st, 30th, or 29th, will repeat on the '
+                  '30th, 29th, or 28th of subsequent months as needed.'
+            )
+    )
+    async def reoccur(self, ctx, *, message=None):
+        if not message:
+            return await ctx.send(locale.get_string('helpMessage', prefix=config.PREFIX))
+
+        # Get Info to set
+        userId = ctx.message.author.id
+        createdAt = ctx.message.created_at
+        messageId = ctx.message.id
+        channelId = ctx.channel.id
+        remindAfter, _msg = reminders.parse_remind_message(message, createdAt)
+        msg = await filter_escaped_mentions(ctx, _msg)
+
+        validIntResponses = {
+            '1': 'Daily',
+            '2': 'Bi-Daily',
+            '3': 'Weekly',
+            '4': 'Fornightly',
+            '5': 'Monthly',
+            '6': 'Month-end',
+            '7': 'Bi-Montly',
+            '8': 'Semi-Yearly',
+            '9': 'Yearly',
+            '10': 'Year-end'
+        }
+
+        validStringResponses = {
+            'daily': 1,
+            'day': 1,
+            'd': 1,
+            'bi-daily': 2,
+            'bidaily': 2,
+            'biday': 2,
+            'bd': 2,
+            'weekly': 3,
+            'week': 3,
+            'w': 3,
+            'fornightly': 4,
+            'fortnight': 4,
+            'fortnite': 4,
+            'fn': 4,
+            'monthly': 5,
+            'month': 5,
+            'm': 5,
+            'month-end': 6,
+            'monthend': 6,
+            'me': 6,
+            'bi-montly': 7,
+            'bimonthly': 7,
+            'bimonth': 7,
+            'bm': 7,
+            'semi-yearly': 8,
+            'semiyearly': 8,
+            'semiyear': 8,
+            'sy': 8,
+            'yearly': 9,
+            'year': 9,
+            'y': 9,
+            'year-end': 10,
+            'yearend': 10,
+            'ye': 10
+        }
+
+        reoccurList = ', '.join([f'{k}: {v}' for k, v in validIntResponses.items()])
+
+        try:
+            reoccurChoice = 0
+            await ctx.send(locale.get_string('getReoccurrence', reoccurList=reoccurList))
+
+            def check(m):
+                if m.channel == ctx or m.channel == ctx.channel:
+                    msg = m.content.lower()
+                    return str(msg) in validIntResponses.keys or msg.lower() in validStringResponses.keys
+
+                return False
+
+            response = await ctx.wait_for('message', timeout=120, check=check)
+
+            if response in validIntResponses.keys:
+                reoccurChoice = int(response)
+
+            if response.lower() in validStringResponses.keys:
+                reoccurChoice = validStringResponses[response.lower()]
+
+        except asyncio.TimeoutError:
+            await ctx.send(locale.get_string('reoccurTimeout'))
+
+        return await handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg, reoccurChoice)
+
     @tasks.loop(minutes=1)
     async def check_reminders(self):
         # Get all active tasks
@@ -105,14 +213,14 @@ class Reminders(commands.Cog, name='Reminders'):
             log.info(reminders.unset_reminder(rowId, overrideId=True))
 
 
-async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg):
+async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg, reoccur=Reoccur.NONE):
     if remindAfter is None:
         return await ctx.send(msg)
 
     if remindAfter.total_seconds() < 10:
         return await ctx.send(locale.get_string('remindSetTooShort'))
 
-    if reminders.can_quick_remind(remindAfter):
+    if reoccur == Reoccur.NONE and reminders.can_quick_remind(remindAfter):
         seconds = remindAfter.total_seconds()
         secondsAgo = nomic_time.get_timestamp(createdAt)
 
@@ -134,7 +242,7 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
 
     try:
         responseMsg = reminders.set_new_reminder(
-            userId, messageId, channelId, createdAt, remindAfter, msg)
+            userId, messageId, channelId, createdAt, remindAfter, msg, reoccur)
         log.info(responseMsg.split('\n')[0])
         await ctx.send(responseMsg)
 

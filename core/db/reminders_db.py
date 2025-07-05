@@ -11,11 +11,20 @@ def _table_exists(conn, table):
     return cursor.fetchone()[0] == 1
 
 
+def _add_column(conn, table, column, attributes):
+    cursor = conn.execute(f'PRAGMA table_info({table})')
+    rows = cursor.fetchall()
+    if column not in [row[1] for row in rows]:
+        log.info(f'Adding column {column} to {table}')
+        conn.execute(f'ALTER TABLE {table} ADD COLUMN {column} {attributes}')
+
+
 def _create_table_reminders(db):
     table = DB_TABLE_REMINDERS_NAME
     conn = sqlite3.connect(db)
 
     if _table_exists(conn, table):
+        _add_column(conn, table, 'Reoccur', 'INT NOT NULL DEFAULT 0')
         conn.close()
         return
 
@@ -29,7 +38,8 @@ def _create_table_reminders(db):
             CreatedAt   INT     NOT NULL,
             RemindAfter INT     NOT NULL,
             RemindMsg   TEXT,
-            Active      INT     NOT NULL    DEFAULT 1
+            Active      INT     NOT NULL    DEFAULT 1,
+            Reoccur     INT     NOT NULL    DEFAULT 0
         )
         '''
     )
@@ -43,20 +53,20 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg):
-    return _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg,
+def add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur):
+    return _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur,
                          SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, db, table):
+def _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur, db, table):
     conn = sqlite3.connect(db)
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active)
-        Values (:userId, :messageId, :channelId, :createdAt, :remindAfter, :remindMsg, 1)
+        (UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active, Reoccur)
+        Values (:userId, :messageId, :channelId, :createdAt, :remindAfter, :remindMsg, 1, :reoccur)
         ''',
-        [userId, messageId, channelId, createdAt, remindAfter, remindMsg]
+        [userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur]
     )
 
     conn.commit()
@@ -95,7 +105,7 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT RowId, UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active
+        SELECT RowId, UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active, Reoccur
         FROM {table}
         {'' if not where else where}
         '''

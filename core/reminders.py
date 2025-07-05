@@ -4,6 +4,7 @@ import re
 from core.log import log
 from core.db import reminders_db as db
 from core import nomic_time, utils, language
+from core.enums import Reoccur
 from config.config import PREFIX
 
 locale = language.Locale('core.reminders')
@@ -14,14 +15,15 @@ def set_new_reminder(userId: str,
                      channelId: int,
                      createdAt: datetime,
                      remindAfter: timedelta,
-                     remindMsg: str):
+                     remindMsg: str,
+                     reoccur: Reoccur):
     '''CreatedAt and remindAfter should be a UTC timestamp in seconds'''
 
     _createdAt = nomic_time.get_timestamp(createdAt)
     _remindAfter = nomic_time.get_timestamp(createdAt + remindAfter)
 
     rowId = db.add_reminder(userId, messageId, channelId,
-                            _createdAt, _remindAfter, remindMsg)
+                            _createdAt, _remindAfter, remindMsg, reoccur)
 
     _remindAfterFormatted = f'<t:{_remindAfter}>'
 
@@ -59,7 +61,15 @@ def get_reminder(rowId):
     remindAfter = f'<t:{reminder["RemindAfter"]}:R>'
     remindMsg = reminder['RemindMsg']
 
-    return locale.get_string('reminderSetLong', remindAfter=remindAfter, remindMsg=remindMsg)
+    remindReoccur = ''
+    reoccurence = Reoccur(reminder['Reoccur'])
+    if reoccurence != 0:
+        remindReoccur = f', and to reoccur {reoccurence.name.lower()}'
+
+    return locale.get_string('reminderSetLong',
+                             remindAfter=remindAfter,
+                             remindReoccur=remindReoccur,
+                             remindMsg=remindMsg)
 
 
 def unset_reminder(rowId, requesterId=None, serverId=None, overrideId=False):
