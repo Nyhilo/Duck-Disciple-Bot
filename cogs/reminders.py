@@ -201,8 +201,8 @@ class Reminders(commands.Cog, name='Reminders'):
             except discord.NotFound:
                 await replyTo.reply(locale.get_string('remindChannelNotFound',
                                                       userAt=userAt, createdAt=createdAt, message=_msg))
-
-            log.info(reminders.unset_reminder(rowId, overrideId=True))
+            if task['Reoccur'] is None or task['Reoccur'] == 0:
+                log.info(reminders.unset_reminder(rowId, overrideId=True))
 
 
 async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remindAfter, msg, reoccur=Reoccur.NONE):
