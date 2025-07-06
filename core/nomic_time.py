@@ -14,6 +14,7 @@ locale = language.Locale('core.nomic_time') if settings.cycle_running else langu
 print(settings.cycle_running)
 print(locale.base_path)
 
+
 def get_current_utc_string() -> None:
     # Okay there's a lot going on here
     # Get some base reference values
@@ -226,7 +227,7 @@ def set_locale(locale_code: str):
 #####################
 
 
-def utc_now():
+def utc_now() -> datetime:
     # for debugging
     # return datetime(month=10, day=21, year=2022, hour=0, minute=59, second=1).replace(tzinfo=timezone.utc)
 

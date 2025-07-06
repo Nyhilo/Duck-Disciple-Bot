@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class Reoccur(Enum):
+class Reoccur(IntEnum):
     NONE = 0
     DAILY = 1
     BIDAILY = 2
@@ -9,7 +9,5 @@ class Reoccur(Enum):
     FORNIGHTLY = 4
     MONTHLY = 5
     MONTHEND = 6
-    BIMONTHLY = 7
-    SEMIYEARLY = 8
-    YEARLY = 9
-    YEAREND = 10
+    YEARLY = 7
+    YEAREND = 8

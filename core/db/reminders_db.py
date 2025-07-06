@@ -25,6 +25,7 @@ def _create_table_reminders(db):
 
     if _table_exists(conn, table):
         _add_column(conn, table, 'Reoccur', 'INT NOT NULL DEFAULT 0')
+        _add_column(conn, table, 'OriginalTimestamp', 'INT')
         conn.close()
         return
 
@@ -39,7 +40,8 @@ def _create_table_reminders(db):
             RemindAfter INT     NOT NULL,
             RemindMsg   TEXT,
             Active      INT     NOT NULL    DEFAULT 1,
-            Reoccur     INT     NOT NULL    DEFAULT 0
+            Reoccur     INT     NOT NULL    DEFAULT 0,
+            OriginalTimestamp   INT
         )
         '''
     )
@@ -53,20 +55,24 @@ def _create_table_reminders(db):
 
 
 # Repository Methods
-def add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur):
-    return _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur,
+def add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur, originalTimestamp):
+    return _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur, originalTimestamp,
                          SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
 
 
-def _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur, db, table):
+def _add_reminder(userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur, originalTimestamp,
+                  db, table):
     conn = sqlite3.connect(db)
+
+    _reoccur = int(reoccur)
+
     cursor = conn.execute(
         f'''
         INSERT INTO {table}
-        (UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active, Reoccur)
-        Values (:userId, :messageId, :channelId, :createdAt, :remindAfter, :remindMsg, 1, :reoccur)
+        (UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active, Reoccur, OriginalTimestamp)
+        Values (:userId, :messageId, :channelId, :createdAt, :remindAfter, :remindMsg, 1, :_reoccur, :originalTimestamp)
         ''',
-        [userId, messageId, channelId, createdAt, remindAfter, remindMsg, reoccur]
+        [userId, messageId, channelId, createdAt, remindAfter, remindMsg, _reoccur, originalTimestamp]
     )
 
     conn.commit()
@@ -95,6 +101,26 @@ def _unset_reminder(rowId, db, table):
     return cursor.rowcount > 0
 
 
+def update_remindAfter(rowId, newTimestamp):
+    _update_remindAfter(rowId, newTimestamp, SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME)
+
+
+def _update_remindAfter(rowId, newTimestamp, db, table):
+    conn = sqlite3.connect(db)
+    cursor = conn.execute(
+        f'''
+        UPDATE {table}
+        SET remindAfter = :newTimestamp
+        WHERE ROWID = :rowId
+        ''', [newTimestamp, rowId]
+    )
+
+    conn.commit()
+    conn.close()
+
+    return cursor.rowcount > 0
+
+
 def get_reminders(where=None):
     return _get_reminders(SQLITE3_DB_NAME, DB_TABLE_REMINDERS_NAME, where)
 
@@ -105,7 +131,16 @@ def _get_reminders(db, table, where=None):
 
     cursor = conn.execute(
         f'''
-        SELECT RowId, UserId, MessageId, ChannelId, CreatedAt, RemindAfter, RemindMsg, Active, Reoccur
+        SELECT RowId,
+               UserId,
+               MessageId,
+               ChannelId,
+               CreatedAt,
+               RemindAfter,
+               RemindMsg,
+               Active,
+               Reoccur,
+               OriginalTimestamp
         FROM {table}
         {'' if not where else where}
         '''

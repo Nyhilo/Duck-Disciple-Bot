@@ -85,13 +85,11 @@ class Reminders(commands.Cog, name='Reminders'):
                   '\tFornightly: Repeats every 14 days\n'
                   '\tMonthly: Repeats each month on the day†\n'
                   '\tMonth-End: Repeats at the end of each month'
-                  '\tBi-Montly Repeats every 2 months on the day†\n'
-                  '\tSemi-Yearly: Repeats every 6 months on the day†\n'
                   '\tYearly: Repeats every year on the day†\n'
                   '\tYear-End: Repeats on the last day of the year\n'
                   '† If set on the 31st, 30th, or 29th, will repeat on the '
-                  '30th, 29th, or 28th of subsequent months as needed.'
-            )
+                  '30th, 29th, or 28th of subsequent months as needed.\n'
+                  'This command also supports abbreviations, e.g. w for weekly or me for month-end.')
     )
     async def reoccur(self, ctx, *, message=None):
         if not message:
@@ -112,10 +110,8 @@ class Reminders(commands.Cog, name='Reminders'):
             '4': 'Fornightly',
             '5': 'Monthly',
             '6': 'Month-end',
-            '7': 'Bi-Montly',
-            '8': 'Semi-Yearly',
-            '9': 'Yearly',
-            '10': 'Year-end'
+            '7': 'Yearly',
+            '8': 'Year-end'
         }
 
         validStringResponses = {
@@ -139,20 +135,12 @@ class Reminders(commands.Cog, name='Reminders'):
             'month-end': 6,
             'monthend': 6,
             'me': 6,
-            'bi-montly': 7,
-            'bimonthly': 7,
-            'bimonth': 7,
-            'bm': 7,
-            'semi-yearly': 8,
-            'semiyearly': 8,
-            'semiyear': 8,
-            'sy': 8,
-            'yearly': 9,
-            'year': 9,
-            'y': 9,
-            'year-end': 10,
-            'yearend': 10,
-            'ye': 10
+            'yearly': 7,
+            'year': 7,
+            'y': 7,
+            'year-end': 8,
+            'yearend': 8,
+            'ye': 8
         }
 
         reoccurList = ', '.join([f'{k}: {v}' for k, v in validIntResponses.items()])
@@ -164,16 +152,16 @@ class Reminders(commands.Cog, name='Reminders'):
             def check(m):
                 if m.channel == ctx or m.channel == ctx.channel:
                     msg = m.content.lower()
-                    return str(msg) in validIntResponses.keys or msg.lower() in validStringResponses.keys
+                    return str(msg) in validIntResponses or msg.lower() in validStringResponses
 
                 return False
 
-            response = await ctx.wait_for('message', timeout=120, check=check)
+            response = (await self.bot.wait_for('message', timeout=120, check=check)).content
 
-            if response in validIntResponses.keys:
+            if response in validIntResponses:
                 reoccurChoice = int(response)
 
-            if response.lower() in validStringResponses.keys:
+            if response.lower() in validStringResponses:
                 reoccurChoice = validStringResponses[response.lower()]
 
         except asyncio.TimeoutError:
@@ -204,7 +192,11 @@ class Reminders(commands.Cog, name='Reminders'):
             _msg = f'"{msg}"' if msg else ''
             try:
                 replyTo = await channel.fetch_message(task['MessageId'])
-                await replyTo.reply(locale.get_string('remindFound', userAt=userAt, message=_msg))
+                if task['Reoccur'] is None or task['Reoccur'] == 0:
+                    await replyTo.reply(locale.get_string('remindFound', userAt=userAt, message=_msg))
+                else:
+                    await replyTo.reply(_msg)
+                    reminders.refresh_reoccuring_reminder(task)
 
             except discord.NotFound:
                 await replyTo.reply(locale.get_string('remindChannelNotFound',
