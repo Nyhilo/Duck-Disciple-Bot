@@ -181,6 +181,15 @@ class Reminders(commands.Cog, name='Reminders'):
             rowId = task['rowid']
             channelId = task['ChannelId']
             channel = self.bot.get_channel(channelId)
+
+            if channel is None and task['UserId'] is not None:
+                # If the target channel does not exist, dm the user
+                user = await self.bot.fetch_user(task['UserId'])
+                dm = await user.create_dm()
+
+                if dm is not None:
+                    channel = dm
+
             if channel is None:
                 log.info(
                     f'Channel with id {channelId} does not exist. Setting reminder with id {rowId} to inactive...')
