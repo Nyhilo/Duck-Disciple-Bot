@@ -183,11 +183,11 @@ class Reminders(commands.Cog, name='Reminders'):
             channel = self.bot.get_channel(channelId)
 
             if channel is None and task['UserId'] is not None:
-                # It might be a direct message
+                # If the target channel does not exist, dm the user
                 user = await self.bot.fetch_user(task['UserId'])
                 dm = await user.create_dm()
 
-                if dm is not None and channelId == dm.id:
+                if dm is not None:
                     channel = dm
 
             if channel is None:

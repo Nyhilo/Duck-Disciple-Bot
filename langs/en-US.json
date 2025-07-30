@@ -56,7 +56,7 @@
             "helpMessageReoccur": "Please see `{prefix}help remind` for syntax on how to use the reoccur command.",
             "forgetIdNotGiven": "Please include the id of the reminder to forget.",
             "remindFound": "{userAt}, reminding you of the message you sent here.\n\n{message}",
-            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set in this channel {createdAt}.\n\n{message}",
+            "remindChannelNotFound": "{userAt}, reminding you of a reminder you set here {createdAt}.\n\n{message}",
             "remindSetTooShort": "C'mon, less than 10 seconds is just silly.",
             "remindSetShort": "Okay, I'll remind you.",
             "remindFoundShort": "Hey, reminding you about this thing.\n\n{message}",
