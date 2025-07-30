@@ -77,8 +77,8 @@ class Reminders(commands.Cog, name='Reminders'):
     @commands.command(
             brief='Set a reoccuring reminder',
             help=(f'Uses the same syntax as {config.PREFIX}remind.\n'
-                  'Follows up for the reoccurrence interval after setting for the reminder.\n'
-                  'Reoccurence intervals are as follows:\n'
+                  'Follows up for the scheduled interval after setting for the reminder.\n'
+                  'Scheduled intervals are as follows:\n'
                   '\tDaily: Repeats every 24 hours\n'
                   '\tBi-Daily: Repeats every 48 hours\n'
                   '\tWeekly: Repeats every 7 days\n'
@@ -91,7 +91,7 @@ class Reminders(commands.Cog, name='Reminders'):
                   '30th, 29th, or 28th of subsequent months as needed.\n'
                   'This command also supports abbreviations, e.g. w for weekly or me for month-end.')
     )
-    async def reoccur(self, ctx, *, message=None):
+    async def schedule(self, ctx, *, message=None):
         if not message:
             return await ctx.send(locale.get_string('helpMessage', prefix=config.PREFIX))
 
