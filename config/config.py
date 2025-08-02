@@ -131,6 +131,8 @@ class CARD_DECORATIONS():
     Holographic = '<a:HoloSparkle:1260320827648512130>'
 
 
+QUICK_REMIND_SECONDS_THRESHOLD = 60 * 10
+
 # The maximum character limit in which we attempt to trigger &stopdoingnomic on a message
 STOP_DOING_MSG_LEN_LIMIT = 280
 STOP_DOING_DEFAULT_CHANCE = 0.3

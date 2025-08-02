@@ -198,19 +198,20 @@ class Reminders(commands.Cog, name='Reminders'):
                     log.info(unsetMsg)
                 continue
 
-            _msg = f'"{msg}"' if msg else ''
+            _msg = f'{msg}' if msg else ''
             try:
                 replyTo = await channel.fetch_message(task['MessageId'])
-                if task['Reoccur'] is None or task['Reoccur'] == 0:
-                    await replyTo.reply(locale.get_string('remindFound', userAt=userAt, message=_msg))
-                else:
+                if task['Reoccur']:
                     await replyTo.reply(_msg)
                     reminders.refresh_reoccuring_reminder(task)
+                else:
+                    await replyTo.reply(locale.get_string('remindFound', userAt=userAt, message=_msg))
 
             except discord.NotFound:
                 await replyTo.reply(locale.get_string('remindChannelNotFound',
                                                       userAt=userAt, createdAt=createdAt, message=_msg))
-            if task['Reoccur'] is None or task['Reoccur'] == 0:
+
+            if not task['Reoccur']:
                 log.info(reminders.unset_reminder(rowId, overrideId=True))
 
 
@@ -220,6 +221,8 @@ async def handle_set_reminder(ctx, userId, createdAt, messageId, channelId, remi
 
     if remindAfter.total_seconds() < 10:
         return await ctx.send(locale.get_string('remindSetTooShort'))
+
+    msg = msg.strip()
 
     if reoccur == Reoccur.NONE and reminders.can_quick_remind(remindAfter):
         seconds = remindAfter.total_seconds()

@@ -6,7 +6,7 @@ from core.log import log
 from core.db import reminders_db as db
 from core import nomic_time, utils, language
 from core.enums import Reoccur
-from config.config import PREFIX
+from config.config import PREFIX, QUICK_REMIND_SECONDS_THRESHOLD
 
 locale = language.Locale('core.reminders')
 
@@ -268,4 +268,4 @@ def parse_remind_message(_msg, createdAt=None):
 
 
 def can_quick_remind(span: timedelta):
-    return span.total_seconds() < 60 * 10
+    return span.total_seconds() < QUICK_REMIND_SECONDS_THRESHOLD
