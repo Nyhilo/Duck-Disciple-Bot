@@ -117,10 +117,9 @@ class Cycle(commands.Cog, name='Current Cycle'):
     # Cycle Commands #
     ##################
     @commands.command(
-        brief='Starts a new cycle',
-        help=('Triggers Khronos to begin tracking a new cycle on the current '
-              'date. It will use the phase loop pattern of the previous cycle. '
-              'Use setphaseloop to update the loop pattern')
+        brief='Displays configuration for the current cycle',
+        help=('Refer to the Cycle category under &help for phase management'
+              'commands.')
     )
     async def cycleinfo(self, ctx):
         try:
