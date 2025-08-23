@@ -28,18 +28,6 @@ class Cycle(commands.Cog, name='Current Cycle'):
         self.channel_phase.start()
         self.channel_phase_end.start()
 
-    @commands.command(
-        brief='Get information about the time relevant to the current Cycle',
-        help=('Get current time and day in UTC, as well asn any relevant '
-              'information regarding time in the current Cycle')
-    )
-    async def time(self, ctx):
-        try:
-            await ctx.send(nomic_time.get_current_utc_string())
-        except Exception as e:
-            log.exception(e)
-            await ctx.send(globalLocale.get_string('genericError'))
-
     ###########
     # Khronos #
     ###########

@@ -15,44 +15,6 @@ print(settings.cycle_running)
 print(locale.base_path)
 
 
-def get_current_utc_string() -> None:
-    # Okay there's a lot going on here
-    # Get some base reference values
-    now = utc_now()
-
-    # Get string representations of the current time and day
-    time = now.strftime('%H:%M')
-    weekday = now.strftime('%A')
-
-    # Figure out what phase it is
-    _phase = _get_phase(now)
-    _nextPhase = _phase + 1
-
-    # Get the names of the needed phases
-    phase = _get_phase_name(_phase)
-    nextPhase = _get_phase_name(_nextPhase)
-
-    # Day of the week for the next phase's beginning
-    nextDayDt = _get_date_from_phase(_nextPhase)
-    nextDay = nextDayDt.strftime('%A')
-    nextDayTimestamp = get_timestamp(nextDayDt)
-
-    # Discord-formatted timestamp strings
-    nextDayRelativeTimestampStr = f'<t:{nextDayTimestamp}:R>'
-    nextDayTimestampStr = f'<t:{nextDayTimestamp}:F>'
-
-    return locale.get_string(
-        'timeUtcReportString',
-        time=time,
-        weekday=weekday,
-        phase=phase,
-        nextPhase=nextPhase,
-        nextDay=nextDay,
-        nextDayRelativeTimestampStr=nextDayRelativeTimestampStr,
-        nextDayTimestampStr=nextDayTimestampStr,
-    )
-
-
 #################################
 # Phase Determination Functions #
 #################################
